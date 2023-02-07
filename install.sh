@@ -29,7 +29,7 @@ function diskparts ()
     swapon /dev/$dn
     dn=${disk}3
     mkfs.btrfs /dev/$dn
-    mount /dev/$dn/mnt
+    mount /dev/$dn ~/mnt
     cd /mnt
     read
 }
