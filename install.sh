@@ -54,6 +54,22 @@ function diskparts ()
     read
 }
 
+function pacstrap_arch ()
+{
+    echo "Select CPU ************"
+    echo "  1)Intel"
+    echo "  2)AMD"
+    echo "  3)VMs"
+
+    read n
+    case $n in
+      1) echo "You chose Option 1";;
+      2) echo "You chose Option 2";;
+      3) echo "You chose Option 3";;
+      *) echo "invalid option";;
+    esac
+}
+
 
 echo "####################"
 echo "#Installtion Script#"
