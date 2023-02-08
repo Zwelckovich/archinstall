@@ -157,9 +157,9 @@ function i3_install ()
     sudo sed -i "/^$variable/ c$variable_changed" /etc/lightdm/lightdm.conf
 }
 
-echo "####################"
-echo "#Installtion Script#"
-echo "####################"
+echo "#####################"
+echo "#Installation Script#"
+echo "#####################"
 echo " "
 echo "Select Action:"
 echo "  1)Install Arch-Base"
