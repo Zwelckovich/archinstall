@@ -15,7 +15,7 @@ function pacman_init ()
     sed -i "/^#$variable/ c$variable" /etc/pacman.conf
     variable="ParallelDownloads = 5"
     sed -i "/^#$variable/ c$variable" /etc/pacman.conf
-    sed '/^Color=.*/a ILoveCandy' /etc/pacman.conf
+    sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
 }
 
 function diskparts ()
@@ -100,7 +100,7 @@ function base_config ()
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
     variable="ParallelDownloads = 5"
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
-    arch-chroot /mnt sed '/^Color=.*/a ILoveCandy' /etc/pacman.conf
+    arch-chroot /mnt sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
     arch-chroot /mnt pacman-key --init
     arch-chroot /mnt pacman-key --populate archlinux
     arch-chroot /mnt pacman -Sy
