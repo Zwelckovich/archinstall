@@ -152,9 +152,9 @@ function i3_install ()
     sudo paccache -r
     sudo systemctl enable lightdm
     sudo systemctl enable --now zramd
-    #variable="MODULES=()"
-    #variable_changed="MODULES=(btrfs)"
-    #sudo sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
+    variable="greeter-session=example-gtk"
+    variable_changed="greeter-session=lightdm-webkit2-greeter"
+    sudo sed -i "/^$variable/ c$variable_changed" /etc/lightdm/lightdm.conf
 }
 
 echo "####################"
