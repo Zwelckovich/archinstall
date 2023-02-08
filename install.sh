@@ -95,9 +95,7 @@ function base_config ()
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
     variable="ParallelDownloads = 5"
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
-    variable="Color"
-    variable_changed="ILoveCandy"
-    arch-chroot /mnt sed -i "/^#$variable/ o$variable" /etc/pacman.conf
+    arch-chroot /mnt sed '/^Color=.*/a ILoveCandy' /etc/pacman.conf
     arch-chroot /mnt pacman-key --init
     arch-chroot /mnt pacman-key --populate archlinux
     arch-chroot /mnt pacman -Sy
