@@ -116,13 +116,11 @@ function base_config ()
     arch-chroot /mnt useradd -mG wheel zwelch
     echo "### USER PASSWORD ###"
     arch-chroot /mnt passwd zwelch
-    arch-chroot /mnt passwd
     echo "### UNCOMMENT WHEEL GROUP ###"
     echo "### PRESS ENTER WHEN READY ###"
     read
-    arch-chroot /mnt EDITOR=vim visudo
+    arch-chroot visudo
     arch-chroot /mnt systemctl enable NetworkManager
-    arch-chroot /mnt passwd
     umount -l /mnt
     echo "#################"
     echo "#SCRIPT FINISHED#"
