@@ -146,8 +146,9 @@ function i3_install ()
     makepkg -srci --noconfirm
     popd
     rm -rf yay
-    yay --noconfirm -Syu
-    yay --noconfirm -S xorg lightdm lightdm-webkit2-greeter i3 dmenu feh archlinux-wallpaper xfce4-terminal picom brave firefox pacman-contrib alsa-utils pulseaudio pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack pavucontrol timeshift timeshift-autosnap zramd
+    pacman --noconfirm -Syu
+    pacman --noconfirm -S xorg lightdm lightdm-webkit2-greeter i3 dmenu feh archlinux-wallpaper xfce4-terminal picom brave firefox pacman-contrib alsa-utils pulseaudio pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack pavucontrol 
+    yay --noconfirm -S timeshift timeshift-autosnap zramd
     sudo paccache -r
     sudo systemctl enable lightdm
     sudo systemctl enable --now zramd
