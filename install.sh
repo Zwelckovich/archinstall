@@ -39,7 +39,7 @@ function diskparts ()
     btrfs su cr /mnt/@opt
     btrfs su cr /mnt/@tmp
     btrfs su cr /mnt/@.snapshots
-    umount /mnt
+    umount -l /mnt
     mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ /dev/$dn /mnt
     mkdir /mnt/{boot,home,var,opt,tmp,.snapshots}
     mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home /dev/$dn /mnt/home
