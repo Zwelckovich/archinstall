@@ -35,6 +35,7 @@ function diskparts ()
     mount /dev/$dn /mnt
     btrfs su cr /mnt/@
     btrfs su cr /mnt/@home
+    btrfs su cr /mnt/@var
     btrfs su cr /mnt/@opt
     btrfs su cr /mnt/@tmp
     btrfs su cr /mnt/@.snapshots
