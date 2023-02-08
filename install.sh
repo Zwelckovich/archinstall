@@ -148,8 +148,8 @@ function i3_install ()
     rm -rf yay
     pacman --noconfirm -Syu
     pacman --noconfirm -S xorg lightdm lightdm-webkit2-greeter i3 dmenu feh archlinux-wallpaper xfce4-terminal picom firefox pacman-contrib alsa-utils pulseaudio pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack pavucontrol 
-    yay --noconfirm -S timeshift timeshift-autosnap zramd brave-bin
-    sudo paccache -r
+    yay --noconfirm -S timeshift timeshift-autosnap zramd
+    yay --noconfirm -S brave-bin
     sudo systemctl enable lightdm
     sudo systemctl enable --now zramd
     variable="greeter-session=example-gtk"
