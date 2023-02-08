@@ -88,9 +88,9 @@ function base_config ()
     variable="en_US.UTF-8 UTF-8"
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/locale.gen
     arch-chroot /mnt locale-gen
-    arch-chroot /mnt echo LANG=en_US.UTF-8 >> /etc/locale.conf
-    arch-chroot /mnt echo KEYMAP=de  >> /etc/vconsole.conf
-    arch-chroot /mnt echo zwelcharch >> /etc/zwelcharch
+    arch-chroot /mnt echo "LANG=en_US.UTF-8" >> /etc/locale.conf
+    arch-chroot /mnt echo "KEYMAP=de"  >> /etc/vconsole.conf
+    arch-chroot /mnt echo "zwelcharch" >> /etc/hostname
     arch-chroot /mnt echo "127.0.0.1	localhost" >> /etc/hosts
     arch-chroot /mnt echo "::1		localhost" >> /etc/hosts
     arch-chroot /mnt echo "127.0.1.1	zwelcharch.localdomain	zwelcharch" >> /etc/hosts
