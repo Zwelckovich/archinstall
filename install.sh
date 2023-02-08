@@ -75,10 +75,30 @@ function pacstrap_arch ()
 
 function base_config ()
 {
+    echo "#############"
+    echo "#Base Config#"
+    echo "#############"
     arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
     arch-chroot /mnt hwclock --systohc
     variable="en_US.UTF-8 UTF-8"
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/locale.gen
+    arch-chroot /mnt locale-gen
+    arch-chroot /mnt echo LANG=en_US.UTF-8 >> /etc/locale.conf
+    arch-chroot /mnt echo KEYMAP=de  >> /etc/vconsole.conf
+    arch-chroot /mnt echo zwelcharch >> /etc/zwelcharch
+    arch-chroot /mnt echo "127.0.0.1	localhost" >> /etc/hosts
+    arch-chroot /mnt echo "::1		localhost" >> /etc/hosts
+    arch-chroot /mnt echo "127.0.1.1	zwelcharch.localdomain	zwelcharch" >> /etc/hosts
+    arch-chroot /mnt passwd
+    arch-chroot /mnt pacman-key --init
+    arch-chroot /mnt pacman-key --populate archlinux
+    arch-chroot /mnt pacman -Sy
+    arch-chroot /mnt pacman -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs cups nvim 
+    variable="MODULES=()"
+    variable_changed="MODULES=(btrfs)"
+    arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
+    arch-chroot /mnt mkinitcpio -p linux-zen
+    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id = Arch
 }
 
 
