@@ -121,7 +121,7 @@ function base_config ()
     read
     arch-chroot /mnt visudo
     arch-chroot /mnt systemctl enable NetworkManager
-    #umount -l /mnt
+    umount -l /mnt
     echo "#################"
     echo "#SCRIPT FINISHED#"
     echo "#################"
