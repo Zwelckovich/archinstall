@@ -71,7 +71,6 @@ function pacstrap_arch ()
       *) echo "invalid option";;
     esac
     genfstab -U /mnt >> /mnt/etc/fstab
-    arch-chroot /mnt
 }
 
 function base_config ()
@@ -79,7 +78,7 @@ function base_config ()
     arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
     arch-chroot /mnt hwclock --systohc
     variable="en_US.UTF-8 UTF-8"
-    varch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/locale.gen
+    arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/locale.gen
 }
 
 
