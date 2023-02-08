@@ -80,3 +80,4 @@ read
 ## Sequencer
 pacman_init
 diskparts
+pacstrap_arch
