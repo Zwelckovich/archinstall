@@ -119,7 +119,7 @@ function base_config ()
     echo "### UNCOMMENT WHEEL GROUP ###"
     echo "### PRESS ENTER WHEN READY ###"
     read
-    arch-chroot visudo
+    arch-chroot /mnt visudo
     arch-chroot /mnt systemctl enable NetworkManager
     umount -l /mnt
     echo "#################"
