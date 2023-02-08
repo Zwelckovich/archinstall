@@ -154,7 +154,7 @@ function i3_install ()
     sudo systemctl enable --now zramd
     variable="greeter-session=example-gtk"
     variable_changed="greeter-session=lightdm-webkit2-greeter"
-    sudo sed -i "/^$variable/ c$variable_changed" /etc/lightdm/lightdm.conf
+    sudo sed -i "/^#$variable*/ c$variable_changed" /etc/lightdm/lightdm.conf
 }
 
 echo "#####################"
