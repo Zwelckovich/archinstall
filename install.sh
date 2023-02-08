@@ -89,16 +89,50 @@ function base_config ()
     arch-chroot /mnt echo "127.0.0.1	localhost" >> /etc/hosts
     arch-chroot /mnt echo "::1		localhost" >> /etc/hosts
     arch-chroot /mnt echo "127.0.1.1	zwelcharch.localdomain	zwelcharch" >> /etc/hosts
+    echo "### ROOT PASSWORD ###"
     arch-chroot /mnt passwd
+    variable="Color"
+    arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
+    variable="ParallelDownloads = 5"
+    arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
+    variable="Color"
+    variable_changed="ILoveCandy"
+    arch-chroot /mnt sed -i "/^#$variable/ o$variable" /etc/pacman.conf
     arch-chroot /mnt pacman-key --init
     arch-chroot /mnt pacman-key --populate archlinux
     arch-chroot /mnt pacman -Sy
-    arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs cups vim 
+    arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs vim 
     variable="MODULES=()"
     variable_changed="MODULES=(btrfs)"
     arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
     arch-chroot /mnt mkinitcpio -p linux-zen
     arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id = Arch
+    variable="GRUB_DISABLE_OS_PROBER=false"
+    arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
+    arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+    arch-chroot /mnt useradd -mG wheel zwelch
+    echo "### USER PASSWORD ###"
+    arch-chroot /mnt passwd zwelch
+    arch-chroot /mnt passwd
+    echo "### UNCOMMENT WHEEL GROUP ###"
+    echo "### PRESS ENTER WHEN READY ###"
+    read
+    arch-chroot /mnt EDITOR=vim visudo
+    arch-chroot /mnt systemctl enable NetworkManager
+    arch-chroot /mnt passwd
+    umount -l /mnt
+    echo "#################"
+    echo "#SCRIPT FINISHED#"
+    echo "#################"
+    echo "Select Action:"
+    echo "  1)Shutdown"
+    echo "  2)Reboot"
+    read n
+    case $n in
+      1) shutdown now;;
+      2) reboot;;
+      *) echo "invalid option";;
+    esac
 }
 
 
