@@ -25,7 +25,7 @@ function diskparts ()
     sgdisk --zap-all /dev/$disk
     sgdisk -n 1:0:+300M -n 2:0:+8G -n 3:0:0 -t 1:ef00 -t 2:8200 /dev/$disk -p
     dn=${disk}1
-    mkfs.fat -f -F32 /dev/$dn
+    mkfs.fat -F32 /dev/$dn
     dn=${disk}2
     swapoff /dev/$dn
     mkswap /dev/$dn
