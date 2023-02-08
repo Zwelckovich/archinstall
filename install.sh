@@ -19,6 +19,7 @@ function diskparts ()
     echo "#Disk Partitions#"
     echo "#################"
     fdisk -l
+    echo " "
     echo "Enter disk name for installation: "
     read disk
     umount /dev/${disk}?*
@@ -57,18 +58,20 @@ function pacstrap_arch ()
     echo "###############"
     echo "#Pacstrap Arch#"
     echo "###############"
-    echo "Select CPU ************"
+    echo "Select CPU:"
     echo "  1)Intel"
     echo "  2)AMD"
     echo "  3)VMs"
 
     read n
     case $n in
-      1) echo "You chose Option 1";;
-      2) echo "You chose Option 2";;
-      3) echo "You chose Option 3";;
+      1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
+      2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
+      3) pacstrap /mnt base linux-zen linux-firmware nano btrfs-progs;;
       *) echo "invalid option";;
     esac
+    genfstab -U /mnt >> /mnt/etc/fstab
+    arch-chroot /mnt
 }
 
 
