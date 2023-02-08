@@ -76,9 +76,10 @@ function pacstrap_arch ()
 
 function base_config ()
 {
-    ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
-    hwclock --systohc
-    variable="en_US.UTF-8 UTF-8"; sed -i "/^#$variable/ c$variable" /etc/locale.gen
+    arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+    arch-chroot /mnt hwclock --systohc
+    variable="en_US.UTF-8 UTF-8"
+    varch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/locale.gen
 }
 
 
