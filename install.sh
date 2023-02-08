@@ -104,7 +104,7 @@ function base_config ()
     arch-chroot /mnt pacman-key --init
     arch-chroot /mnt pacman-key --populate archlinux
     arch-chroot /mnt pacman -Sy
-    arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs vim 
+    arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs vim wget 
     variable="MODULES=()"
     variable_changed="MODULES=(btrfs)"
     arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
@@ -136,15 +136,44 @@ function base_config ()
     esac
 }
 
+function i3_install ()
+{
+    echo "#################"
+    echo "#I3 INSTALLATION#"
+    echo "#################"
+    git clone https://aur.archlinux.org/yay.git
+    pushd yay
+    makepkg -srci --noconfirm
+    popd
+    rm -rf yay
+    yay --noconfirm -Syu
+    yay --noconfirm -S xorg lightdm lightdm-webkit2-greeter i3 dmenu feh archlinux-wallpaper xfce4-terminal picom brave firefox pacman-contrib alsa-utils pulseaudio pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack pavucontrol timeshift timeshift-autosnap zramd
+    sudo paccache -r
+    sudo systemctl enable lightdm
+    sudo systemctl enable --now zramd
+    #variable="MODULES=()"
+    #variable_changed="MODULES=(btrfs)"
+    #sudo sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
+}
 
 echo "####################"
 echo "#Installtion Script#"
 echo "####################"
 echo " "
-echo "Press enter to start..."
-read
-## Sequencer
-pacman_init
-diskparts
-pacstrap_arch
-base_config
+echo "Select Action:"
+echo "  1)Install Arch-Base"
+echo "  2)Install I3"
+read n
+case $n in
+    1) 
+    pacman_init
+    diskparts
+    pacstrap_arch
+    base_config
+    ;;
+    2) 
+    i3_install
+    ;;
+    *) echo "invalid option";;
+esac
+
