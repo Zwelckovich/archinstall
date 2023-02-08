@@ -141,7 +141,7 @@ echo " "
 echo "Press enter to start..."
 read
 ## Sequencer
-#pacman_init
-#diskparts
-#pacstrap_arch
+pacman_init
+diskparts
+pacstrap_arch
 base_config
