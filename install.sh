@@ -21,7 +21,8 @@ function diskparts ()
     fdisk -l
     echo "Enter disk name for installation: "
     read disk
-    sfdisk /dev/$disk < sdx.sfdisk
+    sgdisk --zap-all /dev/$disk
+    sgdisk -n 1:0:+300M -n 2:0:+8G -n 3:0:0 -t 1:ef00 -t 2:8200 /dev/$disk -p
     dn=${disk}1
     mkfs.fat -F32 /dev/$dn
     dn=${disk}2
@@ -29,7 +30,7 @@ function diskparts ()
     swapon /dev/$dn
     dn=${disk}3
     mkfs.btrfs /dev/$dn
-    mount /dev/$dn ~/mnt
+    mount /dev/$dn /mnt
     cd /mnt
     read
 }
