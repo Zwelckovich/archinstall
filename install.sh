@@ -74,6 +74,13 @@ function pacstrap_arch ()
     arch-chroot /mnt
 }
 
+function base_config ()
+{
+    ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+    hwclock --systohc
+    variable="en_US.UTF-8 UTF-8"; sed -i "/^#$variable/ c$variable" /etc/locale.gen
+}
+
 
 echo "####################"
 echo "#Installtion Script#"
@@ -85,3 +92,4 @@ read
 pacman_init
 diskparts
 pacstrap_arch
+base_config
