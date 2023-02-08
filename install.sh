@@ -50,12 +50,13 @@ function diskparts ()
     mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@.snapshots /dev/$dn /mnt/.snapshots
     dn=${disk}1
     mount /dev/$dn /mnt/boot
-    echo "Script Ended"
-    read
 }
 
 function pacstrap_arch ()
 {
+    echo "###############"
+    echo "#Pacstrap Arch#"
+    echo "###############"
     echo "Select CPU ************"
     echo "  1)Intel"
     echo "  2)AMD"
