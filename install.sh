@@ -11,6 +11,11 @@ function pacman_init ()
     echo "#############"
     pacman-key --init   
     pacman-key --populate archlinux
+    variable="Color"
+    sed -i "/^#$variable/ c$variable" /etc/pacman.conf
+    variable="ParallelDownloads = 5"
+    sed -i "/^#$variable/ c$variable" /etc/pacman.conf
+    sed '/^Color=.*/a ILoveCandy' /etc/pacman.conf
 }
 
 function diskparts ()
