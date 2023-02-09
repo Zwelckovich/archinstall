@@ -70,10 +70,10 @@ function pacstrap_arch ()
 
     read n
     case $n in
-      1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
-      2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
-      3) pacstrap /mnt base linux-zen linux-firmware nano btrfs-progs;;
-      *) echo "invalid option";;
+        1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
+        2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
+        3) pacstrap /mnt base linux-zen linux-firmware nano btrfs-progs;;
+        *) echo "invalid option";;
     esac
     genfstab -U /mnt >> /mnt/etc/fstab
 }
@@ -131,9 +131,9 @@ function base_config ()
     echo "  2)Reboot"
     read n
     case $n in
-      1) shutdown now;;
-      2) reboot;;
-      *) echo "invalid option";;
+        1) shutdown now;;
+        2) reboot;;
+        *) echo "invalid option";;
     esac
 }
 
@@ -148,13 +148,14 @@ function i3_install ()
     popd
     rm -rf yay
     sudo pacman --noconfirm -Syu
-    sudo pacman --noconfirm -S xorg lightdm lightdm-webkit2-greeter i3 dmenu feh archlinux-wallpaper xfce4-terminal picom firefox pacman-contrib alsa-utils pulseaudio pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack pavucontrol 
+    sudo pacman --noconfirm -S xorg lightdm i3 dmenu feh xfce4-terminal picom firefox pacman-contrib alsa-utils pulseaudio pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack pavucontrol 
     yay --noconfirm -S timeshift timeshift-autosnap zramd
     sudo systemctl enable lightdm
     sudo systemctl enable --now zramd
-    variable="greeter-session=example-gtk"
-    variable_changed="greeter-session=lightdm-webkit2-greeter"
-    sudo sed -i "/^#$variable*/ c$variable_changed" /etc/lightdm/lightdm.conf
+    #variable="greeter-session=example-gtk"
+    #variable_changed="greeter-session=lightdm-webkit2-greeter"
+    #sudo sed -i "/^#$variable*/ c$variable_changed" /etc/lightdm/lightdm.conf
+    #yay -S lightdm-webkit-theme-aether
 }
 
 echo "#####################"
@@ -167,14 +168,14 @@ echo "  2)Install I3"
 read n
 case $n in
     1) 
-    pacman_init
-    diskparts
-    pacstrap_arch
-    base_config
-    ;;
+        pacman_init
+        diskparts
+        pacstrap_arch
+        base_config
+        ;;
     2) 
-    i3_install
-    ;;
+        i3_install
+        ;;
     *) echo "invalid option";;
 esac
 
