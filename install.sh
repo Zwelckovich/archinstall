@@ -156,7 +156,7 @@ function i3_install ()
     #variable="greeter-session=example-gtk"
     #variable_changed="greeter-session=lightdm-webkit2-greeter"
     #sudo sed -i "/^#$variable*/ c$variable_changed" /etc/lightdm/lightdm.conf
-    yay -S lightdm-webkit-theme-aether
+    yay --noconfirm -S lightdm-webkit-theme-aether
 }
 
 echo "#####################"
