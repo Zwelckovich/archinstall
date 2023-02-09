@@ -121,7 +121,7 @@ function base_config ()
     read
     arch-chroot /mnt visudo
     arch-chroot /mnt systemctl enable NetworkManager
-    cp -r /archinstall /mnt
+    cp -r /archinstall /mnt/home/zwelch
     umount -l /mnt
     echo "#################"
     echo "#SCRIPT FINISHED#"
