@@ -122,6 +122,7 @@ function base_config ()
     arch-chroot /mnt visudo
     arch-chroot /mnt systemctl enable NetworkManager
     cp -r /archinstall /mnt/home/zwelch
+    chmod 777 /mnt/home/zwelch/archinstall
     umount -l /mnt
     echo "#################"
     echo "#SCRIPT FINISHED#"
