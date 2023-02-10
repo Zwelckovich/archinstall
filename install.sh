@@ -148,11 +148,12 @@ function i3_install ()
     makepkg -srci --noconfirm
     popd
     rm -rf yay
-    sudo pacman --noconfirm -Syu
-    sudo pacman --noconfirm -S xorg lightdm i3 dmenu feh xfce4-terminal picom firefox pacman-contrib alsa-utils pulseaudio pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack pavucontrol 
+    yay --noconfirm -Sy
     yay --noconfirm -S timeshift timeshift-autosnap zramd
     sudo systemctl enable lightdm
     sudo systemctl enable --now zramd
+    sudo pacman --noconfirm -Syu
+    sudo pacman --noconfirm -S xorg lightdm i3 dmenu feh xfce4-terminal picom firefox pacman-contrib alsa-utils pulseaudio pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack pavucontrol 
     #variable="greeter-session=example-gtk"
     #variable_changed="greeter-session=lightdm-webkit2-greeter"
     #sudo sed -i "/^#$variable*/ c$variable_changed" /etc/lightdm/lightdm.conf
@@ -179,4 +180,3 @@ case $n in
         ;;
     *) echo "invalid option";;
 esac
-
