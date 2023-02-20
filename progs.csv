@@ -1,0 +1,9 @@
+#TAG,NAME IN REPO (or git url),PURPOSE (should be a verb phrase to sound right while installing)
+,neovim,"a tidier vim with some useful features"
+A,mutt-wizard-git,"is a light-weight terminal-based email system."
+A,rs-visa,"Rohde & Schwarz VISA driver."
+,ripgrep,"Grep utility for fuzzyfinder."
+,polybar,"Better status bar."
+A,tiramisu-git,"Notification daemon for our polybar."
+,cronie,"Schedule daemon."
+,nodejs,"Java runtime environment."
