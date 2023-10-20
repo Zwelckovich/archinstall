@@ -104,7 +104,7 @@ function base_config ()
     arch-chroot /mnt pacman-key --init
     arch-chroot /mnt pacman-key --populate archlinux
     arch-chroot /mnt pacman -Sy
-    arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim wget 
+    arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget 
     variable="MODULES=()"
     variable_changed="MODULES=(btrfs)"
     arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
@@ -153,7 +153,7 @@ function i3_install ()
     sudo systemctl enable lightdm
     sudo systemctl enable --now zramd
     sudo pacman --noconfirm -Syu
-    sudo pacman --noconfirm -S xorg lightdm i3 dmenu feh xfce4-terminal picom firefox pacman-contrib alsa-utils pulseaudio pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack pavucontrol 
+    sudo pacman --noconfirm -S xorg lightdm i3 dmenu feh xfce4-terminal picom firefox pacman-contrib alsa-utils pipewire pipewire-pulse pavucontrol 
     #variable="greeter-session=example-gtk"
     #variable_changed="greeter-session=lightdm-webkit2-greeter"
     #sudo sed -i "/^#$variable*/ c$variable_changed" /etc/lightdm/lightdm.conf
