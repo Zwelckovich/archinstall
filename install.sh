@@ -266,7 +266,7 @@ echo " "
 echo "Select Action:"
 echo "  1)Install Arch-Base"
 echo "  2)Install I3"
-echo "  2)Install Hyprland"
+echo "  3)Install Hyprland"
 read n
 case $n in
     1) 
