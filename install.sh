@@ -100,13 +100,13 @@ function diskparts ()
 
     read n
      case $n in
-        1) btrfs;;
-        2) ext4;;
+        1) btrfs_format;;
+        2) ext4_format;;
         *) echo "invalid option";;
     esac
 }
 
-function btrfs ()
+function btrfs_format ()
 {
     echo "#################"
     echo "#Disk Partitions#"
@@ -163,7 +163,7 @@ function btrfs ()
     genfstab -U /mnt >> /mnt/etc/fstab
 }
 
-function ext4 ()
+function ext4_format ()
 {
     echo "#################"
     echo "#Disk Partitions#"
