@@ -303,9 +303,23 @@ function hyprland_install ()
             install_software $SOFTWR
     done
 
+    if [[ "$ISNVIDIA" == true ]]; then
+        #check for hyprland and remove it so the -nvidia package can be installed
+        if yay -Q hyprland &>> /dev/null ; then
+            yay -R --noconfirm hyprland &>> $INSTLOG &
+        fi
+        install_software hyprland-nvidia
+    else
+        install_software hyprland
+    fi
+
     for SOFTWR in ${install_stage[@]}; do
             install_software $SOFTWR
     done 
+
+    if [[ "$ISNVIDIA" == true ]]; then
+        echo -e "\nsource = ~/.config/hypr/env_var_nvidia.conf" >> ~/.config/hypr/hyprland.conf
+    fi
 }
 
 show_progress() {
