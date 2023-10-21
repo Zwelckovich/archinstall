@@ -62,6 +62,7 @@ install_stage=(
     xfce4-settings
     nwg-look-bin
     sddm
+    firefox
 )
 
 
