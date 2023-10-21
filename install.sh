@@ -30,6 +30,42 @@ prep_stage=(
     pacman-contrib
 )
 
+install_stage=(
+    pipewire 
+    pipewire-pulse
+    kitty 
+    mako 
+    waybar
+    swww 
+    swaylock-effects 
+    wofi 
+    wlogout 
+    xdg-desktop-portal-hyprland 
+    swappy 
+    grim 
+    slurp 
+    btop
+    mpv
+    pamixer 
+    pavucontrol 
+    brightnessctl 
+    bluez 
+    bluez-utils 
+    blueman 
+    gvfs 
+    thunar 
+    thunar-archive-plugin 
+    file-roller
+    starship 
+    ttf-cascadia-code-nerd
+    lxappearance 
+    xfce4-settings
+    nwg-look-bin
+    sddm
+)
+
+
+
 function pacman_init ()
 {
     echo "#############"
@@ -266,6 +302,9 @@ function hyprland_install ()
             install_software $SOFTWR
     done
 
+    for SOFTWR in ${install_stage[@]}; do
+            install_software $SOFTWR
+    done 
 }
 
 show_progress() {
