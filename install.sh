@@ -145,6 +145,15 @@ function btrfs ()
     dn=${disk}1
     mount /dev/$dn /mnt/boot
 
+    echo "###############"
+    echo "#Pacstrap Arch#"
+    echo "###############"
+    echo "Select CPU:"
+    echo "  1)Intel"
+    echo "  2)AMD"
+    echo "  3)VMs"
+
+    read n
     case $n in
         1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
         2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
