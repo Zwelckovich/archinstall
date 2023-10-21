@@ -80,6 +80,14 @@ function btrfs ()
     mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@.snapshots /dev/$dn /mnt/.snapshots
     dn=${disk}1
     mount /dev/$dn /mnt/boot
+
+    case $n in
+        1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
+        2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
+        3) pacstrap /mnt base linux-zen linux-firmware nano btrfs-progs;;
+        *) echo "invalid option";;
+    esac
+    genfstab -U /mnt >> /mnt/etc/fstab
 }
 
 function ext4 ()
@@ -97,10 +105,7 @@ function ext4 ()
     mkdir /mnt/boot
     dn=${disk}1
     mount /dev/$dn /mnt/boot
-}
 
-function pacstrap_arch ()
-{
     echo "###############"
     echo "#Pacstrap Arch#"
     echo "###############"
@@ -111,8 +116,9 @@ function pacstrap_arch ()
 
     read n
     case $n in
-        1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
-        2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
+        1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode;;
+        2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode;;
+        3) pacstrap /mnt base linux-zen linux-firmware nano;;
         *) echo "invalid option";;
     esac
     genfstab -U /mnt >> /mnt/etc/fstab
@@ -265,7 +271,6 @@ case $n in
     1) 
         pacman_init
         diskparts
-        pacstrap_arch
         base_config
         ;;
     2) 
