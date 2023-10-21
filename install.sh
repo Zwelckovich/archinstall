@@ -11,6 +11,25 @@ nvidia_stage=(
     libva-nvidia-driver-git
 )
 
+prep_stage=(
+    qt5-wayland 
+    qt5ct
+    qt6-wayland 
+    qt6ct
+    qt5-svg
+    qt5-quickcontrols2
+    qt5-graphicaleffects
+    gtk3 
+    polkit-gnome 
+    pipewire 
+    wireplumber 
+    jq 
+    wl-clipboard 
+    cliphist 
+    python-requests 
+    pacman-contrib
+)
+
 function pacman_init ()
 {
     echo "#############"
@@ -242,6 +261,10 @@ function hyprland_install ()
         sudo mkinitcpio --config /etc/mkinitcpio.conf --generate /boot/initramfs-custom.img
         echo -e "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf &>> $INSTLOG
     fi
+
+    for SOFTWR in ${prep_stage[@]}; do
+            install_software $SOFTWR
+    done
 
 }
 
