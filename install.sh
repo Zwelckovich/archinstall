@@ -65,6 +65,14 @@ install_stage=(
     firefox
 )
 
+# set some colors
+CNT="[\e[1;36mNOTE\e[0m]"
+COK="[\e[1;32mOK\e[0m]"
+CER="[\e[1;31mERROR\e[0m]"
+CAT="[\e[1;37mATTENTION\e[0m]"
+CWR="[\e[1;35mWARNING\e[0m]"
+CAC="[\e[1;33mACTION\e[0m]"
+INSTLOG="install.log"
 
 
 function pacman_init ()
@@ -289,6 +297,7 @@ function hyprland_install ()
 
     if [[ "$ISNVIDIA" == true ]]; then
         echo -e "$CNT - Nvidia GPU support setup stage, this may take a while..."
+        sleep 5
         for SOFTWR in ${nvidia_stage[@]}; do
             install_software $SOFTWR
         done
@@ -308,6 +317,8 @@ function hyprland_install ()
         if yay -Q hyprland &>> /dev/null ; then
             yay -R --noconfirm hyprland
         fi
+        echo -e "$CNT - Installing NVIDIA Hyprland"
+        sleep 5
         install_software hyprland-nvidia
     else
         install_software hyprland
