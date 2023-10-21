@@ -3,6 +3,13 @@
 #
 
 ## Variables
+nvidia_stage=(
+    linux-headers 
+    nvidia-dkms 
+    nvidia-settings 
+    libva 
+    libva-nvidia-driver-git
+)
 
 function pacman_init ()
 {
@@ -30,6 +37,23 @@ function diskparts ()
     umount /dev/${disk}?*
     umount -l /mnt
     sgdisk --zap-all /dev/$disk
+    echo "###############"
+    echo "#Filesystem#"
+    echo "###############"
+    echo "Select Filesystem:"
+    echo "  1)btrfs"
+    echo "  2)ext4"
+
+    read n
+    case $n in
+        1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
+        2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
+        *) echo "invalid option";;
+    esac
+}
+
+function btrfs ()
+{
     sgdisk -n 1:0:+300M -n 2:0:+8G -n 3:0:0 -t 1:ef00 -t 2:8200 /dev/$disk -p
     dn=${disk}1
     mkfs.fat -F32 /dev/$dn
@@ -58,6 +82,21 @@ function diskparts ()
     mount /dev/$dn /mnt/boot
 }
 
+function ext4 ()
+{
+    sgdisk -n 1:0:+300M -n 2:0:+8G -n 3:0:0 -t 1:ef00 -t 2:8200 /dev/$disk -p
+    dn=${disk}1
+    mkfs.fat -F32 /dev/$dn
+    dn=${disk}2
+    swapoff /dev/$dn
+    mkswap /dev/$dn
+    swapon /dev/$dn
+    dn=${disk}3 
+    mkfs.ext4 -f /dev/$dn
+    dn=${disk}1
+    mount /dev/$dn /mnt/boot
+}
+
 function pacstrap_arch ()
 {
     echo "###############"
@@ -70,9 +109,8 @@ function pacstrap_arch ()
 
     read n
     case $n in
-        1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
-        2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
-        3) pacstrap /mnt base linux-zen linux-firmware nano btrfs-progs;;
+        1) btrfs;;
+        2) ext4;;
         *) echo "invalid option";;
     esac
     genfstab -U /mnt >> /mnt/etc/fstab
@@ -160,6 +198,59 @@ function i3_install ()
     yay --noconfirm -S lightdm-webkit-theme-aether
 }
 
+function hyprland_install ()
+{
+    clear
+    echo -ne "
+    -------------------------------------------------------------------------
+    ██╗  ██╗██╗   ██╗██████╗ ██████╗ ██╗      █████╗ ███╗   ██╗██████╗ 
+    ██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██║     ██╔══██╗████╗  ██║██╔══██╗
+    ███████║ ╚████╔╝ ██████╔╝██████╔╝██║     ███████║██╔██╗ ██║██║  ██║
+    ██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══██╗██║     ██╔══██║██║╚██╗██║██║  ██║
+    ██║  ██║   ██║   ██║     ██║  ██║███████╗██║  ██║██║ ╚████║██████╔╝
+    ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ 
+    -------------------------------------------------------------------------                                                           
+    "
+    if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
+        ISNVIDIA=true
+    else
+        ISNVIDIA=false
+    fi
+
+    if [[ "$ISNVIDIA" == true ]]; then
+        echo -e "$CNT - Nvidia GPU support setup stage, this may take a while..."
+        for SOFTWR in ${nvidia_stage[@]}; do
+            install_software $SOFTWR
+        done
+    
+        # update config
+        sudo sed -i 's/MODULES=()/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
+        sudo mkinitcpio --config /etc/mkinitcpio.conf --generate /boot/initramfs-custom.img
+        echo -e "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf &>> $INSTLOG
+    fi
+
+}
+
+function install_software() {
+    # First lets see if the package is there
+    if yay -Q $1 &>> /dev/null ; then
+        echo -e "$COK - $1 is already installed."
+    else
+        # no package found so installing
+        echo -en "$CNT - Now installing $1 ."
+        yay -S --noconfirm $1 &>> $INSTLOG &
+        show_progress $!
+        # test to make sure package installed
+        if yay -Q $1 &>> /dev/null ; then
+            echo -e "\e[1A\e[K$COK - $1 was installed."
+        else
+            # if this is hit then a package is missing, exit to review log
+            echo -e "\e[1A\e[K$CER - $1 install had failed, please check the install.log"
+            exit
+        fi
+    fi
+}
+
 echo "#####################"
 echo "#Installation Script#"
 echo "#####################"
@@ -177,6 +268,9 @@ case $n in
         ;;
     2) 
         i3_install
+        ;;
+    3)
+        hyprland_install
         ;;
     *) echo "invalid option";;
 esac
