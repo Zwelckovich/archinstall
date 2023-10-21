@@ -219,6 +219,12 @@ function hyprland_install ()
     ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ 
     -------------------------------------------------------------------------                                                           
     "
+    git clone https://aur.archlinux.org/yay.git
+    pushd yay
+    makepkg -srci --noconfirm
+    popd
+    rm -rf yay
+    yay --noconfirm -Syu
     if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
         ISNVIDIA=true
     else
