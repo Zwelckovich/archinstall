@@ -306,7 +306,7 @@ function hyprland_install ()
     if [[ "$ISNVIDIA" == true ]]; then
         #check for hyprland and remove it so the -nvidia package can be installed
         if yay -Q hyprland &>> /dev/null ; then
-            yay -R --noconfirm hyprland &>> $INSTLOG &
+            yay -R --noconfirm hyprland
         fi
         install_software hyprland-nvidia
     else
@@ -320,6 +320,10 @@ function hyprland_install ()
     if [[ "$ISNVIDIA" == true ]]; then
         echo -e "\nsource = ~/.config/hypr/env_var_nvidia.conf" >> ~/.config/hypr/hyprland.conf
     fi
+
+    echo -e "$CNT - Enabling the SDDM Service..."
+    sudo systemctl enable sddm
+    sleep 2
 }
 
 show_progress() {
