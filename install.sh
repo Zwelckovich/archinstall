@@ -92,7 +92,7 @@ function ext4 ()
     mkswap /dev/$dn
     swapon /dev/$dn
     dn=${disk}3 
-    mkfs.ext4 -f /dev/$dn
+    mkfs.ext4 /dev/$dn
     mount /dev/$dn /mnt
     mkdir /mnt/boot
     dn=${disk}1
