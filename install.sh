@@ -45,9 +45,9 @@ function diskparts ()
     echo "  2)ext4"
 
     read n
-    case $n in
-        1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
-        2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
+     case $n in
+        1) btrfs;;
+        2) ext4;;
         *) echo "invalid option";;
     esac
 }
@@ -93,6 +93,8 @@ function ext4 ()
     swapon /dev/$dn
     dn=${disk}3 
     mkfs.ext4 -f /dev/$dn
+    mount /dev/$dn /mnt
+    mkdir /mnt/boot
     dn=${disk}1
     mount /dev/$dn /mnt/boot
 }
@@ -109,8 +111,8 @@ function pacstrap_arch ()
 
     read n
     case $n in
-        1) btrfs;;
-        2) ext4;;
+        1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
+        2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
         *) echo "invalid option";;
     esac
     genfstab -U /mnt >> /mnt/etc/fstab
