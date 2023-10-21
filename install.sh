@@ -268,6 +268,16 @@ function hyprland_install ()
 
 }
 
+show_progress() {
+    while ps | grep $1 &> /dev/null;
+    do
+        echo -n "."
+        sleep 2
+    done
+    echo -en "Done!\n"
+    sleep 2
+}
+
 function install_software() {
     # First lets see if the package is there
     if yay -Q $1 &>> /dev/null ; then
