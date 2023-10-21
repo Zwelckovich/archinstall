@@ -168,7 +168,7 @@ function base_config ()
     arch-chroot /mnt visudo
     arch-chroot /mnt systemctl enable NetworkManager
     cp -r ~/archinstall /mnt/home/zwelch
-    chmod 666 /mnt/home/zwelch/archinstall
+    chmod 777 /mnt/home/zwelch/archinstall
     umount -l /mnt
     echo "#################"
     echo "#SCRIPT FINISHED#"
@@ -266,6 +266,7 @@ echo " "
 echo "Select Action:"
 echo "  1)Install Arch-Base"
 echo "  2)Install I3"
+echo "  2)Install Hyprland"
 read n
 case $n in
     1) 
