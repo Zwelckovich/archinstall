@@ -91,16 +91,6 @@ function pacman_init ()
 
 function diskparts ()
 {
-    echo "#################"
-    echo "#Disk Partitions#"
-    echo "#################"
-    fdisk -l
-    echo " "
-    echo "Enter disk name for installation: "
-    read disk
-    umount /dev/${disk}?*
-    umount -l /mnt
-    sgdisk --zap-all /dev/$disk
     echo "###############"
     echo "#Filesystem#"
     echo "###############"
@@ -118,6 +108,16 @@ function diskparts ()
 
 function btrfs ()
 {
+    echo "#################"
+    echo "#Disk Partitions#"
+    echo "#################"
+    fdisk -l
+    echo " "
+    echo "Enter disk name for installation: "
+    read disk
+    umount /dev/${disk}?*
+    umount -l /mnt
+    sgdisk --zap-all /dev/$disk
     sgdisk -n 1:0:+300M -n 2:0:+8G -n 3:0:0 -t 1:ef00 -t 2:8200 /dev/$disk -p
     dn=${disk}1
     mkfs.fat -F32 /dev/$dn
@@ -165,6 +165,16 @@ function btrfs ()
 
 function ext4 ()
 {
+    echo "#################"
+    echo "#Disk Partitions#"
+    echo "#################"
+    fdisk -l
+    echo " "
+    echo "Enter disk name for installation: "
+    read disk
+    umount /dev/${disk}?*
+    umount -l /mnt
+    sgdisk --zap-all /dev/$disk
     sgdisk -n 1:0:+300M -n 2:0:+8G -n 3:0:0 -t 1:ef00 -t 2:8200 /dev/$disk -p
     dn=${disk}1
     mkfs.fat -F32 /dev/$dn
