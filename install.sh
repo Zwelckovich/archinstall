@@ -289,73 +289,6 @@ function i3_install ()
     yay --noconfirm -S lightdm-webkit-theme-aether
 }
 
-function hyprland_install ()
-{
-    clear
-    echo -ne "
-    -------------------------------------------------------------------------
-    ██╗  ██╗██╗   ██╗██████╗ ██████╗ ██╗      █████╗ ███╗   ██╗██████╗ 
-    ██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██║     ██╔══██╗████╗  ██║██╔══██╗
-    ███████║ ╚████╔╝ ██████╔╝██████╔╝██║     ███████║██╔██╗ ██║██║  ██║
-    ██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══██╗██║     ██╔══██║██║╚██╗██║██║  ██║
-    ██║  ██║   ██║   ██║     ██║  ██║███████╗██║  ██║██║ ╚████║██████╔╝
-    ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ 
-    -------------------------------------------------------------------------                                                           
-    "
-    git clone https://aur.archlinux.org/yay.git
-    pushd yay
-    makepkg -srci --noconfirm
-    popd
-    rm -rf yay
-    yay --noconfirm -Syu
-    if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
-        ISNVIDIA=true
-    else
-        ISNVIDIA=false
-    fi
-
-    if [[ "$ISNVIDIA" == true ]]; then
-        echo -e "$CNT - Nvidia GPU support setup stage, this may take a while..."
-        sleep 5
-        for SOFTWR in ${nvidia_stage[@]}; do
-            install_software $SOFTWR
-        done
-    
-        # update config
-        sudo sed -i 's/MODULES=()/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
-        sudo mkinitcpio --config /etc/mkinitcpio.conf --generate /boot/initramfs-custom.img
-        echo -e "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf &>> $INSTLOG
-    fi
-
-    for SOFTWR in ${prep_stage[@]}; do
-            install_software $SOFTWR
-    done
-
-    if [[ "$ISNVIDIA" == true ]]; then
-        #check for hyprland and remove it so the -nvidia package can be installed
-        if yay -Q hyprland &>> /dev/null ; then
-            yay -R --noconfirm hyprland
-        fi
-        echo -e "$CNT - Installing NVIDIA Hyprland"
-        sleep 5
-        install_software hyprland-nvidia
-    else
-        install_software hyprland
-    fi
-
-    for SOFTWR in ${install_stage[@]}; do
-            install_software $SOFTWR
-    done 
-
-    if [[ "$ISNVIDIA" == true ]]; then
-        echo -e "\nsource = ~/.config/hypr/env_var_nvidia.conf" >> ~/.config/hypr/hyprland.conf
-    fi
-
-    echo -e "$CNT - Enabling the SDDM Service..."
-    sudo systemctl enable sddm
-    sleep 2
-}
-
 show_progress() {
     while ps | grep $1 &> /dev/null;
     do
@@ -393,7 +326,6 @@ echo " "
 echo "Select Action:"
 echo "  1)Install Arch-Base"
 echo "  2)Install I3"
-echo "  3)Install Hyprland"
 read n
 case $n in
     1) 
@@ -403,9 +335,6 @@ case $n in
         ;;
     2) 
         i3_install
-        ;;
-    3)
-        hyprland_install
         ;;
     *) echo "invalid option";;
 esac
