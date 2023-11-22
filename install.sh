@@ -3,66 +3,24 @@
 #
 
 ## Variables
-nvidia_stage=(
-    linux-headers 
-    nvidia-dkms 
-    nvidia-settings 
-    libva 
-    libva-nvidia-driver-git
-)
-
-prep_stage=(
-    qt5-wayland 
-    qt5ct
-    qt6-wayland 
-    qt6ct
-    qt5-svg
-    qt5-quickcontrols2
-    qt5-graphicaleffects
-    gtk3 
-    polkit-gnome 
-    pipewire 
-    wireplumber 
-    jq 
-    wl-clipboard 
-    cliphist 
-    python-requests 
-    pacman-contrib
-)
-
-install_stage=(
-    pipewire 
-    pipewire-pulse
-    kitty 
-    mako 
-    waybar
-    swww 
-    swaylock-effects 
-    wofi 
-    wlogout 
-    xdg-desktop-portal-hyprland 
-    swappy 
-    grim 
-    slurp 
-    btop
-    mpv
-    pamixer 
-    pavucontrol 
-    brightnessctl 
-    bluez 
-    bluez-utils 
-    blueman 
-    gvfs 
-    thunar 
-    thunar-archive-plugin 
-    file-roller
-    starship 
-    ttf-cascadia-code-nerd
-    lxappearance 
-    xfce4-settings
-    nwg-look-bin
-    sddm
+i3_base_stage=(
+    timeshift
+    timeshift-autosnap
+    zramd
+    xorg
+    lightdm
+    lightdm-slick-greeter
+    i3
+    dmenu
+    feh
+    xfce4-terminal
+    picom
     firefox
+    pacman-contri
+    b alsa-utils
+    pipewir
+    e pipewire-pulse
+    pavucontrol
 )
 
 # set some colors
@@ -277,15 +235,19 @@ function i3_install ()
     makepkg -srci --noconfirm
     popd
     rm -rf yay
-    yay --noconfirm -Sy
+    yay --noconfirm -Syu
     yay --noconfirm -S timeshift timeshift-autosnap zramd
+    for SOFTWR in ${i3_base_stage[@]}; do
+            install_software $SOFTWR
+    done 
+    #sudo pacman --noconfirm -Syu
+    #sudo pacman --noconfirm -S xorg lightdm lightdm-slick-greeter i3 dmenu feh xfce4-terminal picom firefox pacman-contrib alsa-utils pipewire pipewire-pulse pavucontrol 
+    variable="greeter-session=example-gtk"
+    variable_changed="greeter-session=lightdm-slick-greeter"
+    sudo sed -i "/^#$variable*/ c$variable_changed" /etc/lightdm/lightdm.conf
     sudo systemctl enable lightdm
+    sudo systemctl enable lightdm.service
     sudo systemctl enable --now zramd
-    sudo pacman --noconfirm -Syu
-    sudo pacman --noconfirm -S xorg lightdm lightdm-slick-greeter i3 dmenu feh xfce4-terminal picom firefox pacman-contrib alsa-utils pipewire pipewire-pulse pavucontrol 
-    #variable="greeter-session=example-gtk"
-    #variable_changed="greeter-session=lightdm-webkit2-greeter"
-    #sudo sed -i "/^#$variable*/ c$variable_changed" /etc/lightdm/lightdm.conf
     #yay --noconfirm -S lightdm-webkit-theme-aether
 }
 
