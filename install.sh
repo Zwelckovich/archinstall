@@ -7,10 +7,8 @@ i3_base_stage=(
     timeshift
     timeshift-autosnap
     zramd
-    xorg
     lightdm
     lightdm-slick-greeter
-    i3
     dmenu
     feh
     xfce4-terminal
@@ -236,6 +234,7 @@ function i3_install ()
     popd
     rm -rf yay
     yay --noconfirm -Syu
+    yay --noconfirm -S xorg i3
     for SOFTWR in ${i3_base_stage[@]}; do
             install_software $SOFTWR
     done 
@@ -267,7 +266,7 @@ function install_software() {
     else
         # no package found so installing
         echo -en "$CNT - Now installing $1 ."
-        yay -S --noconfirm $1
+        yay -S --noconfirm $1 &>> $INSTLOG &
         show_progress $!
         # test to make sure package installed
         if yay -Q $1 &>> /dev/null ; then
@@ -275,6 +274,7 @@ function install_software() {
         else
             # if this is hit then a package is missing, exit to review log
             echo -e "\e[1A\e[K$CER - $1 install had failed, please check the install.log"
+            exit
         fi
     fi
 }
