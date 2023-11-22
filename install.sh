@@ -236,7 +236,6 @@ function i3_install ()
     popd
     rm -rf yay
     yay --noconfirm -Syu
-    yay --noconfirm -S timeshift timeshift-autosnap zramd
     for SOFTWR in ${i3_base_stage[@]}; do
             install_software $SOFTWR
     done 
