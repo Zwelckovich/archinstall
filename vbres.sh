@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-#res="1920 1080 60"
-res="2560 1440 60"
+res="1920 1080 60"
+#res="2560 1440 60"
 variable=$(cvt $res | grep Modeline | cut -d ' ' -f 2-)
 monitor=$(xrandr | grep Virtual | grep primary | awk '{print $1}')
 modename=$(cvt $res | grep Modeline | cut -d ' ' -f 2)
