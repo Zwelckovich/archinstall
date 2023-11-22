@@ -16,10 +16,10 @@ i3_base_stage=(
     xfce4-terminal
     picom
     firefox
-    pacman-contri
-    b alsa-utils
-    pipewir
-    e pipewire-pulse
+    pacman-contrib 
+    alsa-utils
+    pipewire 
+    pipewire-pulse
     pavucontrol
 )
 
