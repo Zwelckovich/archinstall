@@ -267,7 +267,7 @@ function install_software() {
     else
         # no package found so installing
         echo -en "$CNT - Now installing $1 ."
-        yay -S --noconfirm $1
+        yay -S --noconfirm $1 > /dev/null 2>&1
         show_progress $!
         # test to make sure package installed
         if yay -Q $1 &>> /dev/null ; then
