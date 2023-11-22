@@ -275,7 +275,6 @@ function install_software() {
         else
             # if this is hit then a package is missing, exit to review log
             echo -e "\e[1A\e[K$CER - $1 install had failed, please check the install.log"
-            exit
         fi
     fi
 }
