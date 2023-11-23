@@ -19,6 +19,8 @@ i3_base_stage=(
     pipewire 
     pipewire-pulse
     pavucontrol
+    ttf-cascadia-code-nerd
+    kiity
 )
 
 # set some colors
