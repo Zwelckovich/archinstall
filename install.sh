@@ -21,6 +21,7 @@ i3_base_stage=(
     pavucontrol
     ttf-cascadia-code-nerd
     kiity
+    code
 )
 
 # set some colors
