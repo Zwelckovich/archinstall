@@ -20,7 +20,7 @@ i3_base_stage=(
     pipewire-pulse
     pavucontrol
     ttf-cascadia-code-nerd
-    kiity
+    kitty
     code
 )
 
