@@ -233,9 +233,9 @@ bindsym $mod+r mode "resize"
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-        status_command i3status
-}
+# bar {
+#         status_command i3status
+# }
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 focus_follows_mouse no
@@ -245,3 +245,4 @@ exec --no-startup-id setxkbmap de
 exec --no-startup-id numlockx on
 exec_always killall picom ; picom -b
 exec_always --no-startup-id sh ~/archinstall/vbres.sh
+exec_always pkill -9 polybar ; polybar

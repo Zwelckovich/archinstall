@@ -25,6 +25,7 @@ i3_base_stage=(
     qt5-graphicaleffects
     qt5-svg
     qt5-quickcontrols2
+    polybar
 )
 
 # set some colors
