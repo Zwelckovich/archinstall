@@ -244,3 +244,4 @@ focus_follows_mouse no
 exec --no-startup-id setxkbmap de
 exec --no-startup-id numlockx on
 exec_always killall picom ; picom -b
+exec_always --no-startup-id sh ~/archinstall/vbres.sh
