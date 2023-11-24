@@ -13,7 +13,7 @@ i3_base_stage=(
     feh
     xfce4-terminal
     picom
-    firefox
+    chromium
     pacman-contrib 
     alsa-utils
     pipewire 
