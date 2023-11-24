@@ -22,6 +22,7 @@ i3_base_stage=(
     ttf-cascadia-code-nerd
     kitty
     code
+    numlockx
 )
 
 # set some colors
