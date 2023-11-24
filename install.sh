@@ -7,8 +7,7 @@ i3_base_stage=(
     timeshift
     timeshift-autosnap
     zramd
-    lightdm
-    lightdm-slick-greeter
+    sddm
     dmenu
     feh
     xfce4-terminal
@@ -23,6 +22,9 @@ i3_base_stage=(
     kitty
     code
     numlockx
+    qt5-graphicaleffects
+    qt5-svg
+    qt5-quickcontrols2
 )
 
 # set some colors
@@ -242,15 +244,8 @@ function i3_install ()
     for SOFTWR in ${i3_base_stage[@]}; do
             install_software $SOFTWR
     done 
-    #sudo pacman --noconfirm -Syu
-    #sudo pacman --noconfirm -S xorg lightdm lightdm-slick-greeter i3 dmenu feh xfce4-terminal picom firefox pacman-contrib alsa-utils pipewire pipewire-pulse pavucontrol 
-    variable="greeter-session=example-gtk"
-    variable_changed="greeter-session=lightdm-slick-greeter"
-    sudo sed -i "/^#$variable*/ c$variable_changed" /etc/lightdm/lightdm.conf
-    sudo systemctl enable lightdm
-    sudo systemctl enable lightdm.service
+    sudo systemctl enable sddm
     sudo systemctl enable --now zramd
-    #yay --noconfirm -S lightdm-webkit-theme-aether
 }
 
 show_progress() {
