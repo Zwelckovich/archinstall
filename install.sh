@@ -43,6 +43,25 @@ INSTLOG="install.log"
 
 function pacman_init ()
 {
+    clear
+    echo -ne "
+    ---------------------------------------------------------------------
+     █████╗ ██████╗  ██████╗██╗  ██╗    ██████╗  █████╗ ███████╗███████╗
+    ██╔══██╗██╔══██╗██╔════╝██║  ██║    ██╔══██╗██╔══██╗██╔════╝██╔════╝
+    ███████║██████╔╝██║     ███████║    ██████╔╝███████║███████╗█████╗  
+    ██╔══██║██╔══██╗██║     ██╔══██║    ██╔══██╗██╔══██║╚════██║██╔══╝  
+    ██║  ██║██║  ██║╚██████╗██║  ██║    ██████╔╝██║  ██║███████║███████╗
+    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝
+                                                                        
+    ██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗                   
+    ██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║                   
+    ██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║                   
+    ██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║                   
+    ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗              
+    ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝              
+                                                                    
+    -----------------
+    "
     echo "#############"
     echo "#Pacman Init#"
     echo "#############"
@@ -234,12 +253,12 @@ function base_config ()
     arch-chroot /mnt systemctl enable NetworkManager
     cp -r ~/archinstall /mnt/home/zwelch
     chmod 777 /mnt/home/zwelch/archinstall
-    umount -l /mnt
     arch-chroot /mnt git clone https://aur.archlinux.org/yay.git
     arch-chroot /mnt pushd yay
     arch-chroot /mnt makepkg -srci --noconfirm
     arch-chroot /mnt popd
     arch-chroot /mnt rm -rf yay
+    umount -l /mnt
     echo "#################"
     echo "#SCRIPT FINISHED#"
     echo "#################"
