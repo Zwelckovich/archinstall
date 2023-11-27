@@ -58,9 +58,8 @@ function pacman_init ()
     ██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║                   
     ██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║                   
     ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗              
-    ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝              
-                                                                    
-    -----------------
+    ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝                                                                   
+    ---------------------------------------------------------------------
     "
     echo "#############"
     echo "#Pacman Init#"
@@ -253,11 +252,6 @@ function base_config ()
     arch-chroot /mnt systemctl enable NetworkManager
     cp -r ~/archinstall /mnt/home/zwelch
     chmod 777 /mnt/home/zwelch/archinstall
-    arch-chroot /mnt git clone https://aur.archlinux.org/yay.git
-    arch-chroot /mnt pushd yay
-    arch-chroot /mnt makepkg -srci --noconfirm
-    arch-chroot /mnt popd
-    arch-chroot /mnt rm -rf yay
     umount -l /mnt
     echo "#################"
     echo "#SCRIPT FINISHED#"
@@ -285,7 +279,17 @@ function i3_install ()
     ██║██████╔╝    ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗
     ╚═╝╚═════╝     ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝
     ---------------------------------------------------------------------
-    "                                               
+    "     
+    if ! command -v yay &> /dev/null
+    then
+        echo "yay could not be found"
+        git clone https://aur.archlinux.org/yay.git
+        makepkg -srci --noconfirm
+        popd
+        pushd yay
+        rm -rf yay
+        exit 1
+    fi
     yay --noconfirm -Sy
     for SOFTWR in ${i3_base_stage[@]}; do
             install_software $SOFTWR
