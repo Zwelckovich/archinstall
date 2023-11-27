@@ -64,8 +64,10 @@ module-margin-left = 1
 module-margin-right = 1
 
 ; Icons
-font-0 = "CaskaydiaCove NFM:pixelsize=24:style=Regular;2"
-font-1 = "CaskaydiaCove NFM:pixelsize=13:style=Regular;2"
+# font-0 = "CaskaydiaCove NFM:pixelsize=24:style=Regular;2"
+# font-1 = "CaskaydiaCove NFM:pixelsize=13:style=Regular;2"
+font-0 = "NotoSansM NFM:pixelsize=16:style=Regular;2"
+font-1 = "NotoSansM NFM:pixelsize=13:style=Regular;2"
 
 
 modules-left = i3 
@@ -170,7 +172,7 @@ format = <label-state> <label-mode>
 ;   %mode%
 ; Default: %mode%
 label-mode = %mode%
-label-mode-padding = 2
+label-mode-padding = 0
 label-mode-background = #e60053
 
 ; Available tokens:
@@ -179,11 +181,11 @@ label-mode-background = #e60053
 ;   %index%
 ;   %output%
 ; Default: %icon% %name%
-label-focused = %icon%
-label-focused-foreground = #ffffff
-label-focused-background = #3f3f3f
+label-focused = %index%
+label-focused-foreground = ${colors.text}
+label-focused-background = ${colors.surface1}
 label-focused-underline = #fba922
-label-focused-padding = 4
+label-focused-padding = 1
 
 ; Available tokens:
 ;   %name%
@@ -192,7 +194,7 @@ label-focused-padding = 4
 ;   %output%
 ; Default: %icon% %name%
 label-unfocused = %index%
-label-unfocused-padding = 4
+label-unfocused-padding = 0
 
 ; Available tokens:
 ;   %name%
@@ -202,7 +204,7 @@ label-unfocused-padding = 4
 ; Default: %icon% %name%
 label-visible = %index%
 label-visible-underline = #555555
-label-visible-padding = 4
+label-visible-padding = 0
 
 ; Available tokens:
 ;   %name%
@@ -210,15 +212,15 @@ label-visible-padding = 4
 ;   %index%
 ;   %output%
 ; Default: %icon% %name%
-label-urgent = %icon%
+label-urgent = %index%
 label-urgent-foreground = #000000
 label-urgent-background = #bd2c40
-label-urgent-padding = 4
+label-urgent-padding = 0
 
 ; Separator in between workspaces
 label-separator = |
-label-separator-padding = 4
-label-separator-foreground = #ffb52a
+label-separator-padding = 0
+label-separator-foreground = ${colors.blue}
 
 [module/date]
 type = internal/date
@@ -230,7 +232,7 @@ time = %H:%M
 time-alt = %H:%M
 
 format-prefix = 
-format-prefix-foreground = ${colors.surface0-alt}
+format-prefix-foreground = ${colors.text}
 
 label = %date% %time%
 label-font = 2
