@@ -284,9 +284,9 @@ function i3_install ()
     then
         echo "yay could not be found"
         git clone https://aur.archlinux.org/yay.git
+        pushd yay
         makepkg -srci --noconfirm
         popd
-        pushd yay
         rm -rf yay
         exit 1
     fi
