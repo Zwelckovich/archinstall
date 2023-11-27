@@ -10,7 +10,7 @@ i3_base_stage=(
     timeshift-autosnap
     zramd
     sddm
-    dmenu
+    rofi
     feh
     xfce4-terminal
     picom
@@ -267,8 +267,7 @@ function i3_install ()
     ╚═╝╚═════╝     ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝
     ---------------------------------------------------------------------
     "                                               
-    yay --noconfirm -Syu
-    yay --noconfirm -S xorg i3
+    yay --noconfirm -Sy
     for SOFTWR in ${i3_base_stage[@]}; do
             install_software $SOFTWR
     done 
@@ -290,22 +289,12 @@ show_progress() {
 }
 
 function install_software() {
-    # First lets see if the package is there
-    if yay -Q $1 &>> /dev/null ; then
-        echo -e "$COK - $1 is already installed."
-    else
-        # no package found so installing
-        echo -en "$CNT - Now installing $1 ."
-        yay -S --noconfirm $1 &>> $INSTLOG &
-        show_progress $!
-        # test to make sure package installed
-        if yay -Q $1 &>> /dev/null ; then
-            echo -e "\e[1A\e[K$COK - $1 was installed."
-        else
-            # if this is hit then a package is missing, exit to review log
-            echo -e "\e[1A\e[K$CER - $1 install check failed, please check the install.log"
-        fi
-    fi
+    # no package found so installing
+    echo -en "$CNT - Now installing $1 ."
+    yay -S --noconfirm $1 &>> $INSTLOG &
+    show_progress $!
+    # test to make sure package installed
+    echo -e "\e[1A\e[K$COK - $1 was installed."
 }
 
 echo "#####################"
