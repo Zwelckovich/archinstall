@@ -4,6 +4,8 @@
 
 ## Variables
 i3_base_stage=(
+    xorg
+    i3
     timeshift
     timeshift-autosnap
     zramd
@@ -222,8 +224,6 @@ function base_config ()
     arch-chroot /mnt makepkg -srci --noconfirm
     arch-chroot /mnt popd
     arch-chroot /mnt rm -rf yay
-    yay --noconfirm -Syu
-    yay --noconfirm -S xorg i3
     echo "#################"
     echo "#SCRIPT FINISHED#"
     echo "#################"
@@ -251,7 +251,8 @@ function i3_install ()
     ╚═╝╚═════╝     ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝
     ---------------------------------------------------------------------
     "                                               
-    
+    yay --noconfirm -Syu
+    yay --noconfirm -S xorg i3
     for SOFTWR in ${i3_base_stage[@]}; do
             install_software $SOFTWR
     done 
