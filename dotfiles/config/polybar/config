@@ -4,39 +4,39 @@
 ;--------------------------
 
 [colors]
- base = #1e1e2e
- mantle = #181825
- crust = #11111b
+base = #1e1e2e
+mantle = #181825
+crust = #11111b
 
- text = #cdd6f4
- subtext0 = #a6adc8
- subtext1 = #bac2de
+text = #cdd6f4
+subtext0 = #a6adc8
+subtext1 = #bac2de
 
- surface0 = #313244
- surface1 = #45475a
- surface2 = #585b70
- 
- overlay0 = #6c7086
- overlay1 = #7f849c
- overlay2 = #9399b2
- 
+surface0 = #313244
+surface1 = #45475a
+surface2 = #585b70
 
- blue = #89b4fa
- lavender = #b4befe
- sapphire = #74c7ec
- sky = #89dceb
- teal = #94e2d5
- green = #a6e3a1
- yellow = #f9e2af
- peach = #fab387
- maroon = #eba0ac
- red = #f38ba8
- mauve = #cba6f7
- pink = #f5c2e7
- flamingo = #f2cdcd
- rosewater = #f5e0dc
+overlay0 = #6c7086
+overlay1 = #7f849c
+overlay2 = #9399b2
 
- transparent = #FF00000
+
+blue = #89b4fa
+lavender = #b4befe
+sapphire = #74c7ec
+sky = #89dceb
+teal = #94e2d5
+green = #a6e3a1
+yellow = #f9e2af
+peach = #fab387
+maroon = #eba0ac
+red = #f38ba8
+mauve = #cba6f7
+pink = #f5c2e7
+flamingo = #f2cdcd
+rosewater = #f5e0dc
+
+transparent = #FF00000
 
 [bar/main]
 ;monitor = ${env:MONITOR:HDMI-1}
@@ -64,17 +64,9 @@ module-margin-left = 1
 module-margin-right = 1
 
 ; Icons
-font-0 = CaskaydiaCove Nerd Font Mono:pixelsize=16;4
-; Percentages
-font-1 = CaskaydiaCove Nerd Font Mono:pixelsize=13;3
-; Logo
-font-2 = CaskaydiaCove Nerd Font Mono:pixelsize=24;4
-; Bluetooth icon
-font-3 = CaskaydiaCove Nerd Font Mono:pixelsize=12;3
-; Sound icon
-font-4 = CaskaydiaCove Nerd Font Mono:pixelsize=18;4
-; Workspaces
-font-5 = CaskaydiaCove Nerd Font Mono:pixelsize=18;4
+font-0 = "CaskaydiaCove NFM:pixelsize=24:style=Regular;2"
+font-1 = "CaskaydiaCove NFM:pixelsize=13:style=Regular;2"
+
 
 modules-left = i3 
 modules-center = 
@@ -98,67 +90,135 @@ tray-padding = 0
 cursor-click = pointer
 cursor-scroll = ns-resize
 
+; replace i3 with the name of your i3 module
+scroll-up = "#i3.prev"
+scroll-down = "#i3.next"
+; Alternatively, you can send commands directly to i3
+;scroll-up = i3-msg workspace next_on_output
+;scroll-down = i3-msg workspace prev_on_output
+
 [module/i3]
 type = internal/i3
-format = <label-state> <label-mode>
-index-sort = false
+label-active-font = 1
+
+; Only show workspaces defined on the same output as the bar
+;
+; Useful if you want to show monitor specific workspaces
+; on different bars
+;
+; Default: false
+pin-workspaces = true
+
+; Show urgent workspaces regardless of whether the workspace is actually hidden 
+; by pin-workspaces.
+;
+; Default: false
+; New in version 3.6.0
+show-urgent = true
+
+; This will split the workspace name on ':'
+; Default: false
+strip-wsnumbers = true
+
+; Sort the workspaces by index instead of the default
+; sorting that groups the workspaces by output
+; Default: false
+index-sort = true
+
+; Create click handler used to focus workspace
+; Default: true
+enable-click = false
+
+; Create scroll handlers used to cycle workspaces
+; Default: true
+enable-scroll = false
+
+; Wrap around when reaching the first/last workspace
+; Default: true
 wrapping-scroll = false
-format-font = 6
 
-ws-icon-0 = 1;
-; ws-icon-0 = 1;
-; ws-icon-1 = 2;
-ws-icon-1 = 2;
-ws-icon-2 = 3;
-; ws-icon-2 = 3;ﰤ
-ws-icon-3 = 4;
-; ws-icon-3 = 4;﯑
-ws-icon-4 = 5;
-ws-icon-5 = 6;
-ws-icon-6 = 7;
-ws-icon-7 = 8;
-ws-icon-8 = 9;
+; Set the scroll cycle direction 
+; Default: true
+reverse-scroll = false
 
-; ws-icon-0 = 1;α
-; ws-icon-1 = 2;β
-; ws-icon-2 = 3;γ
-; ws-icon-3 = 4;δ
-; ws-icon-4 = 5;ε
-; ws-icon-5 = 6;ζ
-; ws-icon-6 = 7;η
-; ws-icon-7 = 8;θ
-; ws-icon-8 = 9;ι
+; Use fuzzy (partial) matching for wc-icon.
+; Example: code;♚ will apply the icon to all workspaces 
+; containing 'code' in the name
+; Changed in version 3.7.0: Selects longest string match instead of the first match.
+; Default: false
+fuzzy-match = true
 
-; Only show workspaces on the same output as the bar
-;pin-workspaces = true
+; ws-icon-[0-9]+ = <label>;<icon>
+; NOTE: The <label> needs to match the name of the i3 workspace
+; Neither <label> nor <icon> can contain a semicolon (;)
+ws-icon-0 = 1;
+ws-icon-1 = 2;♛
+ws-icon-2 = 3;♜
+ws-icon-3 = 4;♝
+ws-icon-4 = 5;♞
+ws-icon-default = ♟
+; NOTE: You cannot skip icons, e.g. to get a ws-icon-6
+; you must also define a ws-icon-5.
+; NOTE: Icon will be available as the %icon% token inside label-*
 
+; Available tags:
+;   <label-state> (default) - gets replaced with <label-(focused|unfocused|visible|urgent)>
+;   <label-mode> (default)
+format = <label-state> <label-mode>
+
+; Available tokens:
+;   %mode%
+; Default: %mode%
+label-mode = %mode%
 label-mode-padding = 2
-label-mode-foreground = #000
-label-mode-background = ${colors.base}
+label-mode-background = #e60053
 
-; focused = Active workspace on focused monitor
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon% %name%
 label-focused = %icon%
-label-focused-background = ${colors.subtext0}
-label-focused-underline= ${colors.green}
-label-focused-padding = 1
+label-focused-foreground = #ffffff
+label-focused-background = #3f3f3f
+label-focused-underline = #fba922
+label-focused-padding = 4
 
-; unfocused = Inactive workspace on any monitor
-label-unfocused = %icon%
-label-unfocused-padding = 1
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon% %name%
+label-unfocused = %index%
+label-unfocused-padding = 4
 
-; visible = Active workspace on unfocused monitor
-label-visible = %icon%
-label-visible-background = ${self.label-focused-background}
-label-visible-underline = ${self.label-focused-underline}
-label-visible-padding = ${self.label-focused-padding}
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon% %name%
+label-visible = %index%
+label-visible-underline = #555555
+label-visible-padding = 4
 
-; urgent = Workspace with urgency hint set
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon% %name%
 label-urgent = %icon%
-label-ur1ent-background = ${colors.red}
-label-urgent-padding = 1
+label-urgent-foreground = #000000
+label-urgent-background = #bd2c40
+label-urgent-padding = 4
 
 ; Separator in between workspaces
-; label-separator = |
+label-separator = |
+label-separator-padding = 4
+label-separator-foreground = #ffb52a
 
 [module/date]
 type = internal/date
@@ -173,3 +233,4 @@ format-prefix =
 format-prefix-foreground = ${colors.surface0-alt}
 
 label = %date% %time%
+label-font = 2

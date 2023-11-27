@@ -11,4 +11,4 @@ cstr=$(echo "xrandr --addmode $monitor $modename")
 eval "$cstr"
 cstr=$(echo "xrandr --output $monitor --primary --mode $modename --pos 0x0 --rotate normal")
 eval "$cstr"
-feh --bg-scale wallpaper/arch-rainbow-1920x1080.png
+feh --bg-scale ~/archinstall/wallpaper/arch-rainbow-1920x1080.png
