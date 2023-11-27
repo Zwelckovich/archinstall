@@ -14,7 +14,7 @@ i3_base_stage=(
     feh
     xfce4-terminal
     picom
-    chromium
+    thorium-browser-bin
     pacman-contrib 
     alsa-utils
     pipewire 
@@ -288,7 +288,6 @@ function i3_install ()
         makepkg -srci --noconfirm
         popd
         rm -rf yay
-        exit 1
     fi
     yay --noconfirm -Sy
     for SOFTWR in ${i3_base_stage[@]}; do
