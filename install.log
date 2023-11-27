@@ -158,3 +158,111 @@ Optional dependencies for polybar
     i3-wm: i3 module support [installed]
 :: Running post-transaction hooks...
 (1/1) Arming ConditionNeedsUpdate...
+Sync Explicit (1): ttf-noto-nerd-3.1.0-1
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (1) ttf-noto-nerd-3.1.0-1
+
+Total Download Size:    65.30 MiB
+Total Installed Size:  864.71 MiB
+
+:: Proceed with installation? [Y/n] 
+:: Retrieving packages...
+ ttf-noto-nerd-3.1.0-1-any downloading...
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.moson.org : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.mailtunnel.eu : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.cyberbits.eu : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.theo546.fr : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.f4st.host : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.thaller.ws : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.uk.mirror.allworldit.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from london.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archmirror.it : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.telepoint.bg : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from md.mirrors.hacktegic.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from arch.mirror.constant.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from america.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.lty.me : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.za.mirror.allworldit.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.ufscar.br : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.theash.xyz : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from seoul.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from asia.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from sydney.mirror.pkgbuild.com : The requested URL returned error: 404
+warning: failed to retrieve some files
+error: failed to commit transaction (failed to retrieve some files)
+Errors occurred, no packages were upgraded.
+ -> error installing repo packages
+Sync Explicit (1): ttf-noto-nerd-3.1.0-1
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (1) ttf-noto-nerd-3.1.0-1
+
+Total Download Size:    65.30 MiB
+Total Installed Size:  864.71 MiB
+
+:: Proceed with installation? [Y/n] 
+:: Retrieving packages...
+ ttf-noto-nerd-3.1.0-1-any downloading...
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.moson.org : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.mailtunnel.eu : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.cyberbits.eu : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.theo546.fr : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.f4st.host : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.thaller.ws : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.uk.mirror.allworldit.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from london.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archmirror.it : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.telepoint.bg : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from md.mirrors.hacktegic.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from arch.mirror.constant.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from america.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.lty.me : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.za.mirror.allworldit.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.ufscar.br : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.theash.xyz : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from seoul.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from asia.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from sydney.mirror.pkgbuild.com : The requested URL returned error: 404
+warning: failed to retrieve some files
+error: failed to commit transaction (failed to retrieve some files)
+Errors occurred, no packages were upgraded.
+ -> error installing repo packages
+Sync Explicit (1): ttf-noto-nerd-3.1.0-1
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (1) ttf-noto-nerd-3.1.0-1
+
+Total Download Size:    65.30 MiB
+Total Installed Size:  864.71 MiB
+
+:: Proceed with installation? [Y/n] 
+:: Retrieving packages...
+ ttf-noto-nerd-3.1.0-1-any downloading...
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.moson.org : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.mailtunnel.eu : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.cyberbits.eu : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.theo546.fr : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.f4st.host : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.thaller.ws : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.uk.mirror.allworldit.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from london.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archmirror.it : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.telepoint.bg : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from md.mirrors.hacktegic.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from arch.mirror.constant.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from america.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.lty.me : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from archlinux.za.mirror.allworldit.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.ufscar.br : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from mirror.theash.xyz : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from seoul.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from asia.mirror.pkgbuild.com : The requested URL returned error: 404
+error: failed retrieving file 'ttf-noto-nerd-3.1.0-1-any.pkg.tar.zst' from sydney.mirror.pkgbuild.com : The requested URL returned error: 404
+warning: failed to retrieve some files
+error: failed to commit transaction (failed to retrieve some files)
+Errors occurred, no packages were upgraded.
+ -> error installing repo packages

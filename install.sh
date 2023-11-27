@@ -217,6 +217,13 @@ function base_config ()
     cp -r ~/archinstall /mnt/home/zwelch
     chmod 777 /mnt/home/zwelch/archinstall
     umount -l /mnt
+    arch-chroot /mnt git clone https://aur.archlinux.org/yay.git
+    arch-chroot /mnt pushd yay
+    arch-chroot /mnt makepkg -srci --noconfirm
+    arch-chroot /mnt popd
+    arch-chroot /mnt rm -rf yay
+    yay --noconfirm -Syu
+    yay --noconfirm -S xorg i3
     echo "#################"
     echo "#SCRIPT FINISHED#"
     echo "#################"
@@ -233,21 +240,26 @@ function base_config ()
 
 function i3_install ()
 {
-    echo "#################"
-    echo "#I3 INSTALLATION#"
-    echo "#################"
-    git clone https://aur.archlinux.org/yay.git
-    pushd yay
-    makepkg -srci --noconfirm
-    popd
-    rm -rf yay
-    yay --noconfirm -Syu
-    yay --noconfirm -S xorg i3
+    clear
+    echo -ne "
+    ---------------------------------------------------------------------
+    ██╗██████╗     ██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗     
+    ██║╚════██╗    ██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║     
+    ██║ █████╔╝    ██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║     
+    ██║ ╚═══██╗    ██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║     
+    ██║██████╔╝    ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗
+    ╚═╝╚═════╝     ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝
+    ---------------------------------------------------------------------
+    "                                               
+    
     for SOFTWR in ${i3_base_stage[@]}; do
             install_software $SOFTWR
     done 
     sudo systemctl enable sddm
     sudo systemctl enable --now zramd
+    cp -r ~/archinstall/dotfiles/config/* ~/.config/
+    sudo cp -r ~/archinstall/dotfiles/etc/* /etc/
+    sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/* /usr/share/sddm/themes/
 }
 
 show_progress() {
@@ -274,8 +286,7 @@ function install_software() {
             echo -e "\e[1A\e[K$COK - $1 was installed."
         else
             # if this is hit then a package is missing, exit to review log
-            echo -e "\e[1A\e[K$CER - $1 install had failed, please check the install.log"
-            exit
+            echo -e "\e[1A\e[K$CER - $1 install check failed, please check the install.log"
         fi
     fi
 }
@@ -286,7 +297,7 @@ echo "#####################"
 echo " "
 echo "Select Action:"
 echo "  1)Install Arch-Base"
-echo "  2)Install I3"
+echo "  2)Install i3"
 read n
 case $n in
     1) 
