@@ -22,6 +22,7 @@ i3_base_stage=(
     pavucontrol
     #ttf-cascadia-code-nerd
     ttf-noto-nerd
+    noto-fonts-emoji
     kitty
     code
     numlockx
