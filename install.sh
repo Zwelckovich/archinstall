@@ -34,6 +34,7 @@ i3_base_stage=(
     eza
     neofetch
     starship
+    npm
 )
 
 # set some colors
