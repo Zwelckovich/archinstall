@@ -13,7 +13,7 @@
     },
     "workbench.iconTheme": "catppuccin-mocha",
     "security.workspace.trust.untrustedFiles": "open",
-    "editor.fontFamily": "'NotoSansM NFM, 'monospace', monospace,'NotoSansM NFM'",
+    "editor.fontFamily": "'NotoSansM NFM', 'monospace', monospace,'NotoSansM NFM'",
     "editor.fontSize": 15,
     "git.confirmSync": false,
     "git.autofetch": true,
