@@ -40,6 +40,8 @@ i3_base_stage=(
     spotify-tui
     spotifyd
     git-crypt
+    zathura
+    zathura-pdf-mupdf
 )
 
 # set some colors
