@@ -68,6 +68,7 @@ function pacman_init ()
     ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝                                                                   
     ---------------------------------------------------------------------
     "
+    echo ""
     echo "#############"
     echo "#Pacman Init#"
     echo "#############"
@@ -219,6 +220,7 @@ function base_config ()
                                                                     
     ---------------------------------------------------------------------
     "     
+    echo ""
     arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
     arch-chroot /mnt hwclock --systohc
     variable="en_US.UTF-8 UTF-8"
@@ -287,6 +289,7 @@ function i3_install ()
     ╚═╝╚═════╝     ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝
     ---------------------------------------------------------------------
     "     
+    echo ""
     if ! command -v yay &> /dev/null
     then
         echo "yay could not be found"
