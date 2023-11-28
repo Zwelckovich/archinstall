@@ -35,6 +35,9 @@ i3_base_stage=(
     neofetch
     starship
     npm
+    gnupg
+    gzip
+    pv
 )
 
 # set some colors
