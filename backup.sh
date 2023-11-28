@@ -36,6 +36,10 @@ function backup()
 
 function restore()
 {
+    # Uncrypt
+    pushd  ~/archinstall/
+    git-crypt unlock ../git-crypt-key
+    popd
     # All Configs
     cp -r ~/archinstall/dotfiles/config/* ~/.config/
 
