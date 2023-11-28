@@ -12,6 +12,25 @@ truncation_length = 4
 # Catppuccin 'lavender'
 style = "bold lavender"
 
+# First param ─┌
+[username]
+format = " [╭─$user]($style)@"
+show_always = true
+style_root = "bold maroon"
+style_user = "bold maroon"
+
+# Second param
+[hostname]
+disabled = false
+format = "[$hostname]($style) in "
+ssh_only = false
+style = "bold dimmed maroon"
+trim_at = "-"
+
+# Fourth param
+[sudo]
+disabled = false
+
 [palettes.catppuccin_mocha]
 rosewater = "#f5e0dc"
 flamingo = "#f2cdcd"
