@@ -33,6 +33,7 @@ i3_base_stage=(
     fish
     eza
     neofetch
+    starship
 )
 
 # set some colors
