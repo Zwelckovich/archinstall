@@ -45,6 +45,14 @@ function restore()
 
     # Scripts
     cp -r ~/archinstall/dotfiles/scripts/ ~/
+
+    # Secrets
+    cp -r ~/archinstall/secrets/config/* ~/.config/
+
+    # Grub
+    sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/ 
+    sudo cp -r ~/archinstall/dotfiles/usr/share/grub /themes/* /usr/share/grub/themes/
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
 }
 
 
