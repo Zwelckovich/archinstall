@@ -28,9 +28,6 @@ function backup()
     cp -r /usr/share/sddm/themes/catppuccin-mocha/ ~/archinstall/dotfiles/usr/share/sddm/themes/
 
     # Thorium
-    tar cf - ~/.config/thorium -P | pv -s $(du -sb ~/.config/thorium | awk '{print $1}') | gzip > ~/archinstall/thorium-profile.tar.gz
-    gpg -c ~/archinstall/thorium-profile.tar.gz
-    rm -rf ~/archinstall/thorium-profile.tar.gz
 
     # Fish
     cp -r ~/.config/fish/config.fish ~/archinstall/dotfiles/config/fish/
@@ -44,9 +41,6 @@ function restore()
     # SDDM
     sudo cp -r ~/archinstall/dotfiles/etc/sddm.conf /etc/
     sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/catppuccin-mocha/ /usr/share/sddm/themes/
-    gpg ~/archinstall/thorium-profile.tar.gz.gpg
-    pv ~/archinstall/thorium-profile.tar.gz | tar -xzf - -C ~/.config/
-    rm -rf ~/archinstall/thorium-profile.tar.gz
 }
 
 
