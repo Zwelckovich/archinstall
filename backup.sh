@@ -51,7 +51,7 @@ function restore()
 
     # Grub
     sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/ 
-    sudo cp -r ~/archinstall/dotfiles/usr/share/grub /themes/* /usr/share/grub/themes/
+    sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /usr/share/grub/themes/
     sudo grub-mkconfig -o /boot/grub/grub.cfg
 }
 
