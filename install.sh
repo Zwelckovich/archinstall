@@ -42,6 +42,7 @@ i3_base_stage=(
     git-crypt
     zathura
     zathura-pdf-mupdf
+    btop
 )
 
 # set some colors
