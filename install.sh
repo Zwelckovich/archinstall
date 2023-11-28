@@ -37,6 +37,9 @@ i3_base_stage=(
     npm
     bfg
     i3lock-color
+    spotify-tui
+    spotifyd
+    git-crypt
 )
 
 # set some colors

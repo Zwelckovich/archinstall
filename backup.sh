@@ -27,7 +27,8 @@ function backup()
     cp -r /etc/sddm.conf ~/archinstall/dotfiles/etc/
     cp -r /usr/share/sddm/themes/catppuccin-mocha/ ~/archinstall/dotfiles/usr/share/sddm/themes/
 
-    # Thorium
+    # Scripts
+    cp -r ~/scripts/ ~/archinstall/dotfiles/
 
     # Fish
     cp -r ~/.config/fish/config.fish ~/archinstall/dotfiles/config/fish/
@@ -41,6 +42,9 @@ function restore()
     # SDDM
     sudo cp -r ~/archinstall/dotfiles/etc/sddm.conf /etc/
     sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/catppuccin-mocha/ /usr/share/sddm/themes/
+
+    # Scripts
+    cp -r ~/archinstall/dotfiles/scripts/ ~/
 }
 
 
