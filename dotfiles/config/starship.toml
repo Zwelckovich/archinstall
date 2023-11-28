@@ -31,6 +31,13 @@ style = "bold lavender"
 [sudo]
 disabled = true
 
+[git_status]
+ahead = "⇡${count}"
+behind = "⇣${count}"
+deleted = "x"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+style = "text"
+
 [palettes.catppuccin_mocha]
 rosewater = "#f5e0dc"
 flamingo = "#f2cdcd"
