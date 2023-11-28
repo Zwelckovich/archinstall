@@ -36,6 +36,7 @@ i3_base_stage=(
     starship
     npm
     bfg
+    i3lock-color
 )
 
 # set some colors

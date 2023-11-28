@@ -21,10 +21,10 @@ else
   # Section 1
 
 		shutdown=""
-		reboot=""
-		lock=""
-		suspend=""
-		logout=""
+		reboot=""
+		lock=""
+		suspend="󰤄"
+		logout="󰗽"
   # Section 2
 #		shutdown="襤"
 #		reboot="ﰇ"
@@ -35,11 +35,11 @@ else
 
 	else
   # Section 1
-		shutdown=" Shutdown"
-		reboot=" Restart"
-		lock=" Lock"
-		suspend=" Sleep"
-		logout=" Logout"
+		shutdown=" Shutdown"
+		reboot=" Restart"
+		lock=" Lock"
+		suspend="󰤄 Sleep"
+		logout="󰗽 Logout"
   # Section 2
 #		shutdown="襤Shutdown"
 #		reboot="ﰇ Restart"
@@ -90,14 +90,14 @@ case $chosen in
         fi
         ;;
     $lock)
-        sh $HOME/.local/bin/lock
+        sh $HOME/archinstall/lock.sh
         ;;
     $suspend)
 		ans=$(rdialog &)
 		if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
 			mpc -q pause
 			amixer set Master mute
-			sh $HOME/.local/bin/lock
+			sh $HOME/archinstall/lock.sh
 			systemctl suspend
 		elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
 			exit
