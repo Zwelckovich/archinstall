@@ -1,5 +1,6 @@
-if status is-interactive
-    # Commands to run in interactive sessions can go here
+## Starship prompt
+if status --is-interactive
+   source ("/usr/bin/starship" init fish --print-full-init | psub)
 end
 
 # Catppuccin Mocha Theme
@@ -58,3 +59,6 @@ alias l.='eza -ald --color=always --group-directories-first --icons .*' # show o
 alias ip='ip -color'
 
 alias grep='grep --color=auto'
+
+## Neofetch
+neofetch

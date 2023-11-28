@@ -32,6 +32,7 @@ i3_base_stage=(
     polybar
     fish
     eza
+    neofetch
 )
 
 # set some colors
@@ -298,9 +299,7 @@ function i3_install ()
     done 
     sudo systemctl enable sddm
     sudo systemctl enable --now zramd
-    cp -r ~/archinstall/dotfiles/config/* ~/.config/
-    sudo cp -r ~/archinstall/dotfiles/etc/* /etc/
-    sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/* /usr/share/sddm/themes/
+    sh ~/archinstall/backup.sh
 }
 
 show_progress() {
