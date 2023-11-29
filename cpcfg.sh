@@ -30,6 +30,20 @@ function restore()
     # All Configs
     cp -r ~/archinstall/dotfiles/config/* ~/.config/
 
+    # VM Settings
+    echo -e "$CNT - Checking for Physical or VM..."
+    ISVM=$(hostnamectl | grep Chassis)
+    echo -e "Using $ISVM"
+    if [[ $ISVM == *"vm"* ]]; then
+        echo -e "Using VM Picom Conf..."
+    else
+        echo -e "Using GLX Picom Conf..."
+        variable='# backend = "glx";'
+        variable_new='backend = "glx";'
+        sed -i "s/$variable/$variable_new/" ~/.config/picom/picom.conf
+        sleep 1
+    fi
+
     # SDDM
     sudo cp -r ~/archinstall/dotfiles/etc/sddm.conf /etc/
     sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/catppuccin-mocha/ /usr/share/sddm/themes/
