@@ -120,8 +120,7 @@ function btrfs_format ()
     echo "#################"
     fdisk -l
     echo " "
-    echo "Enter disk name for installation: "
-    read disk
+    read -p 'Enter disk name for installation: ' disk
     umount /dev/${disk}?*
     umount -l /mnt
     sgdisk --zap-all /dev/$disk
@@ -160,7 +159,7 @@ function btrfs_format ()
     echo "  2)AMD"
     echo "  3)VMs"
 
-    read n
+    read -p 'Selection: ' n
     case $n in
         1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
         2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
@@ -177,8 +176,7 @@ function ext4_format ()
     echo "#################"
     fdisk -l
     echo " "
-    echo "Enter disk name for installation: "
-    read disk
+    read -p 'Enter disk name for installation: ' disk
     umount /dev/${disk}?*
     umount -l /mnt
     sgdisk --zap-all /dev/$disk
@@ -236,6 +234,8 @@ function base_config ()
     ---------------------------------------------------------------------
     "     
     echo ""
+    read -p 'Enter usernamer: ' username
+    read -p 'Enter hostname: ' hostname
     arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
     arch-chroot /mnt hwclock --systohc
     variable="en_US.UTF-8 UTF-8"
@@ -243,10 +243,10 @@ function base_config ()
     arch-chroot /mnt locale-gen
     arch-chroot /mnt bash -c 'echo "LANG=en_US.UTF-8" >> /etc/locale.conf'
     arch-chroot /mnt bash -c 'echo "KEYMAP=de"  >> /etc/vconsole.conf'
-    arch-chroot /mnt bash -c 'echo "zwelcharch" >> /etc/hostname'
+    arch-chroot /mnt bash -c 'echo "$hostname" >> /etc/hostname'
     arch-chroot /mnt bash -c 'echo "127.0.0.1	localhost" >> /etc/hosts'
     arch-chroot /mnt bash -c 'echo "::1		localhost" >> /etc/hosts'
-    arch-chroot /mnt bash -c 'echo "127.0.1.1	zwelcharch.localdomain	zwelcharch" >> /etc/hosts'
+    arch-chroot /mnt bash -c 'echo "127.0.1.1	$hostname.localdomain	$hostname" >> /etc/hosts'
     echo "### ROOT PASSWORD ###"
     arch-chroot /mnt passwd
     variable="Color"
@@ -266,16 +266,16 @@ function base_config ()
     variable="GRUB_DISABLE_OS_PROBER=false"
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
     arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-    arch-chroot /mnt useradd -mG wheel zwelch
+    arch-chroot /mnt useradd -mG wheel $username
     echo "### USER PASSWORD ###"
-    arch-chroot /mnt passwd zwelch
+    arch-chroot /mnt passwd $username
     echo "### UNCOMMENT WHEEL GROUP ###"
     echo "### PRESS ENTER WHEN READY ###"
     read
     arch-chroot /mnt visudo
     arch-chroot /mnt systemctl enable NetworkManager
-    cp -r ~/archinstall /mnt/home/zwelch
-    chmod 777 /mnt/home/zwelch/archinstall
+    cp -r ~/archinstall /mnt/home/$username
+    chmod 777 /mnt/home/$username/archinstall
     umount -l /mnt
     echo "#################"
     echo "#SCRIPT FINISHED#"
@@ -283,7 +283,7 @@ function base_config ()
     echo "Select Action:"
     echo "  1)Shutdown"
     echo "  2)Reboot"
-    read n
+    read -p 'Selection: ' n
     case $n in
         1) shutdown now;;
         2) reboot;;
@@ -367,7 +367,7 @@ echo " "
 echo "Select Action:"
 echo "  1)Install Arch-Base"
 echo "  2)Install i3"
-read n
+read -p 'Selection: ' n
 case $n in
     1) 
         pacman_init
