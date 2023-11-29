@@ -206,7 +206,7 @@ function ext4_format ()
     echo "  2)AMD"
     echo "  3)VMs"
 
-    read n
+    read -p 'Selection: ' n
     case $n in
         1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode;;
         2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode;;
