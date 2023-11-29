@@ -37,6 +37,7 @@ function backup()
 function restore()
 {
     if ls -la ~/ | grep -iqE git-crypt-key; then
+        echo -e "Using git-crypt-key"
         # Uncrypt
         pushd  ~/archinstall/
         git-crypt unlock ../git-crypt-key
@@ -44,6 +45,8 @@ function restore()
 
         # Secrets
         cp -r ~/archinstall/secrets/config/* ~/.config/
+    else
+        echo -e "No git-crypt-key. Skipping secrets"
     fi
 
     # Check VSCode Extensions
