@@ -241,15 +241,15 @@ function base_config ()
     variable="en_US.UTF-8 UTF-8"
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/locale.gen
     arch-chroot /mnt locale-gen
-    arch-chroot /mnt bash -c 'echo "LANG=en_US.UTF-8" >> /etc/locale.conf'
-    arch-chroot /mnt bash -c 'echo "KEYMAP=de"  >> /etc/vconsole.conf'
+    arch-chroot /mnt bash -c "echo \"LANG=en_US.UTF-8\" >> /etc/locale.conf"
+    arch-chroot /mnt bash -c "echo \"KEYMAP=de\"  >> /etc/vconsole.conf"
     cmdstr="echo $hoststr >> /etc/hostname"
     echo $cmdstr
     read
     arch-chroot /mnt bash -c $cmdstr
-    arch-chroot /mnt bash -c 'echo "127.0.0.1	localhost" >> /etc/hosts'
-    arch-chroot /mnt bash -c 'echo "::1		localhost" >> /etc/hosts'
-    cmdstr='echo "127.0.1.1	$hoststr.localdomain	$hoststr" >> /etc/hosts'
+    arch-chroot /mnt bash -c "echo \"127.0.0.1	localhost\" >> /etc/hosts"
+    arch-chroot /mnt bash -c "echo \"::1		localhost\" >> /etc/hosts"
+    cmdstr="echo \"127.0.1.1	$hoststr.localdomain	$hoststr\" >> /etc/hosts"
     echo $cmdstr
     read
     arch-chroot /mnt bash -c $cmdstr
