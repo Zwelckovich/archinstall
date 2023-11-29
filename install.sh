@@ -84,9 +84,9 @@ function pacman_init ()
     ---------------------------------------------------------------------
     "
     echo ""
-    echo "#############"
-    echo "#Pacman Init#"
-    echo "#############"
+    echo "------------------------------------------------------------------------------------------------------------------"
+    echo "                                               Pacman Init                                                        "
+    echo "------------------------------------------------------------------------------------------------------------------"
     pacman-key --init   
     pacman-key --populate archlinux
     variable="Color"
@@ -98,9 +98,10 @@ function pacman_init ()
 
 function diskparts ()
 {
-    echo "###############"
-    echo "#Filesystem#"
-    echo "###############"
+    clear
+    echo "------------------------------------------------------------------------------------------------------------------"
+    echo "                                               File System                                                        "
+    echo "------------------------------------------------------------------------------------------------------------------"
     echo "Select Filesystem:"
     echo "  1)btrfs"
     echo "  2)ext4"
@@ -115,9 +116,10 @@ function diskparts ()
 
 function btrfs_format ()
 {
-    echo "#################"
-    echo "#Disk Partitions#"
-    echo "#################"
+    clear
+    echo "------------------------------------------------------------------------------------------------------------------"
+    echo "                                               Disk Partitions                                                    "
+    echo "------------------------------------------------------------------------------------------------------------------"
     fdisk -l
     echo " "
     read -p 'Enter disk name for installation: ' disk
@@ -171,9 +173,10 @@ function btrfs_format ()
 
 function ext4_format ()
 {
-    echo "#################"
-    echo "#Disk Partitions#"
-    echo "#################"
+    clear
+    echo "------------------------------------------------------------------------------------------------------------------"
+    echo "                                               Disk Partitions                                                    "
+    echo "------------------------------------------------------------------------------------------------------------------"
     fdisk -l
     echo " "
     read -p 'Enter disk name for installation: ' disk
@@ -194,9 +197,10 @@ function ext4_format ()
     dn=${disk}1
     mount /dev/$dn /mnt/boot
 
-    echo "###############"
-    echo "#Pacstrap Arch#"
-    echo "###############"
+    clear
+    echo "------------------------------------------------------------------------------------------------------------------"
+    echo "                                                Pacstrap Arch                                                     "
+    echo "------------------------------------------------------------------------------------------------------------------"
     echo "Select CPU:"
     echo "  1)Intel"
     echo "  2)AMD"
@@ -249,8 +253,9 @@ function base_config ()
     arch-chroot /mnt bash -c "echo \"::1		localhost\" >> /etc/hosts"
     cmdstr="echo \"127.0.1.1	$hoststr.localdomain	$hoststr\" >> /etc/hosts"
     arch-chroot /mnt bash -c "$cmdstr"
-    read
-    echo "### ROOT PASSWORD ###"
+    echo "------------------------------------------------------------------------------------------------------------------"
+    echo "                                               Root Password                                                      "
+    echo "------------------------------------------------------------------------------------------------------------------"
     arch-chroot /mnt passwd
     variable="Color"
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
@@ -270,19 +275,19 @@ function base_config ()
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
     arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
     arch-chroot /mnt useradd -mG wheel $userstr
-    echo "### USER PASSWORD ###"
+    echo "------------------------------------------------------------------------------------------------------------------"
+    echo "                                               User Password                                                      "
+    echo "------------------------------------------------------------------------------------------------------------------"
     arch-chroot /mnt passwd $userstr
-    echo "### UNCOMMENT WHEEL GROUP ###"
-    echo "### PRESS ENTER WHEN READY ###"
-    read
-    arch-chroot /mnt visudo
+    variable="%wheel ALL=(ALL:ALL) ALL"
+    arch-chroot /mnt sed -i "/^# $variable/s/#\s*//" /etc/sudoers
     arch-chroot /mnt systemctl enable NetworkManager
     cp -r ~/archinstall /mnt/home/$userstr
     chmod 777 /mnt/home/$userstr/archinstall
     umount -l /mnt
-    echo "#################"
-    echo "#SCRIPT FINISHED#"
-    echo "#################"
+    echo "------------------------------------------------------------------------------------------------------------------"
+    echo "                                                SCRIPT FINISHED                                                   "
+    echo "------------------------------------------------------------------------------------------------------------------"
     echo "Select Action:"
     echo "  1)Shutdown"
     echo "  2)Reboot"
@@ -363,12 +368,21 @@ function install_software() {
     echo -e "\e[1A\e[K$COK - $1 was installed."
 }
 
-echo "#####################"
-echo "#Installation Script#"
-echo "#####################"
-echo " "
+clear
+echo -ne "
+--------------------------------------------------------------------------------------
+ █████╗ ██████╗  ██████╗██╗  ██╗██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗     
+██╔══██╗██╔══██╗██╔════╝██║  ██║██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║     
+███████║██████╔╝██║     ███████║██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║     
+██╔══██║██╔══██╗██║     ██╔══██║██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║     
+██║  ██║██║  ██║╚██████╗██║  ██║██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝
+                                                                                      
+---------------------------------------------------------------------------------------
+"     
+echo ""
 echo "Select Action:"
-echo "  1)Install Arch-Base"
+echo "  1)Install Arch Minimal"
 echo "  2)Install i3"
 read -p 'Selection: ' n
 case $n in
