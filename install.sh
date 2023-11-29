@@ -338,7 +338,7 @@ function i3_install ()
     done 
     sudo systemctl enable sddm
     sudo systemctl enable --now zramd
-    sh ~/archinstall/backup.sh
+    sh ~/archinstall/cpcfg.sh
 }
 
 show_progress() {
