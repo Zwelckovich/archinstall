@@ -234,8 +234,8 @@ function base_config ()
     ---------------------------------------------------------------------
     "     
     echo ""
-    read -p 'Enter username: ' username
-    read -p "Enter hostname: " hostname
+    read -p 'Enter username: ' userstr
+    read -p "Enter hostname: " hoststr
     arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
     arch-chroot /mnt hwclock --systohc
     variable="en_US.UTF-8 UTF-8"
@@ -243,11 +243,15 @@ function base_config ()
     arch-chroot /mnt locale-gen
     arch-chroot /mnt bash -c 'echo "LANG=en_US.UTF-8" >> /etc/locale.conf'
     arch-chroot /mnt bash -c 'echo "KEYMAP=de"  >> /etc/vconsole.conf'
-    cmdstr="echo $hostname >> /etc/hostname"
+    cmdstr="echo $hoststr >> /etc/hostname"
+    echo $cmdstr
+    read
     arch-chroot /mnt bash -c $cmdstr
     arch-chroot /mnt bash -c 'echo "127.0.0.1	localhost" >> /etc/hosts'
     arch-chroot /mnt bash -c 'echo "::1		localhost" >> /etc/hosts'
-    cmdstr='echo "127.0.1.1	$hostname.localdomain	$hostname" >> /etc/hosts'
+    cmdstr='echo "127.0.1.1	$hoststr.localdomain	$hoststr" >> /etc/hosts'
+    echo $cmdstr
+    read
     arch-chroot /mnt bash -c $cmdstr
     echo "### ROOT PASSWORD ###"
     arch-chroot /mnt passwd
@@ -268,16 +272,16 @@ function base_config ()
     variable="GRUB_DISABLE_OS_PROBER=false"
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
     arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-    arch-chroot /mnt useradd -mG wheel $username
+    arch-chroot /mnt useradd -mG wheel $userstr
     echo "### USER PASSWORD ###"
-    arch-chroot /mnt passwd $username
+    arch-chroot /mnt passwd $userstr
     echo "### UNCOMMENT WHEEL GROUP ###"
     echo "### PRESS ENTER WHEN READY ###"
     read
     arch-chroot /mnt visudo
     arch-chroot /mnt systemctl enable NetworkManager
-    cp -r ~/archinstall /mnt/home/$username
-    chmod 777 /mnt/home/$username/archinstall
+    cp -r ~/archinstall /mnt/home/$userstr
+    chmod 777 /mnt/home/$userstr/archinstall
     umount -l /mnt
     echo "#################"
     echo "#SCRIPT FINISHED#"
