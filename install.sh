@@ -234,7 +234,7 @@ function base_config ()
     ---------------------------------------------------------------------
     "     
     echo ""
-    read -p 'Enter usernamer: ' username
+    read -p 'Enter username: ' username
     read -p "Enter hostname: " hostname
     arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
     arch-chroot /mnt hwclock --systohc
