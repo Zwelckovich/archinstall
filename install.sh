@@ -235,15 +235,18 @@ function base_config ()
     "     
     echo ""
     read -p 'Enter usernamer: ' username
+    read -p "Enter hostname: " hostname
     arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
     arch-chroot /mnt hwclock --systohc
     variable="en_US.UTF-8 UTF-8"
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/locale.gen
     arch-chroot /mnt locale-gen
-    arch-chroot /mnt bash -c 'read -p "Enter hostname: " hostname'
     arch-chroot /mnt bash -c 'echo "LANG=en_US.UTF-8" >> /etc/locale.conf'
     arch-chroot /mnt bash -c 'echo "KEYMAP=de"  >> /etc/vconsole.conf'
-    arch-chroot /mnt bash -c 'echo "$hostname" >> /etc/hostname'
+    cmdstr="'echo "$hostname" >> /etc/hostname'"
+    echo "$cmdstr"
+    read
+    arch-chroot /mnt bash -c "$cmdstr"
     arch-chroot /mnt bash -c 'echo "127.0.0.1	localhost" >> /etc/hosts'
     arch-chroot /mnt bash -c 'echo "::1		localhost" >> /etc/hosts'
     arch-chroot /mnt bash -c 'echo "127.0.1.1	$hostname.localdomain	$hostname" >> /etc/hosts'
