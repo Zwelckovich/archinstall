@@ -242,7 +242,7 @@ function base_config ()
     arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/locale.gen
     arch-chroot /mnt locale-gen
     arch-chroot /mnt bash -c "echo \"LANG=en_US.UTF-8\" >> /etc/locale.conf"
-    arch-chroot /mnt bash -c "echo \"KEYMAP=de\"  >> /etc/vconsole.conf"
+    arch-chroot /mnt bash -c "echo \"KEYMAP=de-latin1-nodeadkeys\"  >> /etc/vconsole.conf"
     cmdstr="echo $hoststr >> /etc/hostname"
     echo $cmdstr
     read
