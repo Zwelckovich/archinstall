@@ -36,10 +36,15 @@ function backup()
 
 function restore()
 {
-    # Uncrypt
-    pushd  ~/archinstall/
-    git-crypt unlock ../git-crypt-key
-    popd
+    if ls -la ~/ | grep -iqE git-crypt-key; then
+        # Uncrypt
+        pushd  ~/archinstall/
+        git-crypt unlock ../git-crypt-key
+        popd
+
+        # Secrets
+        cp -r ~/archinstall/secrets/config/* ~/.config/
+    fi
 
     # Check VSCode Extensions
     if code --list-extensions | grep -iE catppuccin  &>> /dev/null; then
@@ -60,9 +65,6 @@ function restore()
 
     # Scripts
     cp -r ~/archinstall/dotfiles/scripts/ ~/
-
-    # Secrets
-    cp -r ~/archinstall/secrets/config/* ~/.config/
 
     # Grub
     sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/ 
