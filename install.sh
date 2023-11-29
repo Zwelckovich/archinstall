@@ -243,13 +243,12 @@ function base_config ()
     arch-chroot /mnt locale-gen
     arch-chroot /mnt bash -c 'echo "LANG=en_US.UTF-8" >> /etc/locale.conf'
     arch-chroot /mnt bash -c 'echo "KEYMAP=de"  >> /etc/vconsole.conf'
-    cmdstr="'echo "$hostname" >> /etc/hostname'"
-    echo "$cmdstr"
-    read
-    arch-chroot /mnt bash -c "$cmdstr"
+    cmdstr="echo $hostname >> /etc/hostname"
+    arch-chroot /mnt bash -c $cmdstr
     arch-chroot /mnt bash -c 'echo "127.0.0.1	localhost" >> /etc/hosts'
     arch-chroot /mnt bash -c 'echo "::1		localhost" >> /etc/hosts'
-    arch-chroot /mnt bash -c 'echo "127.0.1.1	$hostname.localdomain	$hostname" >> /etc/hosts'
+    cmdstr='echo "127.0.1.1	$hostname.localdomain	$hostname" >> /etc/hosts'
+    arch-chroot /mnt bash -c $cmdstr
     echo "### ROOT PASSWORD ###"
     arch-chroot /mnt passwd
     variable="Color"
