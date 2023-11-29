@@ -33,7 +33,7 @@ function restore()
     # VM Settings
     echo -e "$CNT - Checking for Physical or VM..."
     ISVM=$(hostnamectl | grep Chassis)
-    echo -e "Using $ISVM"
+    # echo -e "Using $ISVM"
     if [[ $ISVM == *"vm"* ]]; then
         echo -e "Using VM Picom Conf..."
     else
