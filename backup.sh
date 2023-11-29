@@ -40,6 +40,17 @@ function restore()
     pushd  ~/archinstall/
     git-crypt unlock ../git-crypt-key
     popd
+
+    # Check VSCode Extensions
+    if code --list-extensions | grep -iE catppuccin  &>> /dev/null; then
+        echo -e "VSCode Catppuccin Extensions is already installed."
+    else
+        echo -e "Installing Catppuccin VSCode Extensions"
+        code --install-extension Catppuccin.catppuccin-vsc
+        code --install-extension Catppuccin.catppuccin-vsc-icons
+    fi
+
+
     # All Configs
     cp -r ~/archinstall/dotfiles/config/* ~/.config/
 
