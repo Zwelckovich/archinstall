@@ -42,6 +42,7 @@ i3_base_stage=(
     zathura
     zathura-pdf-mupdf
     btop
+    lazygit
 )
 
 #software for nvidia GPU only
