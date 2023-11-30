@@ -52,6 +52,9 @@ function restore()
     # Scripts
     cp -r ~/archinstall/dotfiles/scripts/ ~/
 
+    # Citrix
+    sudo cp -r ~/archinstall/dotfiles/usr/share/applications/wfica.desktop /usr/share/applications/
+    # https://wiki.archlinux.org/title/citrix
 }
 
 function update_grub()

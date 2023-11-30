@@ -61,6 +61,6 @@ alias ip='ip -color'
 alias grep='grep --color=auto'
 alias tarnow 'tar -acf '
 alias untar 'tar -zxvf '
-
+alias lg 'lazygit'
 ## Neofetch
 neofetch
