@@ -51,12 +51,15 @@ function restore()
     # Scripts
     cp -r ~/archinstall/dotfiles/scripts/ ~/
 
+}
+
+function update_grub()
+{
     # Grub
     sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/ 
     sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /usr/share/grub/themes/
     sudo grub-mkconfig -o /boot/grub/grub.cfg
 }
-
 
 clear
 echo -ne "
@@ -71,4 +74,16 @@ echo -ne "
 -----------------------------------------
 "     
 echo ""
-restore
+echo "Select Action:"
+echo "  1)Restore Configs"
+echo "  2)Update Grub"
+read -p 'Selection: ' n
+case $n in
+    1) 
+        restore
+        ;;
+    2) 
+        update_grub
+        ;;
+    *) echo "invalid option";;
+esac
