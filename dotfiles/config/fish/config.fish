@@ -59,6 +59,8 @@ alias l.='eza -ald --color=always --group-directories-first --icons .*' # show o
 alias ip='ip -color'
 
 alias grep='grep --color=auto'
+alias tarnow 'tar -acf '
+alias untar 'tar -zxvf '
 
 ## Neofetch
 neofetch
