@@ -52,9 +52,6 @@ function restore()
     # Scripts
     cp -r ~/archinstall/dotfiles/scripts/ ~/
 
-    # Citrix
-    sudo cp -r ~/archinstall/dotfiles/usr/share/applications/wfica.desktop /usr/share/applications/
-    # https://wiki.archlinux.org/title/citrix
 }
 
 function update_grub()
@@ -65,6 +62,16 @@ function update_grub()
     sudo grub-mkconfig -o /boot/grub/grub.cfg
 }
 
+function citrix()
+{
+   # Citrix
+   yay -Sy icaclient
+   cp -r ~/archinstall/dotfiles/home/.ICAClient ~/
+   sudo cp -r ~/archinstall/dotfiles/usr/bin/pulseaudio /usr/bin/
+   sudo cp -r ~/archinstall/dotfiles/usr/share/applications/wfica.desktop /usr/share/applications/
+   sudo ln -s /usr/lib/libunwind.so /usr/lib/libunwind.so.1
+   # https://wiki.archlinux.org/title/citrix
+}
 clear
 echo -ne "
 -----------------------------------------
@@ -81,6 +88,7 @@ echo ""
 echo "Select Action:"
 echo "  1)Restore Configs"
 echo "  2)Update Grub"
+echo "  3)Install Citrix"
 read -p 'Selection: ' n
 case $n in
     1) 
@@ -88,6 +96,9 @@ case $n in
         ;;
     2) 
         update_grub
+        ;;
+    3)
+        citrix
         ;;
     *) echo "invalid option";;
 esac
