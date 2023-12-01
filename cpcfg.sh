@@ -13,7 +13,7 @@ function restore()
 
         # Secrets
         cp -r ~/archinstall/secrets/config/* ~/.config/
-        cp -r ~/archinstall/secrets/home/* ~/
+        cp -r ~/archinstall/secrets/home/. ~/
     else
         echo -e "No git-crypt-key. Skipping secrets"
     fi
