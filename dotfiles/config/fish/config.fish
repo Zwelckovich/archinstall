@@ -62,5 +62,6 @@ alias grep='grep --color=auto'
 alias tarnow 'tar -acf '
 alias untar 'tar -zxvf '
 alias lg 'lazygit'
+alias citrix '/opt/Citrix/ICAClient/wfica'
 ## Neofetch
 neofetch
