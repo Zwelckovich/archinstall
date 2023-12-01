@@ -65,7 +65,9 @@ function update_grub()
 function citrix()
 {
    # Citrix
-   yay -Sy icaclient
+   yay -Sy --noconfirm icaclient
+   mkdir -p ~/.ICAClient/cache
+   cp /opt/Citrix/ICAClient/config/{All_Regions,Trusted_Region,Unknown_Region,canonicalization,regions}.ini ~/.ICAClient/
    cp -r ~/archinstall/dotfiles/home/.ICAClient ~/
    sudo cp -r ~/archinstall/dotfiles/usr/bin/pulseaudio /usr/bin/
    sudo cp -r ~/archinstall/dotfiles/usr/share/applications/wfica.desktop /usr/share/applications/
