@@ -6,4 +6,4 @@ Exec=/opt/Citrix/ICAClient/wfica
 Terminal=false
 Type=Application
 NoDisplay=true
-MimeType=application/x-ica;
+MimeType=application/x-wine-extension-ini;
