@@ -44,6 +44,7 @@ i3_base_stage=(
     btop
     lazygit
     icaclient
+    python-conda
 )
 
 #software for nvidia GPU only
