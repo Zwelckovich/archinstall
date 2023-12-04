@@ -43,6 +43,7 @@ i3_base_stage=(
     zathura-pdf-mupdf
     btop
     lazygit
+    icaclient
 )
 
 #software for nvidia GPU only
@@ -348,6 +349,7 @@ function i3_install ()
     sudo systemctl enable --now zramd
     sh ~/archinstall/cpcfg.sh
 }
+
 
 show_progress() {
     while ps | grep $1 &> /dev/null;
