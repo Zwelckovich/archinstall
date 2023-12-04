@@ -52,6 +52,13 @@ function restore()
     # Scripts
     cp -r ~/archinstall/dotfiles/scripts/ ~/
 
+    # Citrix
+    mkdir -p ~/.ICAClient/cache
+    cp /opt/Citrix/ICAClient/config/{All_Regions,Trusted_Region,Unknown_Region,canonicalization,regions}.ini ~/.ICAClient/
+    cp -r ~/archinstall/dotfiles/home/.ICAClient ~/
+    sudo cp -r ~/archinstall/dotfiles/usr/bin/pulseaudio /usr/bin/
+    sudo cp -r ~/archinstall/dotfiles/usr/share/applications/wfica.desktop /usr/share/applications/
+    sudo ln -sf /usr/lib/libunwind.so /usr/lib/libunwind.so.1
 }
 
 function update_grub()
