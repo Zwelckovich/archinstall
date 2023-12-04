@@ -45,6 +45,7 @@ i3_base_stage=(
     lazygit
     icaclient
     python-conda
+    qucs-s
 )
 
 #software for nvidia GPU only
