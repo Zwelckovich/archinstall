@@ -38,6 +38,11 @@ deleted = "x"
 diverged = "⇕⇡${ahead_count}⇣${behind_count}"
 style = "text"
 
+[conda]
+symbol = '🇨 '
+format = '[$symbol$environment](sky) '
+
+
 [palettes.catppuccin_mocha]
 rosewater = "#f5e0dc"
 flamingo = "#f2cdcd"

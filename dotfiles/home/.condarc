@@ -1,0 +1,5 @@
+auto_activate_base: false
+solver: libmamba
+
+create_default_packages:
+  - conda-libmamba-solver
