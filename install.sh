@@ -6,9 +6,6 @@
 i3_base_stage=(
     xorg
     i3
-    timeshift
-    timeshift-autosnap
-    zramd
     sddm
     rofi
     feh
@@ -46,6 +43,7 @@ i3_base_stage=(
     icaclient
     python-conda
     qucs-s
+    inkscape
 )
 
 #software for nvidia GPU only
@@ -348,7 +346,6 @@ function i3_install ()
             install_software $SOFTWR
     done 
     sudo systemctl enable sddm
-    sudo systemctl enable --now zramd
     sh ~/archinstall/cpcfg.sh
 }
 
