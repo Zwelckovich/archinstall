@@ -248,9 +248,9 @@ bindsym $mod+r mode "resize"
 focus_follows_mouse no
 
 # Programs
-exec --no-startup-id setxkbmap de
-exec --no-startup-id setxkbmap -option caps:escape
-exec --no-startup-id numlockx on
+exec_always --no-startup-id setxkbmap de
+exec_always --no-startup-id setxkbmap -option caps:escape
+exec_always --no-startup-id numlockx on
 exec_always killall picom ; picom -b
 exec_always --no-startup-id sh ~/archinstall/vbres.sh
 exec_always pkill -9 polybar ; polybar main
