@@ -265,7 +265,8 @@ function base_config ()
     arch-chroot /mnt sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
     arch-chroot /mnt pacman-key --init
     arch-chroot /mnt pacman-key --populate archlinux
-    arch-chroot /mnt pacman -Sy
+    arch-chroot /mnt pacman -Scc
+    arch-chroot /mnt pacman -Syy
     arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd 
     variable="MODULES=()"
     variable_changed="MODULES=(btrfs)"
