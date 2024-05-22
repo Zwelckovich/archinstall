@@ -40,7 +40,7 @@ i3_base_stage=(
     zathura-pdf-mupdf
     btop
     lazygit
-    icaclient
+    #    icaclient
     python-conda
     #    qucs-s
     #    inkscape
