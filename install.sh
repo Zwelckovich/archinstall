@@ -33,8 +33,8 @@ i3_base_stage=(
     npm
     bfg
     i3lock-color
-    spotify-tui
-    spotifyd
+    #    spotify-tui
+    #    spotifyd
     git-crypt
     zathura
     zathura-pdf-mupdf
@@ -42,8 +42,8 @@ i3_base_stage=(
     lazygit
     icaclient
     python-conda
-    qucs-s
-    inkscape
+    #    qucs-s
+    #    inkscape
 )
 
 #software for nvidia GPU only
