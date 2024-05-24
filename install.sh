@@ -11,7 +11,7 @@ i3_base_stage=(
     feh
     xfce4-terminal
     picom
-    thorium-browser-bin
+    firefox
     pacman-contrib 
     alsa-utils
     pipewire 
