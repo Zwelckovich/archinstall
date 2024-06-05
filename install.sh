@@ -412,6 +412,10 @@ function restore_dotfiles() {
     pushd ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
     git pull
     popd
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions 
+    pushd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestion
+    git pull
+    popd
 
     echo -e "### FZF-Git ###"
     git clone https://github.com/junegunn/fzf-git.sh.git ~/archinstall/fzf-git
