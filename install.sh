@@ -44,6 +44,9 @@ i3_base_stage=(
     fd
     bat
     git-delta
+    tlrc
+    thefuck
+    zoxide
 )
 
 #software for nvidia GPU only
