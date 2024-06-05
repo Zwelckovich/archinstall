@@ -424,6 +424,7 @@ function restore_dotfiles() {
     wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
     bat cache --build
 
+    echo -e "### Secrets ###"
     if ls -la ~/ | grep -iqE git-crypt-key; then
         echo -e "Using git-crypt-key"
         # Uncrypt
@@ -432,6 +433,7 @@ function restore_dotfiles() {
         popd
 
         # Secrets
+        echo -e "### Git-Diff ###"
         rm -rf ~/.gitconfig
         stow -v 1 -t ~/ -d ~/archinstall/secrets/dotfiles/config/home git-diff
     else
