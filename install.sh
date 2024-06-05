@@ -403,9 +403,6 @@ function restore_dotfiles() {
     echo -e "Using $ISVM"
     if [[ $ISVM == *"vm"* ]]; then
         echo -e "Using VM Picom Conf..."
-        variable='backend = "glx";'
-        variable_new='# backend = "glx";'
-        sed -i "s/$variable/$variable_new/" ~/archinstall/dotfiles/config/picom/.config/picom/picom.conf
     else
         echo -e "Using GLX Picom Conf..."
         variable='# backend = "glx";'
@@ -416,6 +413,7 @@ function restore_dotfiles() {
 
     echo -e "### Home Directory ###"
     rm -rf ~/.zshrc
+    rm -rf ~/.p10k.zsh 
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles home
 }
 
