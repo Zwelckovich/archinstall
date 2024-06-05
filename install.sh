@@ -368,6 +368,17 @@ function install_software() {
     echo -e "\e[1A\e[K$COK - $1 was installed."
 }
 
+function restow_dotfiles() {
+    # Check VSCode Extensions
+    if code --list-extensions | grep -iE catppuccin  &>> /dev/null; then
+        echo -e "VSCode Catppuccin Extensions is already installed."
+    else
+        echo -e "Installing Catppuccin VSCode Extensions"
+        code --install-extension Catppuccin.catppuccin-vsc
+        code --install-extension Catppuccin.catppuccin-vsc-icons
+    fi
+}
+
 clear
 echo -ne "
 --------------------------------------------------------------------------------------
@@ -384,6 +395,7 @@ echo ""
 echo "Select Action:"
 echo "  1)Install Arch Minimal"
 echo "  2)Install i3"
+echo "  3)Restow Dotfiles"
 read -p 'Selection: ' n
 case $n in
     1) 
@@ -393,6 +405,9 @@ case $n in
         ;;
     2) 
         i3_install
+        ;;
+    3)
+        restow_dotfiles
         ;;
     *) echo "invalid option";;
 esac
