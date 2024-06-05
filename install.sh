@@ -421,6 +421,9 @@ function restore_dotfiles() {
     git pull
     popd
     git clone https://github.com/catppuccin/zsh-syntax-highlighting.git ~/archinstall/catppuccin-zsh-syntax-highlighting
+    pushd ~/archinstall/catppuccin-zsh-syntax-highlighting
+    git pull
+    popd
 
     echo -e "### FZF-Git ###"
     git clone https://github.com/junegunn/fzf-git.sh.git ~/archinstall/fzf-git
