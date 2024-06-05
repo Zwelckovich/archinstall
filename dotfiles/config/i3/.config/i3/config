@@ -12,7 +12,6 @@
 set $mod Mod1
 
 exec --no-startup-id picom
-exec --no-startup-id sh eval $(ssh-agent)
 #exec --no-startup-id  feh --bg-scale ~/archinstall/wallpaper/catpuccin-minimal.png
 exec_always --no-startup-id sh ~/archinstall/vbres.sh
 exec_always --no-startup-id setxkbmap de
