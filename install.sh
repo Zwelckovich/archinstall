@@ -40,6 +40,10 @@ i3_base_stage=(
     stow
     zsh
     wezterm
+    fzf
+    fd
+    bat
+    git-delta
 )
 
 #software for nvidia GPU only
@@ -414,6 +418,25 @@ function restore_dotfiles() {
     rm -rf ~/.zshrc
     rm -rf ~/.p10k.zsh 
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles home
+
+    echo -e "### Bat ###"
+    mkdir -p "$(bat --config-dir)/themes"
+    wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
+    bat cache --build
+
+    if ls -la ~/ | grep -iqE git-crypt-key; then
+        echo -e "Using git-crypt-key"
+        # Uncrypt
+        pushd  ~/archinstall/
+        git-crypt unlock ../git-crypt-key
+        popd
+
+        # Secrets
+        rm -rf ~/.gitconfig
+        stow -v 1 -t ~/ -d ~/archinstall/secrets/dotfiles/home git-diff
+    else
+        echo -e "No git-crypt-key. Skipping secrets"
+    fi
 }
 
 function update_grub_sddm() {
