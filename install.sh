@@ -17,33 +17,25 @@ i3_base_stage=(
     pipewire 
     pipewire-pulse
     pavucontrol
-    ttf-noto-nerd
-    noto-fonts-emoji
-    kitty
+    ttf-meslo-nerd-font-powerlevel10k
     code
     numlockx
     qt5-graphicaleffects
     qt5-svg
     qt5-quickcontrols2
     polybar
-    fish
     eza
-    neofetch
-    starship
+    hyfetch
     npm
     bfg
     i3lock-color
-    #    spotify-tui
-    #    spotifyd
     git-crypt
     zathura
     zathura-pdf-mupdf
     btop
     lazygit
-    #    icaclient
     python-conda
-    #    qucs-s
-    #    inkscape
+    inkscape
 )
 
 #software for nvidia GPU only
