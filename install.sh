@@ -420,6 +420,7 @@ function restore_dotfiles() {
     pushd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
     git pull
     popd
+    git clone https://github.com/catppuccin/zsh-syntax-highlighting.git ~/archinstall/catppuccin-zsh-syntax-highlighting
 
     echo -e "### FZF-Git ###"
     git clone https://github.com/junegunn/fzf-git.sh.git ~/archinstall/fzf-git
