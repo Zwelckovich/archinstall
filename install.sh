@@ -368,8 +368,8 @@ function install_software() {
     echo -e "\e[1A\e[K$COK - $1 was installed."
 }
 
-function restow_dotfiles() {
-    # Check VSCode Extensions
+function restore_dotfiles() {
+    echo -e "### VS Code ###"
     if code --list-extensions | grep -iE catppuccin  &>> /dev/null; then
         echo -e "VSCode Catppuccin Extensions is already installed."
     else
@@ -377,6 +377,56 @@ function restow_dotfiles() {
         code --install-extension Catppuccin.catppuccin-vsc
         code --install-extension Catppuccin.catppuccin-vsc-icons
     fi
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config code
+
+    echo -e "### I3 ###"
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config i3
+
+    echo -e "### Polybar ###"
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config polybar
+
+    echo -e "### Rofi ###"
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config rofi
+
+    echo -e "### BTOP ###"
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config btop
+
+    echo -e "### Zathura ###"
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config zathura
+
+    echo -e "### Hyfetch ###"
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config hyfetch
+
+    echo -e "### Picom ###"
+    echo -e "$CNT - Checking for Physical or VM..."
+    ISVM=$(hostnamectl | grep Chassis)
+    echo -e "Using $ISVM"
+    if [[ $ISVM == *"vm"* ]]; then
+        echo -e "Using VM Picom Conf..."
+        variable='backend = "glx";'
+        variable_new='# backend = "glx";'
+        sed -i "s/$variable/$variable_new/" ~/archinstall/dotfiles/config/picom/.config/picom/picom.conf
+    else
+        echo -e "Using GLX Picom Conf..."
+        variable='# backend = "glx";'
+        variable_new='backend = "glx";'
+        sed -i "s/$variable/$variable_new/" ~/archinstall/dotfiles/config/picom/.config/picom/picom.conf
+    fi
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config picom
+
+    echo -e "### Home Directory ###"
+    rm -rf ~/.zshrc
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles home
+}
+
+function update_grub_sddm() {
+    # SDDM
+    sudo cp -r ~/archinstall/dotfiles/etc/sddm.conf /etc/
+    sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/catppuccin-mocha/ /usr/share/sddm/themes/
+    # Grub
+    sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/ 
+    sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /usr/share/grub/themes/
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
 }
 
 clear
@@ -395,7 +445,8 @@ echo ""
 echo "Select Action:"
 echo "  1)Install Arch Minimal"
 echo "  2)Install i3"
-echo "  3)Restow Dotfiles"
+echo "  3)Restore Dotfiles"
+echo "  4)Update Grub/SDDM"
 read -p 'Selection: ' n
 case $n in
     1) 
@@ -407,7 +458,10 @@ case $n in
         i3_install
         ;;
     3)
-        restow_dotfiles
+        restore_dotfiles
+        ;;
+    4)
+        update_grub_sddm
         ;;
     *) echo "invalid option";;
 esac
