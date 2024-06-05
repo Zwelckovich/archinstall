@@ -404,6 +404,21 @@ function restore_dotfiles() {
     echo -e "### Hyfetch ###"
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config hyfetch
 
+    echo -e "### LazyGit ###"
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazygit
+
+    echo -e "### OH-MY-ZSH ###"
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+    pushd ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+    git pull
+    popd
+
+    echo -e "### FZF-Git ###"
+    git clone https://github.com/junegunn/fzf-git.sh.git ~/archinstall/fzf-git
+    pushd ~/archinstall/fzf-git
+    git pull
+    popd
+
     echo -e "### Picom ###"
     echo -e "$CNT - Checking for Physical or VM..."
     ISVM=$(hostnamectl | grep Chassis)
