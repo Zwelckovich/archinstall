@@ -400,7 +400,6 @@ function restore_dotfiles() {
     echo -e "### Picom ###"
     echo -e "$CNT - Checking for Physical or VM..."
     ISVM=$(hostnamectl | grep Chassis)
-    echo -e "Using $ISVM"
     if [[ $ISVM == *"vm"* ]]; then
         echo -e "Using VM Picom Conf..."
     else
