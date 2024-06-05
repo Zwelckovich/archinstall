@@ -13,8 +13,8 @@ if [[ $ISVM == *"vm"* ]]; then
     eval "$cstr"
     cstr=$(echo "xrandr --output $monitor --primary --mode $modename --pos 0x0 --rotate normal")
     eval "$cstr"
-    feh --bg-scale ~/archinstall/wallpaper/arch-rainbow-1920x1080.png
+    feh --bg-scale ~/archinstall/wallpaper/catpuccin-minimal.png
 else
-    feh --bg-scale ~/archinstall/wallpaper/arch-rainbow-1920x1080.png
+    feh --bg-scale ~/archinstall/wallpaper/catpuccin-minimal.png
 fi
 
