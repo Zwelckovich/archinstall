@@ -433,7 +433,7 @@ function restore_dotfiles() {
 
         # Secrets
         rm -rf ~/.gitconfig
-        stow -v 1 -t ~/ -d ~/archinstall/secrets/dotfiles/home git-diff
+        stow -v 1 -t ~/ -d ~/archinstall/secrets/dotfiles/config/home git-diff
     else
         echo -e "No git-crypt-key. Skipping secrets"
     fi
