@@ -38,6 +38,7 @@ i3_base_stage=(
     inkscape
     stow
     zsh
+    wezterm
 )
 
 #software for nvidia GPU only
