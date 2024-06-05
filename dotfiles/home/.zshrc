@@ -87,3 +87,7 @@ _fzf_comprun() {
 
 export BAT_THEME="Catppuccin Mocha"
 
+# ---- Eza (better ls) -----
+
+alias ls="eza --icons=always"
+
