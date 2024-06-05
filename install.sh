@@ -7,6 +7,7 @@ i3_base_stage=(
     xorg
     i3
     sddm
+    dmenu
     rofi
     feh
     xfce4-terminal
