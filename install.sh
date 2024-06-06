@@ -47,6 +47,7 @@ i3_base_stage=(
     tlrc
     thefuck
     zoxide
+    reflector
 )
 
 #software for nvidia GPU only

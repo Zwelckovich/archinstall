@@ -105,3 +105,6 @@ alias cd="z"
 
 # ---- LazyGit ----
 alias lg="lazygit"
+
+# ---- Reflector ----
+alias yaref="sudo reflector --country Germany --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
