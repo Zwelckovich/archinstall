@@ -49,6 +49,7 @@ i3_base_stage=(
     zoxide
     reflector
     ripgrep
+    tree
 )
 
 #software for nvidia GPU only
@@ -378,7 +379,7 @@ function install_software() {
 }
 
 function restore_dotfiles() {
-    echo -e "### VS Code ###"
+    echo -e "$CNT ### VS Code ###"
     if code --list-extensions | grep -iE catppuccin  &>> /dev/null; then
         echo -e "VSCode Catppuccin Extensions is already installed."
     else
@@ -388,28 +389,28 @@ function restore_dotfiles() {
     fi
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config code
 
-    echo -e "### I3 ###"
+    echo -e "$CNT ### I3 ###"
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config i3
 
-    echo -e "### Polybar ###"
+    echo -e "#$CNT ## Polybar ###"
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config polybar
 
-    echo -e "### Rofi ###"
+    echo -e "$CNT ### Rofi ###"
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config rofi
 
-    echo -e "### BTOP ###"
+    echo -e "$CNT ### BTOP ###"
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config btop
 
-    echo -e "### Zathura ###"
+    echo -e "$CNT ### Zathura ###"
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config zathura
 
-    echo -e "### Hyfetch ###"
+    echo -e "$CNT ### Hyfetch ###"
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config hyfetch
 
-    echo -e "### LazyGit ###"
+    echo -e "$CNT ### LazyGit ###"
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazygit
 
-    echo -e "### OH-MY-ZSH ###"
+    echo -e "$CNT ### OH-MY-ZSH ###"
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
     pushd ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
     git pull
@@ -427,49 +428,53 @@ function restore_dotfiles() {
     git pull
     popd
 
-    echo -e "### FZF-Git ###"
+    echo -e "$CNT ### FZF-Git ###"
     git clone https://github.com/junegunn/fzf-git.sh.git ~/archinstall/fzf-git
     pushd ~/archinstall/fzf-git
     git pull
     popd
 
-    echo -e "### Picom ###"
+    echo -e "$CNT ### Picom ###"
     echo -e "$CNT - Checking for Physical or VM..."
     ISVM=$(hostnamectl | grep Chassis)
     if [[ $ISVM == *"vm"* ]]; then
-        echo -e "Using VM Picom Conf..."
+        echo -e "$CNT Using VM Picom Conf..."
     else
-        echo -e "Using GLX Picom Conf..."
+        echo -e "$CNT Using GLX Picom Conf..."
         variable='# backend = "glx";'
         variable_new='backend = "glx";'
         sed -i "s/$variable/$variable_new/" ~/archinstall/dotfiles/config/picom/.config/picom/picom.conf
     fi
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config picom
 
-    echo -e "### Home Directory ###"
+    echo -e "$CNT ### Home Directory ###"
     rm -rf ~/.zshrc
     rm -rf ~/.p10k.zsh 
+    rm -rf ~/.tmux.conf
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles home
 
-    echo -e "### Bat ###"
+    echo -e "$CNT ### Bat ###"
     mkdir -p "$(bat --config-dir)/themes"
     wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
     bat cache --build
 
-    echo -e "### Secrets ###"
+    echo -e "$CNT ### Neovim ###"
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles nvim
+
+    echo -e "$CNT ### Secrets ###"
     if ls -la ~/ | grep -iqE git-crypt-key; then
-        echo -e "Using git-crypt-key"
+        echo -e "$CNT Using git-crypt-key"
         # Uncrypt
         pushd  ~/archinstall/
         git-crypt unlock ../git-crypt-key
         popd
 
         # Secrets
-        echo -e "### Git-Diff ###"
+        echo -e "$CNT ### Git-Diff ###"
         rm -rf ~/.gitconfig
         stow -v 1 -t ~/ -d ~/archinstall/secrets/dotfiles/config/home git-diff
     else
-        echo -e "No git-crypt-key. Skipping secrets"
+        echo -e "$CNT No git-crypt-key. Skipping secrets"
     fi
 }
 
