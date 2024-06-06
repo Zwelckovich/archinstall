@@ -48,6 +48,7 @@ i3_base_stage=(
     thefuck
     zoxide
     reflector
+    ripgrep
 )
 
 #software for nvidia GPU only
