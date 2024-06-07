@@ -54,7 +54,7 @@ i3_base_stage=(
 
 #software for nvidia GPU only
 nvidia_stage=(
-    linux-headers 
+    linux-zen-headers 
     nvidia-dkms 
     nvidia-settings 
     libva 
@@ -172,7 +172,7 @@ function btrfs_format ()
     read -p 'Selection: ' n
     case $n in
         1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs;;
-        2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode btrfs-progs;;
+        2) pacstrap /mnt base linux-zen linux-firmware nano amd-ucode btrfs-progs;;
         3) pacstrap /mnt base linux-zen linux-firmware nano btrfs-progs;;
         *) echo "invalid option";;
     esac
