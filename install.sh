@@ -273,6 +273,7 @@ function base_config ()
     arch-chroot /mnt pacman-key --populate archlinux
     arch-chroot /mnt pacman -Syy
     arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd 
+    arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms
     variable="MODULES=()"
     variable_changed="MODULES=(btrfs)"
     arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
