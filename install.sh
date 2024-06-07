@@ -460,7 +460,7 @@ function restore_dotfiles() {
     bat cache --build
 
     echo -e "$CNT ### Neovim ###"
-    stow -v 1 -t ~/ -d ~/archinstall/config/dotfiles nvim
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config nvim
 
     echo -e "$CNT ### Secrets ###"
     if ls -la ~/ | grep -iqE git-crypt-key; then
