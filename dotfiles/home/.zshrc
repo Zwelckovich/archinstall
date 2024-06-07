@@ -87,6 +87,7 @@ _fzf_comprun() {
 # ----- Bat (better cat) -----
 
 export BAT_THEME="Catppuccin Mocha"
+alias cat="bat"
 
 # ---- Eza (better ls) -----
 
@@ -95,16 +96,24 @@ alias ls="eza --icons=always"
 # ---- TheFuck -----
 
 # thefuck alias
+
 eval $(thefuck --alias)
 eval $(thefuck --alias fk)
 
 # ---- Zoxide (better cd) ----
-eval "$(zoxide init zsh)"
 
+eval "$(zoxide init zsh)"
 alias cd="z"
 
 # ---- LazyGit ----
+
 alias lg="lazygit"
 
 # ---- Reflector ----
+
 alias yaref="sudo reflector --country Germany --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
+
+
+# ---- TLDR ----
+
+alias help="tldr"
