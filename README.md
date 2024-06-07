@@ -23,6 +23,18 @@ cd archinstall
 sh install.sh
 ```
 
+### Install on MacBook
+Before installation:
+```sh
+rmmod b43 bcma ssb wl
+modprobe wl
+```
+After installation:
+```sh
+nmcli device wifi list
+nmcli device wifi connect SSID_or_BSSID password password
+```
+
 ## Keybindings
 
 ### fzf
