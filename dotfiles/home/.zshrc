@@ -117,3 +117,7 @@ alias yaref="sudo reflector --country Germany --age 12 --protocol https --sort r
 # ---- TLDR ----
 
 alias help="tldr"
+
+# ---- CD Alias ----
+
+alias ..="cd .."
