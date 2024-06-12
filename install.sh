@@ -50,6 +50,7 @@ i3_base_stage=(
     reflector
     ripgrep
     tree
+    unzip
 )
 
 #software for nvidia GPU only
