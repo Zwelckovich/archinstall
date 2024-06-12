@@ -380,6 +380,22 @@ function install_software() {
 }
 
 function restore_dotfiles() {
+     echo -e "$CNT ### Secrets ###"
+    if ls -la ~/ | grep -iqE git-crypt-key; then
+        echo -e "$CNT Using git-crypt-key"
+        # Uncrypt
+        pushd  ~/archinstall/
+        git-crypt unlock ../git-crypt-key
+        popd
+
+        # Secrets
+        echo -e "$CNT ### Git-Diff ###"
+        rm -rf ~/.gitconfig
+        stow -v 1 -t ~/ -d ~/archinstall/secrets/dotfiles/config/home git-diff
+    else
+        echo -e "$CNT No git-crypt-key. Skipping secrets"
+    fi
+    
     echo -e "$CNT ### VS Code ###"
     if code --list-extensions | grep -iE catppuccin  &>> /dev/null; then
         echo -e "VSCode Catppuccin Extensions is already installed."
@@ -462,21 +478,7 @@ function restore_dotfiles() {
     echo -e "$CNT ### Neovim ###"
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config nvim
 
-    echo -e "$CNT ### Secrets ###"
-    if ls -la ~/ | grep -iqE git-crypt-key; then
-        echo -e "$CNT Using git-crypt-key"
-        # Uncrypt
-        pushd  ~/archinstall/
-        git-crypt unlock ../git-crypt-key
-        popd
-
-        # Secrets
-        echo -e "$CNT ### Git-Diff ###"
-        rm -rf ~/.gitconfig
-        stow -v 1 -t ~/ -d ~/archinstall/secrets/dotfiles/config/home git-diff
-    else
-        echo -e "$CNT No git-crypt-key. Skipping secrets"
-    fi
+   
 }
 
 function update_grub_sddm() {
