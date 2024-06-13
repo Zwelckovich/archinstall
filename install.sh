@@ -52,6 +52,7 @@ i3_base_stage=(
     ripgrep
     tree
     unzip
+    tmux
 )
 
 #software for nvidia GPU only
@@ -358,7 +359,9 @@ function i3_install ()
     # sh ~/archinstall/cpcfg.sh
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-    chsh /usr/bin/zsh
+    # install pyenv
+    curl https://pyenv.run | bash
+    git clone https://github.com/pyenv/pyenv-update.git $(pyenv root)/plugins/pyenv-update
 }
 
 
@@ -391,9 +394,9 @@ function restore_dotfiles() {
         popd
 
         # Secrets
-        echo -e "$CNT ### Git-Diff ###"
+        echo -e "$CNT ### Git Config ###"
         rm -rf ~/.gitconfig
-        stow -v 1 -t ~/ -d ~/archinstall/secrets/dotfiles/config/home git-diff
+        stow -v 1 -t ~/ -d ~/archinstall/secrets/dotfiles/home gitconfig
     else
         echo -e "$CNT No git-crypt-key. Skipping secrets"
     fi
@@ -466,11 +469,18 @@ function restore_dotfiles() {
     fi
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config picom
 
-    echo -e "$CNT ### Home Directory ###"
+    echo -e "$CNT ### ZSH ###"
     rm -rf ~/.zshrc
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home zshrc
+    echo -e "$CNT ### P10K ###"
     rm -rf ~/.p10k.zsh 
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home p10k
+    echo -e "$CNT ### TMUX ###"
     rm -rf ~/.tmux.conf
-    stow -v 1 -t ~/ -d ~/archinstall/dotfiles home
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home tmux
+    echo -e "$CNT ### Wezterm ###"
+    rm -rf ~/.wezterm.lua
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home wezterm
 
     echo -e "$CNT ### Bat ###"
     mkdir -p "$(bat --config-dir)/themes"
