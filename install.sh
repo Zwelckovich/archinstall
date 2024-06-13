@@ -35,7 +35,8 @@ i3_base_stage=(
     zathura-pdf-mupdf
     btop
     lazygit
-    python-conda
+    python
+    python-pip
     inkscape
     stow
     zsh
