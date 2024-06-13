@@ -361,7 +361,7 @@ function i3_install ()
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
     # install pyenv
     curl https://pyenv.run | bash
-    git clone https://github.com/pyenv/pyenv-update.git $(pyenv root)/plugins/pyenv-update
+    git clone https://github.com/pyenv/pyenv-update.git ~/.pyenv/plugins/pyenv-update
 }
 
 
