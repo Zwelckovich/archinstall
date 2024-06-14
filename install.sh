@@ -364,6 +364,8 @@ function i3_install ()
     # install pyenv
     curl https://pyenv.run | bash
     git clone https://github.com/pyenv/pyenv-update.git ~/.pyenv/plugins/pyenv-update
+    # install tmux plugin manager
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
 
