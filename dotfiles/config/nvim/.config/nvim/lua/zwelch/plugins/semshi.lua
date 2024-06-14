@@ -16,17 +16,17 @@ return {
 			callback = function()
 				-- Only add style, inherit or link to the LSP's colors
 				vim.cmd([[
-            highlight! link semshiGlobal  @none
-            highlight! link semshiImported @none
-            highlight! link semshiParameter @lsp.type.parameter
-            highlight! link semshiBuiltin @function.builtin
-            highlight! link semshiAttribute @field
-            highlight! link semshiSelf @lsp.type.selfKeyword
-            highlight! link semshiUnresolved @none
-            highlight! link semshiFree @none
-            highlight! link semshiAttribute @none
-            highlight! link semshiParameterUnused @none
-            ]])
+		           highlight! semshiGlobal  ctermfg=209 guifg=#cdd6f4	
+		           highlight! link semshiImported @none
+		           highlight! link semshiParameter @lsp.type.parameter
+		           highlight! link semshiBuiltin @function.builtin
+		           highlight! link semshiAttribute @field
+		           highlight! link semshiSelf @lsp.type.selfKeyword
+		           highlight! link semshiUnresolved @none
+		           highlight! link semshiFree @none
+		           highlight! link semshiAttribute @none
+		           highlight! link semshiParameterUnused @none
+		           ]])
 			end,
 		})
 	end,
