@@ -14,7 +14,7 @@ export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 source ~/archinstall/catppuccin-zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting archlinux)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting) 
 source $ZSH/oh-my-zsh.sh
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -91,7 +91,7 @@ alias cat="bat"
 
 # ---- Eza (better ls) -----
 
-alias ls="eza --icons=always"
+alias ls="eza -al --icons=always --color=always --group-directories-first"
 
 # ---- TheFuck -----
 
@@ -109,8 +109,17 @@ alias cd="z"
 
 alias lg="lazygit"
 
-# ---- Reflector ----
+# ---- YAY ----
 
+alias yaclean="yay -Sc --noconfirm"
+alias yaclr="yay -Scc --noconfirm"
+alias yain="yay -S --noconfirm"
+alias yamir="yay -Syy --noconfirm"
+alias yarem="yay -Rns --noconfirm"
+alias yasu="yay -Syu --noconfirm"
+alias yareps="yay -Ss --noconfirm"
+alias yalst="yay -Qe --noconfirm"
+alias yabig="expac -H M '%m\t%n' | sort -h | nl"
 alias yaref="sudo reflector --country Germany --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
 
 
@@ -120,7 +129,18 @@ alias help="tldr"
 
 # ---- CD Alias ----
 
-alias ..="cd .."
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+
+# --- PYENV ----
+
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+
+# --- Python Aliases ---
+alias py="python"
