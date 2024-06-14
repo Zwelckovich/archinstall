@@ -44,6 +44,8 @@ return {
 				"c",
 				"python",
 				"matlab",
+				"ninja",
+				"rst",
 			},
 			incremental_selection = {
 				enable = true,
@@ -57,4 +59,3 @@ return {
 		})
 	end,
 }
-

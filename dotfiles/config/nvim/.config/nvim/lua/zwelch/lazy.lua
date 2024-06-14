@@ -22,3 +22,5 @@ require("lazy").setup({ { import = "zwelch.plugins" }, { import = "zwelch.plugin
 })
 
 vim.keymap.set("n", "<leader>ll", "<cmd>Lazy<cr>", { desc = "Open lazy menu" })
+vim.g.lazyvim_python_lsp = "pyright"
+vim.g.lazyvim_python_ruff = "ruff_lsp"
