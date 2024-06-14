@@ -53,6 +53,8 @@ i3_base_stage=(
     tree
     unzip
     tmux
+    ni-visa
+    expac
 )
 
 #software for nvidia GPU only
