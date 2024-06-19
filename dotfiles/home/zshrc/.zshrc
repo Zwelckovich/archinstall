@@ -120,7 +120,7 @@ alias yasu="yay -Syu --noconfirm"
 alias yareps="yay -Ss --noconfirm"
 alias yalst="yay -Qe --noconfirm"
 alias yabig="expac -H M '%m\t%n' | sort -h | nl"
-alias yaref="sudo reflector --country Germany --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
+alias yaref="sudo reflector --verbose -l 200 -n 20 -p http --sort rate --save /etc/pacman.d/mirrorlist"
 
 
 # ---- TLDR ----
