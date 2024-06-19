@@ -461,16 +461,16 @@ function restore_dotfiles() {
     popd
 
     echo -e "$CNT ### Picom ###"
-    echo -e "$CNT - Checking for Physical or VM..."
-    ISVM=$(hostnamectl | grep Chassis)
-    if [[ $ISVM == *"vm"* ]]; then
-        echo -e "$CNT Using VM Picom Conf..."
-    else
-        echo -e "$CNT Using GLX Picom Conf..."
-        variable='# backend = "glx";'
-        variable_new='backend = "glx";'
-        sed -i "s/$variable/$variable_new/" ~/archinstall/dotfiles/config/picom/.config/picom/picom.conf
-    fi
+    # echo -e "$CNT - Checking for Physical or VM..."
+    # ISVM=$(hostnamectl | grep Chassis)
+    # if [[ $ISVM == *"vm"* ]]; then
+    #     echo -e "$CNT Using VM Picom Conf..."
+    # else
+    #     echo -e "$CNT Using GLX Picom Conf..."
+    #     variable='# backend = "glx";'
+    #     variable_new='backend = "glx";'
+    #     sed -i "s/$variable/$variable_new/" ~/archinstall/dotfiles/config/picom/.config/picom/picom.conf
+    # fi
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config picom
 
     echo -e "$CNT ### ZSH ###"
