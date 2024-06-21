@@ -56,6 +56,7 @@ i3_base_stage=(
     ni-visa
     expac
     scc
+    duf
 )
 
 #software for nvidia GPU only
