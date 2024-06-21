@@ -55,6 +55,7 @@ i3_base_stage=(
     tmux
     ni-visa
     expac
+    scc
 )
 
 #software for nvidia GPU only
