@@ -50,7 +50,7 @@ i3_base_stage=(
     zoxide
     reflector
     ripgrep
-    tree
+    tre
     unzip
     tmux
     ni-visa
