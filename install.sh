@@ -4,39 +4,44 @@
 
 ## Variables
 i3_base_stage=(
+    # Display / Window Manager / Core
     xorg
     i3
+    i3lock-color
     sddm
     dmenu
     rofi
     feh
     xfce4-terminal
     picom
-    thorium-browser-bin
     pacman-contrib 
     alsa-utils
     pipewire 
     pipewire-pulse
     pavucontrol
     ttf-meslo-nerd-font-powerlevel10k
-    code
     numlockx
+    polybar
+    npm
+    # Web Tools 
+    thorium-browser-bin
+    # Programming Tools
+    code
     qt5-graphicaleffects
     qt5-svg
     qt5-quickcontrols2
-    polybar
     eza
     hyfetch
-    npm
     bfg
-    i3lock-color
     git-crypt
-    zathura
-    zathura-pdf-mupdf
-    btop
-    lazygit
     python
     python-pip
+    # Office Tools
+    zathura
+    zathura-pdf-mupdf
+    # CLI Tools
+    btop
+    lazygit
     inkscape
     stow
     zsh
