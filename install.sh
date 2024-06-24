@@ -62,6 +62,7 @@ i3_base_stage=(
     expac
     scc
     duf
+    rsync
 )
 
 #software for nvidia GPU only
