@@ -63,6 +63,7 @@ i3_base_stage=(
     scc
     duf
     rsync
+    dua-cli
 )
 
 #software for nvidia GPU only
