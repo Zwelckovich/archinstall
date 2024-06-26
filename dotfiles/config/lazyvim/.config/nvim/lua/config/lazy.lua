@@ -14,6 +14,7 @@ require("lazy").setup({
 		-- import/override with your plugins
 		{ import = "lazyvim.plugins.extras.dap.core" },
 		{ import = "lazyvim.plugins.extras.lang.python" },
+		{ import = "lazyvim.plugins.extras.lang.git" },
 		{ import = "lazyvim.plugins.extras.util.dot" },
 		{ import = "lazyvim.plugins.extras.editor.dial" },
 		{ import = "lazyvim.plugins.extras.editor.inc-rename" },
