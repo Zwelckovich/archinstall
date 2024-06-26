@@ -143,4 +143,9 @@ export PYENV_ROOT="$HOME/.pyenv"
 eval "$(pyenv init -)"
 
 # --- Python Aliases ---
+
 alias py="python"
+
+# --- Python Aliases ---
+
+alias tree="tre"
