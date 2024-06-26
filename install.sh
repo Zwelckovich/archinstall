@@ -491,7 +491,29 @@ function restore_dotfiles() {
 	bat cache --build
 
 	echo -e "$CNT ### Neovim ###"
-	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config nvim
+	rm -rf ~/.config/nvim
+	rm -rf ~/.local/share/nvim
+	rm -rf ~/.local/state/nvim
+	rm -rf ~/.cache/nvim
+	echo "Select Neovim Version"
+	echo " 1) Josean Neovim Custom"
+	echo " 2) Lazyvim"
+	read -p "Selection: " n
+	case "$n" in
+	1)
+		stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config nvim
+		;;
+	2)
+		git clone https://github.com/LazyVim/starter ~/.config/nvim
+		rm -rf ~/.config/nvim/.git
+		rm -rf ~/.config/nvim/.gitignore
+		rm -rf ~/.config/nvim/lua/plugins
+		stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazyvim
+		;;
+	*)
+		echo default
+		;;
+	esac
 
 }
 
