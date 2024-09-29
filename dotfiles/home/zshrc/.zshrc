@@ -121,7 +121,8 @@ alias yareps="yay -Ss --noconfirm"
 alias yalst="yay -Qe --noconfirm"
 alias yabig="expac -H M '%m\t%n' | sort -h | nl"
 alias yaref="sudo reflector --verbose -l 200 -n 20 -p http --sort rate --save /etc/pacman.d/mirrorlist"
-
+alias yakey="sudo pacman -S archlinux-keyring"
+alias yareinstall="sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkig -si"
 
 # ---- TLDR ----
 
