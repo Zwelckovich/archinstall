@@ -36,6 +36,7 @@ i3_base_stage=(
 	git-crypt
 	python
 	python-pip
+	pyenv
 	# Office Tools
 	zathura
 	zathura-pdf-mupdf
@@ -374,7 +375,7 @@ function i3_install() {
 show_progress() {
 	while ps | grep $1 &>/dev/null; do
 		echo -n "."
-		sleep 2
+		sleep 0.5
 	done
 	echo -en "Done!\n"
 	sleep 2
