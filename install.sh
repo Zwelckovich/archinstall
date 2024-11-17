@@ -5,16 +5,30 @@
 ## Variables
 hypr_base_stage=(
 	# Hyprland
+ 	kitty
+  	pamixer 
+        pavucontrol
+	pipewire-alsa
+        playerctl
+ 	rofi-wayland
+        waybar
+	sddm
+)
+
+piperwire_stage=(
+	# Pipewire
+ 	pipewire
+	wireplumber
+	pipewire-audio
+	pipewire-alsa
+	pipewire-pulse
+	sof-firmware
 )
 
 tools_stage=(
 	# Display /  Audio / Core
 	feh
 	pacman-contrib
-	alsa-utils
-	pipewire
-	pipewire-pulse
-	pavucontrol
 	ttf-meslo-nerd-font-powerlevel10k
 	numlockx
 	npm
@@ -53,7 +67,6 @@ tools_stage=(
 	ripgrep
 	tre-command
 	unzip
-	tmux
 	ni-visa
 	expac
 	scc
@@ -363,19 +376,21 @@ function i3_install() {
 	for SOFTWR in ${hypr_base_stage[@]}; do
 		install_software $SOFTWR
 	done
+	for SOFTWR in ${piperwire_stage[@]}; do
+		install_software $SOFTWR
+	done
 	echo "$CNT - Tools Stage Install"
  	for SOFTWR in ${tools_stage[@]}; do
 		install_software $SOFTWR
 	done
 	sudo systemctl enable sddm
-	# sh ~/archinstall/cpcfg.sh
+ 
+	# OH MY ZSH / Powerlever10k
 	sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 	# install pyenv
 	curl https://pyenv.run | bash
 	git clone https://github.com/pyenv/pyenv-update.git ~/.pyenv/plugins/pyenv-update
-	# install tmux plugin manager
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
 show_progress() {
@@ -499,9 +514,6 @@ function restore_dotfiles() {
 	echo -e "$CNT ### P10K ###"
 	rm -rf ~/.p10k.zsh
 	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home p10k
-	echo -e "$CNT ### TMUX ###"
-	rm -rf ~/.tmux.conf
-	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home tmux
 	echo -e "$CNT ### Wezterm ###"
 	rm -rf ~/.wezterm.lua
 	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home wezterm
