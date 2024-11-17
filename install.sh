@@ -55,7 +55,6 @@ tools_stage=(
 	inkscape
 	stow
 	zsh
-	wezterm
 	fzf
 	fd
 	bat
@@ -450,15 +449,6 @@ function restore_dotfiles() {
 	fi
 	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config code
 
-	echo -e "$CNT ### I3 ###"
-	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config i3
-
-	echo -e "#$CNT ## Polybar ###"
-	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config polybar
-
-	echo -e "$CNT ### Rofi ###"
-	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config rofi
-
 	echo -e "$CNT ### BTOP ###"
 	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config btop
 
@@ -514,9 +504,6 @@ function restore_dotfiles() {
 	echo -e "$CNT ### P10K ###"
 	rm -rf ~/.p10k.zsh
 	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home p10k
-	echo -e "$CNT ### Wezterm ###"
-	rm -rf ~/.wezterm.lua
-	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home wezterm
 
 	echo -e "$CNT ### Bat ###"
 	mkdir -p "$(bat --config-dir)/themes"
