@@ -71,6 +71,8 @@ nvidia_stage=(
 	libva-nvidia-driver-git
 )
 
+uninstall_stage=(
+)
 # set some colors
 CNT="[\e[1;36mNOTE\e[0m]"
 COK="[\e[1;32mOK\e[0m]"
@@ -388,6 +390,18 @@ function install_software() {
 	show_progress $!
 	# test to make sure package installed
 	echo -e "\e[1A\e[K$COK - $1 was installed."
+}
+
+function uninstall_software() {
+	local pkg="$1"
+ 	if yay -Qi "$pkg" &>> /dev/null ; then
+		# no package found so installing
+		echo -en "$CNT - Now uninstalling $pkg ."
+		yay -R --noconfirm $pkg &>>$INSTLOG &
+		show_progress $!
+	else
+ 		echo -en "$CNT $pkg is not installed, skipping uninstallation."
+   	fi
 }
 
 function restore_dotfiles() {
