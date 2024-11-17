@@ -72,6 +72,10 @@ nvidia_stage=(
 )
 
 uninstall_stage=(
+	dunst
+	mako
+	rofi
+	allust-git
 )
 # set some colors
 CNT="[\e[1;36mNOTE\e[0m]"
@@ -278,7 +282,7 @@ function base_config() {
 	arch-chroot /mnt pacman-key --init
 	arch-chroot /mnt pacman-key --populate archlinux
 	arch-chroot /mnt pacman -Syy
-	arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp
+	arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring
 	arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms
 	variable="MODULES=()"
 	variable_changed="MODULES=(btrfs)"
