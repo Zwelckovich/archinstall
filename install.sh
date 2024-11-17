@@ -3,17 +3,13 @@
 #
 
 ## Variables
-i3_base_stage=(
-	# Display / Window Manager / Core
-	xorg
-	i3
-	i3lock-color
-	sddm
-	dmenu
-	rofi
+hypr_base_stage=(
+	# Hyprland
+)
+
+tools_stage=(
+	# Display /  Audio / Core
 	feh
-	xfce4-terminal
-	picom
 	pacman-contrib
 	alsa-utils
 	pipewire
@@ -21,7 +17,6 @@ i3_base_stage=(
 	pavucontrol
 	ttf-meslo-nerd-font-powerlevel10k
 	numlockx
-	polybar
 	npm
 	# Web Tools
 	thorium-browser-bin
