@@ -13,6 +13,7 @@ hypr_base_stage=(
  	rofi-wayland
         waybar
 	sddm
+ 	hyprland
 )
 
 piperwire_stage=(
