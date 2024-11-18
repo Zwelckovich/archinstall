@@ -353,6 +353,9 @@ function i3_install() {
 		rm -rf yay
 	fi
 	yay --noconfirm -Sy
+ 	for SOFTWR in ${uninstall_stage[@]}; do
+		uninstall_software $SOFTWR
+	done
 	# find the Nvidia GPU
 	if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
 		ISNVIDIA=true
