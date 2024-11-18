@@ -314,7 +314,7 @@ function base_config() {
 	arch-chroot /mnt sed -i "/^# $variable/s/#\s*//" /etc/sudoers
 	arch-chroot /mnt systemctl enable NetworkManager
 	arch-chroot /mnt systemctl enable ntpd.service
-	arch-chroot /mnt ntpd --gq
+	# arch-chroot /mnt ntpd --gq
 	cp -r ~/archinstall /mnt/home/$userstr
 	chmod 777 /mnt/home/$userstr/archinstall
 	umount -l /mnt
