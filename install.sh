@@ -13,7 +13,13 @@ hypr_base_stage=(
  	rofi-wayland
         waybar
 	sddm
- 	hyprland
+ 	hyprcursor
+	hyprutils
+	aquamarine
+	hypridle
+	hyprlock
+	hyprland
+	pyprland 
 )
 
 piperwire_stage=(
@@ -80,6 +86,7 @@ nvidia_stage=(
 	linux-zen-headers
 	nvidia-dkms
 	nvidia-settings
+	nvidia-utils
 	libva
 	libva-nvidia-driver-git
 )
@@ -90,6 +97,14 @@ uninstall_stage=(
 	rofi
 	allust-git
 )
+
+uninstall_nvidia_stage=(
+	hyprland-git 
+ 	hyprland-nvidia 
+  	hyprland-nvidia-git 
+   	hyprland-nvidia-hidpi-git
+)
+
 # set some colors
 CNT="[\e[1;36mNOTE\e[0m]"
 COK="[\e[1;32mOK\e[0m]"
@@ -353,17 +368,30 @@ function i3_install() {
 		popd
 		rm -rf yay
 	fi
-	yay --noconfirm -Sy
+ 
+	yay --noconfirm -Syu
+ 
  	for SOFTWR in ${uninstall_stage[@]}; do
 		uninstall_software $SOFTWR
 	done
-	# find the Nvidia GPU
+
+ 	echo -e "$CNT - Piperwire Stage Install"
+	for SOFTWR in ${piperwire_stage[@]}; do
+		install_software $SOFTWR
+	done
+ 
+ 	echo -e "$CNT - Hyprland Stage Install"
+	for SOFTWR in ${hypr_base_stage[@]}; do
+		install_software $SOFTWR
+	done
+ 
+ 	# find the Nvidia GPU
 	if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
 		ISNVIDIA=true
 	else
 		ISNVIDIA=false
 	fi
-	# Setup Nvidia if it was found
+ 	# Setup Nvidia if it was found
 	if [[ "$ISNVIDIA" == true ]]; then
 		echo -e "$CNT - Nvidia GPU support setup stage, this may take a while..."
 		for SOFTWR in ${nvidia_stage[@]}; do
@@ -375,14 +403,7 @@ function i3_install() {
 		sudo mkinitcpio --config /etc/mkinitcpio.conf --generate /boot/initramfs-custom.img
 		echo -e "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf &>>$INSTLOG
 	fi
-	echo -e "$CNT - Hyprland Stage Install"
-	for SOFTWR in ${hypr_base_stage[@]}; do
-		install_software $SOFTWR
-	done
- 	echo -e "$CNT - Piperwire Stage Install"
-	for SOFTWR in ${piperwire_stage[@]}; do
-		install_software $SOFTWR
-	done
+ 
 	echo -e "$CNT - Tools Stage Install"
  	for SOFTWR in ${tools_stage[@]}; do
 		install_software $SOFTWR
