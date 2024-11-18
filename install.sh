@@ -422,7 +422,7 @@ function uninstall_software() {
 		yay -R --noconfirm $pkg &>>$INSTLOG &
 		show_progress $!
 	else
- 		echo -en "$CNT $pkg is not installed, skipping uninstallation."
+ 		echo -en "$CNT $pkg is not installed, skipping uninstallation.\n"
    	fi
 }
 
