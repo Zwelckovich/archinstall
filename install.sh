@@ -371,14 +371,15 @@ function i3_install() {
 		sudo mkinitcpio --config /etc/mkinitcpio.conf --generate /boot/initramfs-custom.img
 		echo -e "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf &>>$INSTLOG
 	fi
-	echo "$CNT - Hyprland Stage Install"
+	echo -e "$CNT - Hyprland Stage Install"
 	for SOFTWR in ${hypr_base_stage[@]}; do
 		install_software $SOFTWR
 	done
+ 	echo -e "$CNT - Piperwire Stage Install"
 	for SOFTWR in ${piperwire_stage[@]}; do
 		install_software $SOFTWR
 	done
-	echo "$CNT - Tools Stage Install"
+	echo -e "$CNT - Tools Stage Install"
  	for SOFTWR in ${tools_stage[@]}; do
 		install_software $SOFTWR
 	done
