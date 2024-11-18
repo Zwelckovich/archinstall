@@ -403,7 +403,7 @@ show_progress() {
 		sleep 0.5
 	done
 	echo -en "Done!\n"
-	sleep 0.5
+	sleep 0.2
 }
 
 function install_software() {
