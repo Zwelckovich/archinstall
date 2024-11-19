@@ -29,6 +29,12 @@ cd archinstall
 sh install.sh
 ```
 
+Change Monitor Settings
+
+```sh
+hyprctl monitots all
+```
+
 ### Install on MacBook
 
 Before installation:
