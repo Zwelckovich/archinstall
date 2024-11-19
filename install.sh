@@ -261,7 +261,7 @@ function base_config() {
   echo " "
   read -p 'Enter disk name for installation: ' disk
   variable="GRUB_CMDLINE_LINUX="""
-  variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=${disk}:MainPart:allow-discards""
+  variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=/dev/${disk}:MainPart:allow-discards""
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/default/grub
   arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
   arch-chroot /mnt useradd -mG wheel $userstr
