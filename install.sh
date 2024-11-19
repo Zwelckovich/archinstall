@@ -554,6 +554,12 @@ function update_grub_sddm() {
   # Grub
   sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/
   sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /usr/share/grub/themes/
+  fdisk -l
+  echo " "
+  read -p 'Enter disk name for installation: ' disk
+  variable="GRUB_CMDLINE_LINUX="""
+  variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=/dev/${disk}:MainPart:allow-discards""
+  arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/default/grub
   sudo grub-mkconfig -o /boot/grub/grub.cfg
 }
 
