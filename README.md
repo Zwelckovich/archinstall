@@ -32,7 +32,7 @@ sh install.sh
 Change Monitor Settings
 
 ```sh
-hyprctl monitots all
+hyprctl monitors all
 ```
 
 ### Install on MacBook
