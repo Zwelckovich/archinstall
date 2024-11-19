@@ -146,22 +146,6 @@ function pacman_init() {
   sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
 }
 
-function diskparts() {
-  clear
-  echo "------------------------------------------------------------------------------------------------------------------"
-  echo "                                               File System                                                        "
-  echo "------------------------------------------------------------------------------------------------------------------"
-  echo "Select Filesystem:"
-  echo "  1)btrfs"
-  echo "  2)ext4"
-
-  read n
-  case $n in
-  1) btrfs_format ;;
-  2) ext4_format ;;
-  *) echo "invalid option" ;;
-  esac
-}
 
 function btrfs_format() {
   clear
@@ -174,30 +158,21 @@ function btrfs_format() {
   umount /dev/${disk}?*
   umount -l /mnt
   sgdisk --zap-all /dev/$disk
-  sgdisk -n 1:0:+300M -n 2:0:+8G -n 3:0:0 -t 1:ef00 -t 2:8200 /dev/$disk -p
+  sgdisk -n 1:0:+300M -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$disk -p
   dn=${disk}1
   mkfs.fat -F32 /dev/$dn
   dn=${disk}2
-  swapoff /dev/$dn
-  mkswap /dev/$dn
-  swapon /dev/$dn
-  dn=${disk}3
-  mkfs.btrfs -f /dev/$dn
-  mount /dev/$dn /mnt
+  echo "-----------------------------------------ENCRYPTION------------------------------------------------"
+  cryptsetup --cipher aes-xts-plain64 --hash sha512 --use-random --verify-passphrase luksFormat /dev/$dn
+  cryptsetup luksOpen /dev/$dn root
+  mkfs.btrfs -f /dev/mapper/root
+  mount /dev/mapper/root /mnt
   btrfs su cr /mnt/@
   btrfs su cr /mnt/@home
-  btrfs su cr /mnt/@var
-  btrfs su cr /mnt/@opt
-  btrfs su cr /mnt/@tmp
-  btrfs su cr /mnt/@.snapshots
   umount /mnt
-  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ /dev/$dn /mnt
-  mkdir /mnt/{boot,home,var,opt,tmp,.snapshots}
-  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home /dev/$dn /mnt/home
-  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@var /dev/$dn /mnt/var
-  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@opt /dev/$dn /mnt/opt
-  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@tmp /dev/$dn /mnt/tmp
-  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@.snapshots /dev/$dn /mnt/.snapshots
+  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ /dev/mapper/root /mnt
+  mkdir /mnt/{boot,home}
+  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home /dev/mapper/root /mnt/home
   dn=${disk}1
   mount /dev/$dn /mnt/boot
 
@@ -219,48 +194,6 @@ function btrfs_format() {
   genfstab -U /mnt >>/mnt/etc/fstab
 }
 
-function ext4_format() {
-  clear
-  echo "------------------------------------------------------------------------------------------------------------------"
-  echo "                                               Disk Partitions                                                    "
-  echo "------------------------------------------------------------------------------------------------------------------"
-  fdisk -l
-  echo " "
-  read -p 'Enter disk name for installation: ' disk
-  umount /dev/${disk}?*
-  umount -l /mnt
-  sgdisk --zap-all /dev/$disk
-  sgdisk -n 1:0:+300M -n 2:0:+8G -n 3:0:0 -t 1:ef00 -t 2:8200 /dev/$disk -p
-  dn=${disk}1
-  mkfs.fat -F32 /dev/$dn
-  dn=${disk}2
-  swapoff /dev/$dn
-  mkswap /dev/$dn
-  swapon /dev/$dn
-  dn=${disk}3
-  mkfs.ext4 /dev/$dn
-  mount /dev/$dn /mnt
-  mkdir /mnt/boot
-  dn=${disk}1
-  mount /dev/$dn /mnt/boot
-
-  echo "------------------------------------------------------------------------------------------------------------------"
-  echo "                                                Pacstrap Arch                                                     "
-  echo "------------------------------------------------------------------------------------------------------------------"
-  echo "Select CPU:"
-  echo "  1)Intel"
-  echo "  2)AMD"
-  echo "  3)VMs"
-
-  read -p 'Selection: ' n
-  case $n in
-  1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode ;;
-  2) pacstrap /mnt base linux -zen linux-firmware nano amd-ucode ;;
-  3) pacstrap /mnt base linux-zen linux-firmware nano ;;
-  *) echo "invalid option" ;;
-  esac
-  genfstab -U /mnt >>/mnt/etc/fstab
-}
 
 function base_config() {
   clear
@@ -315,10 +248,21 @@ function base_config() {
   variable="MODULES=()"
   variable_changed="MODULES=(btrfs)"
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
+  variable="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)"
+  variable_changed="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)"
+  arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
   arch-chroot /mnt mkinitcpio -p linux-zen
   arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id = Arch
   variable="GRUB_DISABLE_OS_PROBER=false"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
+  variable="GRUB_ENABLE_CRYPTODISK=y"
+  arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
+  fdisk -l
+  echo " "
+  read -p 'Enter disk name for installation: ' disk
+  variable="GRUB_CMDLINE_LINUX="""
+  variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=/dev/${disk}:MainPart:allow-discards""
+  arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/default/grub
   arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
   arch-chroot /mnt useradd -mG wheel $userstr
   echo "------------------------------------------------------------------------------------------------------------------"
@@ -628,14 +572,14 @@ echo -ne "
 echo ""
 echo "Select Action:"
 echo "  1)Install Arch Minimal"
-echo "  2)Install i3"
+echo "  2)Install Hyprland"
 echo "  3)Restore Dotfiles"
 echo "  4)Update Grub/SDDM"
 read -p 'Selection: ' n
 case $n in
 1)
   pacman_init
-  diskparts
+  btrfs_format
   base_config
   ;;
 2)
