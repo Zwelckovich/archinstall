@@ -572,7 +572,7 @@ echo -ne "
 echo ""
 echo "Select Action:"
 echo "  1)Install Arch Minimal"
-echo "  2)Install i3"
+echo "  2)Install Hyprland"
 echo "  3)Restore Dotfiles"
 echo "  4)Update Grub/SDDM"
 read -p 'Selection: ' n
