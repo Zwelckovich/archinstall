@@ -246,15 +246,15 @@ function base_config() {
   cmdstr="echo \"127.0.1.1	$hoststr.localdomain	$hoststr\" >> /etc/hosts"
   arch-chroot /mnt bash -c "$cmdstr"
 
-  arch-chroot /mnt btrfs su create /swap
-  arch-chroot /mnt chattr +C /swap
-  arch-chroot /mnt touch /swap/swapfile
-  arch-chroot /mnt chattr +C /swap/swapfile  
-  arch-chroot /mnt dd if=/dev/zero of=/swap/swapfile bs=1024K count=4096  
-  arch-chroot /mnt chmod 600 /swap/swapfile  
-  arch-chroot /mnt mkswap /swap/swapfile  
-  arch-chroot /mnt swapon /swap/swapfile  
-  arch-chroot /mnt bash -c "echo \"/swap/swapfile none swap sw 0 0\"  >> /etc/fstab"
+  #arch-chroot /mnt btrfs su create /swap
+  #arch-chroot /mnt chattr +C /swap
+  #arch-chroot /mnt touch /swap/swapfile
+  #arch-chroot /mnt chattr +C /swap/swapfile  
+  #arch-chroot /mnt dd if=/dev/zero of=/swap/swapfile bs=1024K count=4096  
+  #arch-chroot /mnt chmod 600 /swap/swapfile  
+  #arch-chroot /mnt mkswap /swap/swapfile  
+  #arch-chroot /mnt swapon /swap/swapfile  
+  #arch-chroot /mnt bash -c "echo \"/swap/swapfile none swap sw 0 0\"  >> /etc/fstab"
   
   echo "------------------------------------------------------------------------------------------------------------------"
   echo "                                               Root Password                                                      "
