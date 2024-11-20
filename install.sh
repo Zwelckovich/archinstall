@@ -83,7 +83,7 @@ tools_stage=(
 
 #software for nvidia GPU only
 nvidia_stage=(
-  linux-zen-headers
+  linux-headers
   nvidia-dkms
   nvidia-settings
   nvidia-utils
@@ -186,9 +186,9 @@ function btrfs_format() {
 
   read -p 'Selection: ' n
   case $n in
-  1) pacstrap /mnt base linux-zen linux-firmware nano intel-ucode btrfs-progs ;;
-  2) pacstrap /mnt base linux-zen linux-firmware nano amd-ucode btrfs-progs ;;
-  3) pacstrap /mnt base linux-zen linux-firmware nano btrfs-progs ;;
+  1) pacstrap /mnt base linux linux-firmware nano intel-ucode btrfs-progs ;;
+  2) pacstrap /mnt base linux linux-firmware nano amd-ucode btrfs-progs ;;
+  3) pacstrap /mnt base linux linux-firmware nano btrfs-progs ;;
   *) echo "invalid option" ;;
   esac
   genfstab -U /mnt >>/mnt/etc/fstab
@@ -243,7 +243,7 @@ function base_config() {
   arch-chroot /mnt pacman-key --init
   arch-chroot /mnt pacman-key --populate archlinux
   arch-chroot /mnt pacman -Syy
-  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-zen-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring
+  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring
   arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms
   variable="MODULES=()"
   variable_changed="MODULES=(btrfs)"
@@ -251,7 +251,7 @@ function base_config() {
   variable="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)"
   variable_changed="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)"
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
-  arch-chroot /mnt mkinitcpio -p linux-zen
+  arch-chroot /mnt mkinitcpio -p linux
   arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id = Arch
   variable="GRUB_DISABLE_OS_PROBER=false"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
