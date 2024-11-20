@@ -257,10 +257,10 @@ function base_config() {
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
   variable="GRUB_ENABLE_CRYPTODISK=y"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
-  sudo fdisk -l
+  fdisk -l
   echo " "
   read -p 'Enter disk name for installation: ' disk
-  device-UUID=$(sudo blkid -s UUID -o value /dev/${disk})
+  device-UUID=$(blkid -s UUID -o value /dev/${disk})
   variable="GRUB_CMDLINE_LINUX="""
   variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=UUID=${device-UUID}:MainPart:allow-discards""
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/default/grub
