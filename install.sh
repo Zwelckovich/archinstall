@@ -560,7 +560,7 @@ function update_grub_sddm() {
   read -p 'Enter disk name for installation: ' disk
   device-UUID=$(sudo blkid -s UUID -o value /dev/${disk})
   variable="GRUB_CMDLINE_LINUX="""
-  variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=UUID=${device-UUID}:MainPart:allow-discards""
+  variable_changed="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${device-UUID}:MainPart:allow-discards\""
   sudo sed -i "/^$variable/ c$variable_changed" /etc/default/grub
   sudo grub-mkconfig -o /boot/grub/grub.cfg
 }
