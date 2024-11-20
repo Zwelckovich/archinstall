@@ -158,35 +158,22 @@ function btrfs_format() {
   umount /dev/${disk}?*
   umount -l /mnt
   sgdisk --zap-all /dev/$disk
-  sgdisk -n 1:0:+100M -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$disk -p
+  sgdisk -n 1:0:+300M -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$disk -p
   dn=${disk}1
   mkfs.fat -F32 /dev/$dn
   dn=${disk}2
   echo "-----------------------------------------ENCRYPTION------------------------------------------------"
-  cryptsetup -c=aes-xts-plain64 --key-size=512 --hash=sha512 --iter-time=3000 --pbkdf=pbkdf2 --use-random luksFormat --type=luks1 /dev/$dn  
-  cryptsetup luksOpen /dev/$dn MainPart 
-  mkfs.btrfs -L "Arch Linux" /dev/mapper/MainPart
-  mount /dev/mapper/MainPart /mnt
-  btrfs su cr /mnt/@  
-  btrfs su cr /mnt/@home  
-  btrfs su cr /mnt/@varlog
-  btrfs su cr /mnt/@tmp  
-  btrfs su cr /mnt/@snapshots 
-  chattr +C /mnt/@varlog
-  chattr +C /mnt/@tmp  
+  #cryptsetup --cipher aes-xts-plain64 --hash sha512 --use-random --verify-passphrase luksFormat /dev/$dn
+  cryptsetup -c=aes-xts-plain64 --key-size=512 --hash=sha512 --iter-time=3000 --pbkdf=pbkdf2 --use-random luksFormat --type=luks1 /dev/$dn
+  cryptsetup luksOpen /dev/$dn root
+  mkfs.btrfs -f /dev/mapper/root
+  mount /dev/mapper/root /mnt
+  btrfs su cr /mnt/@
+  btrfs su cr /mnt/@home
   umount /mnt
-
-  mount -o defaults,noatime,discard,ssd,subvol=@ /dev/mapper/MainPart /mnt
-  mkdir /mnt/home  
-  mkdir -p /mnt/var/log  
-  mkdir /mnt/tmp  
-  mkdir /mnt/snapshots  
-  mkdir /mnt/efi
-  mount -o defaults,noatime,discard,ssd,subvol=@home /dev/mapper/MainPart /mnt/home
-  mount -o defaults,noatime,discard,ssd,subvol=@varlog /dev/mapper/MainPart /mnt/var/log
-  mount -o defaults,noatime,discard,ssd,subvol=@tmp /dev/mapper/MainPart /mnt/tmp
-  mount -o defaults,noatime,discard,ssd,subvol=@snapshots /dev/mapper/MainPart /mnt/snapshots
-
+  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ /dev/mapper/root /mnt
+  mkdir /mnt/{boot,home}
+  mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home /dev/mapper/root /mnt/home
   dn=${disk}1
   mount /dev/$dn /mnt/boot
 
@@ -200,9 +187,9 @@ function btrfs_format() {
 
   read -p 'Selection: ' n
   case $n in
-  1) pacstrap /mnt base linux linux-firmware nano intel-ucode btrfs-progs;;
-  2) pacstrap /mnt base linux linux-firmware nano amd-ucode btrfs-progs;;
-  3) pacstrap /mnt base linux linux-firmware nano btrfs-progs;;
+  1) pacstrap /mnt base linux linux-firmware nano intel-ucode btrfs-progs ;;
+  2) pacstrap /mnt base linux linux-firmware nano amd-ucode btrfs-progs ;;
+  3) pacstrap /mnt base linux linux-firmware nano btrfs-progs ;;
   *) echo "invalid option" ;;
   esac
   genfstab -U /mnt >>/mnt/etc/fstab
@@ -245,17 +232,6 @@ function base_config() {
   arch-chroot /mnt bash -c "echo \"::1		localhost\" >> /etc/hosts"
   cmdstr="echo \"127.0.1.1	$hoststr.localdomain	$hoststr\" >> /etc/hosts"
   arch-chroot /mnt bash -c "$cmdstr"
-
-  #arch-chroot /mnt btrfs su create /swap
-  #arch-chroot /mnt chattr +C /swap
-  #arch-chroot /mnt touch /swap/swapfile
-  #arch-chroot /mnt chattr +C /swap/swapfile  
-  #arch-chroot /mnt dd if=/dev/zero of=/swap/swapfile bs=1024K count=4096  
-  #arch-chroot /mnt chmod 600 /swap/swapfile  
-  #arch-chroot /mnt mkswap /swap/swapfile  
-  #arch-chroot /mnt swapon /swap/swapfile  
-  #arch-chroot /mnt bash -c "echo \"/swap/swapfile none swap sw 0 0\"  >> /etc/fstab"
-  
   echo "------------------------------------------------------------------------------------------------------------------"
   echo "                                               Root Password                                                      "
   echo "------------------------------------------------------------------------------------------------------------------"
@@ -268,26 +244,24 @@ function base_config() {
   arch-chroot /mnt pacman-key --init
   arch-chroot /mnt pacman-key --populate archlinux
   arch-chroot /mnt pacman -Syy
-  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring bash-completion
+  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring
   arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms
   variable="MODULES=()"
   variable_changed="MODULES=(btrfs)"
-  arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
-  variable="BINARIES=()"
-  variable_changed="BINARIES=(btrfsck)"
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
   variable="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)"
   variable_changed="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)"
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
   arch-chroot /mnt mkinitcpio -p linux
-  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot  --bootloader-id = Arch
+  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id = Arch
   variable="GRUB_DISABLE_OS_PROBER=false"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
   variable="GRUB_ENABLE_CRYPTODISK=y"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
-  arch-chroot /mnt fdisk -l
+  fdisk -l
+  echo " "
   read -p 'Enter disk name for installation: ' disk
-  deviceUUID=$(arch-chroot /mnt blkid -s UUID -o value /dev/${disk})
+  deviceUUID=$(blkid -s UUID -o value /dev/${disk})
   variable="GRUB_CMDLINE_LINUX="""
   variable_changed="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:MainPart:allow-discards\""
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/default/grub
