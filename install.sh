@@ -40,7 +40,8 @@ tools_stage=(
   numlockx
   npm
   # Web Tools
-  thorium-browser-bin
+  librewolf
+  #thorium-browser-bin
   # Programming Tools
   code
   qt5-graphicaleffects
