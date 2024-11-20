@@ -260,8 +260,9 @@ function base_config() {
   fdisk -l
   echo " "
   read -p 'Enter disk name for installation: ' disk
+  device-UUID=$(blkid -s UUID -o value /dev/${disk})
   variable="GRUB_CMDLINE_LINUX="""
-  variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=/dev/${disk}:MainPart:allow-discards""
+  variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=UUID=${device-UUID}:MainPart:allow-discards""
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/default/grub
   arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
   arch-chroot /mnt useradd -mG wheel $userstr
@@ -557,8 +558,9 @@ function update_grub_sddm() {
   fdisk -l
   echo " "
   read -p 'Enter disk name for installation: ' disk
+  device-UUID=$(blkid -s UUID -o value /dev/${disk})
   variable="GRUB_CMDLINE_LINUX="""
-  variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=/dev/${disk}:MainPart:allow-discards""
+  variable_changed="GRUB_CMDLINE_LINUX="cryptdevice=UUID=${device-UUID}:MainPart:allow-discards""
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/default/grub
   sudo grub-mkconfig -o /boot/grub/grub.cfg
 }
