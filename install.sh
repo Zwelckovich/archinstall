@@ -188,7 +188,7 @@ function btrfs_format() {
   mount -o defaults,noatime,discard,ssd,subvol=@snapshots /dev/mapper/MainPart /mnt/snapshots
 
   dn=${disk}1
-  mount /dev/$dn /mnt/efi
+  mount /dev/$dn /mnt/boot
 
   echo "------------------------------------------------------------------------------------------------------------------"
   echo "                                                Pacstrap Arch                                                     "
@@ -280,7 +280,7 @@ function base_config() {
   variable_changed="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)"
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
   arch-chroot /mnt mkinitcpio -p linux
-  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/efi  --bootloader-id=GRUB
+  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot  --bootloader-id = Arch
   variable="GRUB_DISABLE_OS_PROBER=false"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
   variable="GRUB_ENABLE_CRYPTODISK=y"
