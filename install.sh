@@ -254,8 +254,7 @@ function base_config() {
   arch-chroot /mnt chmod 600 /swap/swapfile  
   arch-chroot /mnt mkswap /swap/swapfile  
   arch-chroot /mnt swapon /swap/swapfile  
-  arch-chroot /mnt /swap/swapfile none swap sw 0 0  
-  arch-chroot /mnt bash -c "echo \"/swap/swapfile none swap sw 0 0\" >> /etc/fstab"
+  arch-chroot /mnt bash -c "echo \"/swap/swapfile none swap sw 0 0\"  >> /etc/fstab"
   
   echo "------------------------------------------------------------------------------------------------------------------"
   echo "                                               Root Password                                                      "
