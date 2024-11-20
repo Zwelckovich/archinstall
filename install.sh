@@ -280,7 +280,7 @@ function base_config() {
   variable_changed="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)"
   arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
   arch-chroot /mnt mkinitcpio -p linux
-  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id = Arch
+  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/efi  --bootloader-id=GRUB
   variable="GRUB_DISABLE_OS_PROBER=false"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
   variable="GRUB_ENABLE_CRYPTODISK=y"
