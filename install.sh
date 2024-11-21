@@ -530,7 +530,7 @@ function update_grub_sddm() {
   sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/catppuccin-mocha/ /usr/share/sddm/themes/
   # Grub
   sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/
-  sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /usr/share/grub/themes/
+  sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /boot/grub/themes/
   sudo fdisk -l
   echo " "
   read -p 'Enter disk name for installation: ' disk
