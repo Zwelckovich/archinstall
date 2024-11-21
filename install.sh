@@ -40,7 +40,7 @@ tools_stage=(
   numlockx
   npm
   # Web Tools
-  librewolf
+  librewolf-bin
   #thorium-browser-bin
   # Programming Tools
   code
