@@ -147,7 +147,6 @@ function pacman_init() {
   sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
 }
 
-
 function btrfs_format() {
   clear
   echo "------------------------------------------------------------------------------------------------------------------"
@@ -195,7 +194,6 @@ function btrfs_format() {
   esac
   genfstab -U /mnt >>/mnt/etc/fstab
 }
-
 
 function base_config() {
   clear
@@ -372,7 +370,7 @@ function i3_install() {
       printf "\n"
     fi
   fi
-  
+
   echo -e "$CNT - Tools Stage Install"
   for SOFTWR in ${tools_stage[@]}; do
     install_software $SOFTWR
@@ -490,6 +488,9 @@ function restore_dotfiles() {
   echo -e "$CNT ### P10K ###"
   rm -rf ~/.p10k.zsh
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home p10k
+  echo -e "$CNT ### ICAClient ###"
+  rm -rf ~/.ICAClient/wfclient.ini
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home .ICAClient
 
   echo -e "$CNT ### Bat ###"
   mkdir -p "$(bat --config-dir)/themes"
@@ -548,7 +549,7 @@ function update_grub_sddm() {
         sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia-drm.modeset=1"/' /etc/default/grub
         echo "nvidia-drm.modeset=1 added to /etc/default/grub" 2>&1 | tee -a "$INSTLOG"
       fi
-  
+
       # Check if nvidia_drm.fbdev=1 is present
       if ! sudo grep -q "nvidia_drm.fbdev=1" /etc/default/grub; then
         # Add nvidia_drm.fbdev=1 to GRUB_CMDLINE_LINUX_DEFAULT
