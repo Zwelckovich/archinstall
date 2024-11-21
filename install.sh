@@ -372,7 +372,7 @@ function i3_install() {
       printf "\n"
     fi
   fi
-
+  
   echo -e "$CNT - Tools Stage Install"
   for SOFTWR in ${tools_stage[@]}; do
     install_software $SOFTWR
@@ -531,6 +531,38 @@ function update_grub_sddm() {
   # Grub
   sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/
   sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /boot/grub/themes/
+  # find the Nvidia GPU
+  if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
+    ISNVIDIA=true
+  else
+    ISNVIDIA=false
+  fi
+  # Setup Nvidia if it was found
+  if [[ "$ISNVIDIA" == true ]]; then
+    # Additional for GRUB users
+    # Check if /etc/default/grub exists
+    if [ -f /etc/default/grub ]; then
+      # Check if nvidia-drm.modeset=1 is present
+      if ! sudo grep -q "nvidia-drm.modeset=1" /etc/default/grub; then
+        # Add nvidia-drm.modeset=1 to GRUB_CMDLINE_LINUX_DEFAULT
+        sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia-drm.modeset=1"/' /etc/default/grub
+        echo "nvidia-drm.modeset=1 added to /etc/default/grub" 2>&1 | tee -a "$INSTLOG"
+      fi
+  
+      # Check if nvidia_drm.fbdev=1 is present
+      if ! sudo grep -q "nvidia_drm.fbdev=1" /etc/default/grub; then
+        # Add nvidia_drm.fbdev=1 to GRUB_CMDLINE_LINUX_DEFAULT
+        sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia_drm.fbdev=1"/' /etc/default/grub
+        echo "nvidia_drm.fbdev=1 added to /etc/default/grub" 2>&1 | tee -a "$INSTLOG"
+      fi
+      # Regenerate GRUB configuration if any changes were made
+      if sudo grep -q "nvidia-drm.modeset=1" /etc/default/grub || sudo grep -q "nvidia_drm.fbdev=1" /etc/default/grub; then
+        sudo grub-mkconfig -o /boot/grub/grub.cfg
+      fi
+    else
+      echo "/etc/default/grub does not exist"
+    fi
+  fi
   sudo fdisk -l
   echo " "
   read -p 'Enter disk name for installation: ' disk
