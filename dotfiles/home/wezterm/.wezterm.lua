@@ -14,11 +14,10 @@ config.font_size = 12
 
 config.enable_tab_bar = false
 
-config.window_decorations = "RESIZE"
 config.window_background_opacity = 0.75
 config.macos_window_background_blur = 8
 
 config.enable_wayland = true
-
+config.window_decorations = "NONE"
 -- and finally, return the configuration to wezterm
 return config
