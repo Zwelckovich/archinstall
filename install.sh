@@ -6,6 +6,7 @@
 hypr_base_stage=(
   # Hyprland
   kitty
+  wezte
   pamixer
   pavucontrol
   pipewire-alsa
@@ -491,6 +492,9 @@ function restore_dotfiles() {
   echo -e "$CNT ### ICAClient ###"
   rm -rf ~/.ICAClient/wfclient.ini
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home .ICAClient
+  echo -e "$CNT ### Wezterm ###"
+  rm -rf ~/.wezterm.lua
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home wezterm
 
   echo -e "$CNT ### Bat ###"
   mkdir -p "$(bat --config-dir)/themes"
