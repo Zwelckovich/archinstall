@@ -21,6 +21,7 @@ hypr_base_stage=(
   hyprlock
   hyprland
   pyprland
+  swww
 )
 
 piperwire_stage=(
@@ -455,8 +456,9 @@ function restore_dotfiles() {
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazygit
 
   echo -e "$CNT ### Hyprland ###"
-  rm -rf ~/.config/hypr/hyprland.conf
+  rm -rf ~/.config/hypr
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config hypr
+  chmod u+x ~/archinstall/dotfiles/config/hypr/.config/hypr/wallpaper.sh
 
   echo -e "$CNT ### OH-MY-ZSH ###"
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
