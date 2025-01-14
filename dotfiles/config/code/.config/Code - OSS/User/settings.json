@@ -13,7 +13,7 @@
     },
     "workbench.iconTheme": "catppuccin-mocha",
     "security.workspace.trust.untrustedFiles": "open",
-    "editor.fontFamily": "'MesloLGS NF', 'MesloLGS NF', MesloLGS NF ,'MesloLGS NF'",
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'JetBrainsMono Nerd Font', JetBrainsMono Nerd Font ,'JetBrainsMono Nerd Font'",
     "editor.fontSize": 15,
     "git.confirmSync": false,
     "git.autofetch": true,

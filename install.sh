@@ -5,13 +5,13 @@
 ## Variables
 hypr_base_stage=(
   # Hyprland
-  kitty
-  wezte
+  kitty       # Standard Hyprland Terminal Emulator
+  wezterm-git # Terminal Emulator with LUA config
   pamixer
   pavucontrol
   pipewire-alsa
   playerctl
-  rofi-wayland
+  rofi-wayland # Application Launcher
   waybar
   sddm
   hyprcursor
@@ -21,7 +21,8 @@ hypr_base_stage=(
   hyprlock
   hyprland
   pyprland
-  swww
+  swww   # Wallpaper Tool
+  swaync # Notification Daemon
 )
 
 piperwire_stage=(
@@ -459,6 +460,14 @@ function restore_dotfiles() {
   rm -rf ~/.config/hypr
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config hypr
   chmod u+x ~/archinstall/dotfiles/config/hypr/.config/hypr/wallpaper.sh
+
+  echo -e "$CNT ### Waybar ###"
+  rm -rf ~/.config/waybar
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config waybar
+
+  echo -e "$CNT ### Rofi ###"
+  rm -rf ~/.config/rofi
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config rofi
 
   echo -e "$CNT ### OH-MY-ZSH ###"
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
