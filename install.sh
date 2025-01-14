@@ -39,7 +39,6 @@ tools_stage=(
   # Display /  Audio / Core
   feh
   pacman-contrib
-  ttf-meslo-nerd-font-powerlevel10k
   npm
   # Web Tools
   librewolf-bin
