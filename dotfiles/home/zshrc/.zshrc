@@ -150,3 +150,7 @@ alias py="python"
 # --- Python Aliases ---
 
 alias tree="tre"
+
+
+# --- Citrix Aliases ---
+alias citrix="/opt/Citrix/ICAClient/wfica"

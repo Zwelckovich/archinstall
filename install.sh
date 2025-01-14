@@ -38,7 +38,6 @@ tools_stage=(
   feh
   pacman-contrib
   ttf-meslo-nerd-font-powerlevel10k
-  numlockx
   npm
   # Web Tools
   librewolf-bin
