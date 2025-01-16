@@ -23,6 +23,14 @@ hypr_base_stage=(
   pyprland
   swww   # Wallpaper Tool
   swaync # Notification Daemon
+  # Fonts
+  adobe-source-code-pro-fonts
+  noto-fonts-emoji
+  otf-font-awesome
+  ttf-droid
+  ttf-fira-code
+  ttf-jetbrains-mono
+  ttf-jetbrains-mono-nerd
 )
 
 piperwire_stage=(
