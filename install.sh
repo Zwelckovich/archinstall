@@ -155,7 +155,7 @@ function btrfs_format() {
   echo "------------------------------------------------------------------------------------------------------------------"
   fdisk -l
   echo " "
-  read -p 'Enter disk name for installation: ' disk
+  read -p 'Enter disk name for installation (e.g. sda): ' disk
   umount /dev/${disk}?*
   umount -l /mnt
   sgdisk --zap-all /dev/$disk
@@ -260,7 +260,7 @@ function base_config() {
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
   fdisk -l
   echo " "
-  read -p 'Enter disk name for installation: ' disk
+  read -p 'Enter disk name for installation (e.g. sda2): ' disk
   deviceUUID=$(blkid -s UUID -o value /dev/${disk})
   variable="GRUB_CMDLINE_LINUX="""
   variable_changed="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:MainPart:allow-discards\""
