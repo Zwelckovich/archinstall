@@ -3,6 +3,7 @@
 ## Install
 
 ```sh
+loadkeys de
 pacman-key --init
 pacman-key --populate archlinux
 pacman -Scc
