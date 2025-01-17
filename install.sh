@@ -64,6 +64,7 @@ tools_stage=(
   python-pip
   pyenv
   # Office Tools
+  texlive
   zathura
   zathura-pdf-mupdf
   # CLI Tools
