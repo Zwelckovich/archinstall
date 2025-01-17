@@ -65,6 +65,7 @@ tools_stage=(
   pyenv
   # Office Tools
   texlive
+  texlive-langgerman
   zathura
   zathura-pdf-mupdf
   # CLI Tools
