@@ -64,8 +64,8 @@ tools_stage=(
   python-pip
   pyenv
   # Office Tools
-  texlive
-  texlive-langgerman
+  texlive            # TeX-Live Latex Framework from AUR-Arch
+  texlive-langgerman # TeX-Live german language support
   zathura
   zathura-pdf-mupdf
   # CLI Tools
