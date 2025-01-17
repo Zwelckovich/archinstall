@@ -5,3 +5,5 @@
 -- vim.g.lazyvim_python_ruff = "ruff_lsp"
 local opt = vim.opt
 opt.spelllang = { "en", "de" }
+
+vim.g.vimtex_view_method = "zathura"
