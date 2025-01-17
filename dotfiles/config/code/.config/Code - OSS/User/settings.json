@@ -102,7 +102,13 @@
   ]
  }
 ],
-"workbench.editorAssociations": {
-  "*.pdf": "latex-workshop-pdf-hook"
-}
+"latex-workshop.view.pdf.ref.viewer": "external",
+"latex-workshop.view.pdf.viewer": "external",
+"latex-workshop.view.pdf.external.viewer.command": "zathura",
+"latex-workshop.view.pdf.external.viewer.args": [
+    "--synctex-editor-command",
+    "code --no-sandbox -r -g %{input}:%{line}",
+    "%PDF%"
+],
+"latex-workshop.synctex.afterBuild.enabled": true,
 }

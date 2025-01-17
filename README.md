@@ -95,11 +95,12 @@ nmcli device wifi connect SSID_or_BSSID password password
 
 ### zathura
 
-| Keybind | Description              |
-| ------- | ------------------------ |
-| CTRL-R  | Enable/Disable Theme     |
-| TAB     | Show Index               |
-| F5      | Toggle presentation mode |
+| Keybind        | Description              |
+| -------------- | ------------------------ |
+| CTRL-R         | Enable/Disable Theme     |
+| TAB            | Show Index               |
+| F5             | Toggle presentation mode |
+| CTRL-LeftClick | Synctex                  |
 
 ### LazyVim
 
