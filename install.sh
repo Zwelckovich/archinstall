@@ -34,6 +34,7 @@ hypr_base_stage=(
   # GTK / Qt Themes
   qt5ct
   qt6ct
+  catppuccin-cursors-mocha
   nwg-look
 )
 
