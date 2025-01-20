@@ -31,6 +31,10 @@ hypr_base_stage=(
   ttf-fira-code
   ttf-jetbrains-mono
   ttf-jetbrains-mono-nerd
+  # GTK / Qt Themes
+  qt5ct
+  qt6ct
+  nwg-look
 )
 
 piperwire_stage=(
@@ -55,6 +59,7 @@ tools_stage=(
   code
   qt5-graphicaleffects
   qt5-svg
+  qt6-svg
   qt5-quickcontrols2
   eza
   hyfetch
@@ -512,6 +517,13 @@ function restore_dotfiles() {
   echo -e "$CNT ### ICAClient ###"
   rm -rf ~/.ICAClient/wfclient.ini
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home .ICAClient
+  echo -e "$CNT ### GTK Themes ###"
+  rm -rf ~/.themes
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home themes
+  echo -e "$CNT ### Icons ###"
+  rm -rf ~/.icons
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home icons
+  unzip ~/.icons/WhiteSur.zip
   echo -e "$CNT ### Wezterm ###"
   rm -rf ~/.wezterm.lua
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home wezterm
