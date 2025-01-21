@@ -524,7 +524,7 @@ function restore_dotfiles() {
 	echo -e "$CNT ### Icons ###"
 	rm -rf ~/.icons
 	cp -r ~/archinstall/dotfiles/home/icons/.icons ~/
-	unzip ~/.icons/WhiteSur.zip -d ~/.icons/WhiteSur/
+	unzip ~/.icons/WhiteSur.zip -d ~/.icons/
 	echo -e "$CNT ### Wezterm ###"
 	rm -rf ~/.wezterm.lua
 	stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home wezterm
