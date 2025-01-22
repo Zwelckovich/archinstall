@@ -100,6 +100,8 @@ tools_stage=(
   duf
   rsync
   dua-cli
+  # Gaming
+  steam
 )
 
 #software for nvidia GPU only
