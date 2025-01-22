@@ -55,7 +55,7 @@ tools_stage=(
 	npm
 	# Web Tools
 	librewolf-bin
-	#thorium-browser-bin
+	thorium-browser-bin
 	# Programming Tools
 	code
 	qt5-graphicaleffects
@@ -69,6 +69,8 @@ tools_stage=(
 	python
 	python-pip
 	pyenv
+	# Science Tools
+	step
 	# Office Tools
 	texlive            # TeX-Live Latex Framework from AUR-Arch
 	texlive-langgerman # TeX-Live german language support
