@@ -107,7 +107,7 @@ nmcli device wifi connect SSID_or_BSSID password password
 | Keybind   | Description                           |
 | --------- | ------------------------------------- |
 | SPACE-U-S | Enable/Disable spell check            |
-| \-L-L     | Compile TEX-File                      |
+| \\-L-L    | Compile TEX-File                      |
 | G-C-C     | Comment Line                          |
 | ci"       | Change between "" or (){} etc.        |
 | c2i"      | Change between second "" or (){} etc. |
