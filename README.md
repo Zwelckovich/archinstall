@@ -111,3 +111,6 @@ nmcli device wifi connect SSID_or_BSSID password password
 | G-C-C     | Comment Line                          |
 | ci"       | Change between "" or (){} etc.        |
 | c2i"      | Change between second "" or (){} etc. |
+| [s        | Previous misspelled word              |
+| ]s        | Next misspelled word                  |
+| z=        | suggest correct words                 |
