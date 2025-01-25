@@ -77,7 +77,8 @@ tools_stage=(
   zathura
   zathura-pdf-mupdf
   meld   # Merging and diff tool
-  baobab # Treesize alternative for linux
+  baobab # Treesize alternative for linux with graphical interface
+  ncdu   # Treesize alternative for linux in CLI
   # CLI Tools
   btop
   lazygit
