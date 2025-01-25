@@ -76,7 +76,8 @@ tools_stage=(
   texlive-langgerman # TeX-Live german language support
   zathura
   zathura-pdf-mupdf
-  meld # Merging and diff tool
+  meld   # Merging and diff tool
+  baobab # Treesize alternative for linux
   # CLI Tools
   btop
   lazygit
