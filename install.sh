@@ -263,9 +263,9 @@ function base_config() {
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
   variable="ParallelDownloads = 5"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
-  variable="[multilib]"
+  variable="\[multilib\]"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
-  variable="Include = /etc/pacman.d/mirrorlist"
+  variable="Include = \/etc\/pacman.d\/mirrorlist"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
   arch-chroot /mnt sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
   arch-chroot /mnt pacman-key --init
