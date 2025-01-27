@@ -159,3 +159,7 @@ alias tree="tre"
 
 # --- Citrix Aliases ---
 alias citrix="/opt/Citrix/ICAClient/wfica"
+
+
+# --- Citrix Aliases ---
+alias ds="ncdu --color dark"
