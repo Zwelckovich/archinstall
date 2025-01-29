@@ -114,3 +114,14 @@ nmcli device wifi connect SSID_or_BSSID password password
 | [s        | Previous misspelled word              |
 | ]s        | Next misspelled word                  |
 | z=        | suggest correct words                 |
+
+### Python
+
+```sh
+python -m venv .venv
+source .venv/bin/activate
+pip install pip-upgrade-tool pipreqs pynvim ruff
+pip-upgrade --clear
+pip-upgrade --yes
+pipreqs --mode gt --force
+```
