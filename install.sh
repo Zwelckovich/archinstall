@@ -69,6 +69,7 @@ tools_stage=(
   python
   python-pip
   pyenv
+  tk # Tkinter library
   # Science Tools
   step
   # Office Tools
@@ -114,6 +115,7 @@ nvidia_stage=(
   nvidia-utils
   libva
   libva-nvidia-driver-git
+  cuda
 )
 
 uninstall_stage=(
@@ -263,10 +265,10 @@ function base_config() {
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
   variable="ParallelDownloads = 5"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
-  variable="\[multilib\]"
-  arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
-  variable="Include = \/etc\/pacman.d\/mirrorlist"
-  arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
+  #  variable="\[multilib\]"
+  #  arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
+  #  variable="Include = \/etc\/pacman.d\/mirrorlist"
+  #  arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
   arch-chroot /mnt sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
   arch-chroot /mnt pacman-key --init
   arch-chroot /mnt pacman-key --populate archlinux
