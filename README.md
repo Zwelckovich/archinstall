@@ -120,6 +120,7 @@ nmcli device wifi connect SSID_or_BSSID password password
 ```sh
 python -m venv .venv
 source .venv/bin/activate
+pip install --upgrade pip
 pip install pip-upgrade-tool pipreqs pynvim ruff
 pip-upgrade --clear
 pip-upgrade --yes
