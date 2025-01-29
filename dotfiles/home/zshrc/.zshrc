@@ -152,8 +152,8 @@ eval "$(pyenv init -)"
 
 alias py="python"
 alias pyact="source .venv/bin/activate"
-alias pydeact = "deactivate"
-alias pyvenv "python -m venv .venv"
+alias pydeact="deactivate"
+alias pyvenv="python -m venv .venv"
 
 # --- Tree Aliases ---
 
