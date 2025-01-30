@@ -79,9 +79,10 @@ tools_stage=(
   texlive-langgerman # TeX-Live german language support
   zathura
   zathura-pdf-mupdf
-  meld   # Merging and diff tool
-  baobab # Treesize alternative for linux with graphical interface
-  ncdu   # Treesize alternative for linux in CLI
+  meld     # Merging and diff tool
+  baobab   # Treesize alternative for linux with graphical interface
+  ncdu     # Treesize alternative for linux in CLI
+  audacity # Audio edit tool
   # CLI Tools
   btop
   lazygit
@@ -105,6 +106,7 @@ tools_stage=(
   duf
   rsync
   dua-cli
+  sox # CLI audio player
   # Gaming
   steam
 )

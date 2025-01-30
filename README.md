@@ -133,3 +133,14 @@ pipreqs --mode gt --force
 pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu124
 pip install -r requirements.txt
 ```
+
+## Kokoro
+
+Create an python venv (works fine with 3.10.6) and activate it.
+
+```sh
+yay -S espeak-ng-git
+pip install --upgrade pip
+pip install kokoro soundfile
+
+```
