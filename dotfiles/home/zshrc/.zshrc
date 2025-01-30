@@ -128,6 +128,7 @@ alias yabig="expac -H M '%m\t%n' | sort -h | nl"
 alias yaref="sudo reflector --verbose --country Germany --age 12 --protocol https,http --sort rate --save /etc/pacman.d/mirrorlist"
 alias yakey="sudo pacman -S archlinux-keyring"
 alias yareinstall="sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkig -si"
+alias yaunused="yay -Rcs $(yay -Qtdq)"
 
 # ---- TLDR ----
 
