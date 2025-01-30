@@ -66,10 +66,12 @@ tools_stage=(
   hyfetch
   bfg
   git-crypt
+  git-lfs # Git Large File Storage
   python
   python-pip
   pyenv
   tk # Tkinter library
+  rust
   # Science Tools
   step
   # Office Tools
