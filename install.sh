@@ -23,7 +23,7 @@ hypr_base_stage=(
   swww          # Wallpaper setter designed specifically for Wayland environments.
   swaync        # Notification utility tailored for Sway, enhancing desktop notifications.
   # Fonts
-  adobe-source-code-pro-Fonts # Monospaced font family optimized for coding environments.
+  adobe-source-code-pro-fonts # Monospaced font family optimized for coding environments.
   noto-fonts-emoji            # Set of emoji characters supporting various platforms and applications.
   otf-font-awesome            # Icon font providing a wide range of scalable vector icons.
   ttf-droid                   # Open-ource fonts based on the Roboto typeface, designed for clarity and readability.
