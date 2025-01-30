@@ -115,7 +115,7 @@ nmcli device wifi connect SSID_or_BSSID password password
 | ]s        | Next misspelled word                  |
 | z=        | suggest correct words                 |
 
-### Python
+## Python
 
 ```sh
 python -m venv .venv
@@ -125,4 +125,11 @@ pip install pip-upgrade-tool pipreqs pynvim ruff
 pip-upgrade --clear
 pip-upgrade --yes
 pipreqs --mode gt --force
+```
+
+## Stable Diffusion
+
+```sh
+pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu124
+pip install -r requirements.txt
 ```
