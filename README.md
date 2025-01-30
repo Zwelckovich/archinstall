@@ -147,6 +147,7 @@ pip install kokoro soundfile
 ## Deep Seek
 
 Linux File Location: /usr/share/ollama/.ollama/models
+URL: <https://ollama.com/library/deepseek-r1>
 
 ```sh
 curl -fsSL https://ollama.com/install.sh | sh
