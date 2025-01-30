@@ -108,7 +108,8 @@ tools_stage=(
   dua-cli
   sox # CLI audio player
   # Gaming
-  steam
+  steam  # Steam platform client
+  lutris # Lutris game launcher for epic or gog etc.
 )
 
 #software for nvidia GPU only
