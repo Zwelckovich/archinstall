@@ -5,108 +5,108 @@
 ## Variables
 hypr_base_stage=(
   # Hyprland
-  kitty       # Standard Hyprland Terminal Emulator
-  wezterm-git # Terminal Emulator with LUA config
-  pamixer
-  pavucontrol
-  pipewire-alsa
-  playerctl
-  rofi-wayland # Application Launcher
-  waybar
-  sddm
-  hyprcursor
-  hyprutils
-  aquamarine
-  hypridle
-  hyprlock
-  hyprland
-  pyprland
-  swww   # Wallpaper Tool
-  swaync # Notification Daemon
+  kitty         # A fast, feature-rich terminal emulator focused on simplicity and efficiency.
+  wezterm-git   # A modern, cross-platform terminal emulator with Lua configuration support.
+  pamixer       # A command-line tool to control pulseaudio volumes.
+  pavucontrol   # A graphical volume control for PulseAudio sound server.
+  pipewire-alsa # ALSA plugin for PipeWire, enabling audio support through PipeWire.
+  playerctl     # A command-line tool to control media players that support the MPRIS interface.
+  rofi-wayland  #  A window switcher and application launcher with Wayland support.
+  waybar        # A lightweight status bar for Wayland environments like Hyprland or Sway.
+  sddm          # The Simple Desktop Display Manager, a display manager for Linux systems.
+  hyprcursor    # Custom cursors for use with Hyprland.
+  hyprutils     # Collection of tools and utilities for enhancing Hyprland functionality.
+  aquamarine    # Color scheme for Qt applications designed to enhance visual appeal.
+  hypridle      # Screen locker utility for Hyprland with customization options.
+  hyprlock      # Screen locking tool integrated into Hyprland, featuring blur effects.
+  hyprland      # The core window manager providing tiling, floating, and fullscreen functionality.
+  pyprland      # Python utility to extend Hyprland's capabilities for custom scripting.
+  swww          # Wallpaper setter designed specifically for Wayland environments.
+  swaync        # Notification utility tailored for Sway, enhancing desktop notifications.
   # Fonts
-  adobe-source-code-pro-fonts
-  noto-fonts-emoji
-  otf-font-awesome
-  ttf-droid
-  ttf-fira-code
-  ttf-jetbrains-mono
-  ttf-jetbrains-mono-nerd
+  adobe-source-code-pro-Fonts # Monospaced font family optimized for coding environments.
+  noto-fonts-emoji            # Set of emoji characters supporting various platforms and applications.
+  otf-font-awesome            # Icon font providing a wide range of scalable vector icons.
+  ttf-droid                   # Open-ource fonts based on the Roboto typeface, designed for clarity and readability.
+  ttf-fira-code               # Monospaced programming font with ligature support, enhancing code legibility.
+  ttf-jetbrains-mono          # Monospaced font optimized for programming environments, offering excellent character spacing.
+  ttf-jetbrains-mono-nerd     # Jetbrains Mono variant with Nerd Font glyphs, combining programming features with additional icons and symbols.
   # GTK / Qt Themes
-  qt5ct
-  qt6ct
-  catppuccin-cursors-mocha
-  nwg-look
+  qt5ct                    # Configuration tool for Qt5 applications to customize themes and appearance.
+  qt6ct                    # Configuration tool for Qt6 applications ensuring compatibility with modern Qt versions.
+  catppuccin-cursors-mocha # Set of cursors styled according to the Catppuccin theme, offering a cohesive visual experience with the 'mocha' color variant.
+  nwg-look                 # Tool designed to customize desktop appearance, including themes and icons for a visually appealing setup.
 )
 
 piperwire_stage=(
   # Pipewire
-  pipewire
-  wireplumber
-  pipewire-audio
-  pipewire-alsa
-  pipewire-pulse
-  sof-firmware
+  pipewire       # Core audio and media processing framework for Linux.
+  wireplumber    # Session manager for PipeWire, simplifying audio and video routing.
+  pipewire-audio # Audio support module for PipeWire.
+  pipewire-alsa  # ALSA compatibility layer for PipeWire, enabling traditional ALSA applications to work with PipeWire.
+  pipewire-pulse # PulseAudio compatibility layer for PipeWire, allowing PulseAudio-based applications to use PipeWire.
+  sof-firmware   # Firmware for Intel Sound Open Firmware (SOF) audio platforms.
 )
 
 tools_stage=(
   # Display /  Audio / Core
-  feh
-  pacman-contrib
-  npm
+  feh            # Lightweight image viewer for X11 with support for various image formats.
+  pacman-Contrib # Additional tools and scripts for Pacman, enhancing package management capabilities.
+  npm            # Node Package Manager for installing, sharing, and managing JavaScript packages.
   # Web Tools
-  librewolf-bin
-  thorium-browser-bin
+  librewolf-bin       # Privacy-focused web browser based on Firefox with enhanced tracking protection and security features.
+  thorium-browser-bin # Lightweight privacy-oriented browser derived from Brave, designed for minimal resource usage and ad-free browsing.
   # Programming Tools
-  code
-  qt5-graphicaleffects
-  qt5-svg
-  qt6-svg
-  qt5-quickcontrols2
-  eza
-  hyfetch
-  bfg
-  git-crypt
-  git-lfs # Git Large File Storage
-  python
-  python-pip
-  pyenv
-  tk # Tkinter library
-  rust
+  code                 # The Visual Studio Code editor, providing a robust development environment.
+  qt5-Graphicaleffects # Qt module for advanced graphical effects in Qt applications.
+  qt5-svg              # SVG support module for Qt applications.
+  qt6-svg              # SVG support module compatible with Qt6 versions.
+  qt5-quickcontrols2   # Module offering modern controls for creating quick, visually appealing user interfaces in Qt applications.
+  eza                  # Enhanced version of the `ls` command, providing more detailed and customizable directory listings.
+  hyfetch              # Lightweight system information tool optimized for Hyprland environments.
+  bfg                  # Binary File Glasses – a tool to extract strings from binary files.
+  git-crypt            # Extension for managing encrypted files in Git repositories.
+  git-lfs              # Large File Storage extension for Git, allowing efficient handling of large files.
+  python               # High-level programming language known for its readability and versatility.
+  python-pip           # Package installer for Python, simplifying package management.
+  pyenv                # Tool to manage multiple Python versions and environments.
+  tk                   # Tkinter library – Python's standard GUI toolkit.
+  rust                 # Programming language focused on safety, speed, and concurrency with a modern syntax.
   # Science Tools
   step
   # Office Tools
-  texlive            # TeX-Live Latex Framework from AUR-Arch
-  texlive-langgerman # TeX-Live german language support
-  zathura
-  zathura-pdf-mupdf
-  meld     # Merging and diff tool
-  baobab   # Treesize alternative for linux with graphical interface
-  ncdu     # Treesize alternative for linux in CLI
-  audacity # Audio edit tool
+  texlive            # TeX Live LaTeX framework from AUR-Arch
+  texlive-langgerman # Provides German language support for TeX Live
+  zathura            # Lightweight PDF viewer with support for multiple backends (e.g., MuPDF, Poppler)
+  zathura-pdf-mupdf  # Zathura plugin using the MuPDF PDF renderer
+  meld               # Graphical tool for merging and comparing files
+  baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
+  ncdu               # Command-line disk usage analyzer, alternative to baobab
+  audacity           # Audio edit tool
   # CLI Tools
-  btop
-  lazygit
-  inkscape
-  stow
-  zsh
-  fzf
-  fd
-  bat
-  git-delta
-  tlrc
-  thefuck
-  zoxide
-  reflector
-  ripgrep
-  tre-command
-  unzip
-  ni-visa
-  expac
-  scc
-  duf
-  rsync
-  dua-cli
-  sox # CLI audio player
+  btop        # Interactive system monitoring tool similar to htop but built using libui.
+  lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
+  inkscape    # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
+  stow        # Tool for managing symlinks, useful for installing software globally while keeping configuration files in a central location.
+  zsh         # Robust shell with advanced features, including syntax highlighting and plugins support.
+  fzf         # Fuzzy file finder that allows you to search through files quickly using partial matches.
+  fd          # Simple, fast, user-friendly alternative to find, optimized for common use cases.
+  bat         # Modern replacement for cat, displaying colored output in terminals when viewing text files.
+  git-delta   # Colors and formats Git diffs with syntax highlighting, making them easier to read.
+  tlrc        # Terminal-based image viewer focused on low resource usage with a dark theme by default.
+  thefuck     # Tool that corrects your mistyped commands automatically by finding similar valid commands.
+  zoxide      # CLI tool that helps you quickly jump between directories using fuzzy search.
+  reflector   # AUR helper designed to speed up updates and package installations by optimizing mirrors in /etc/pacman.conf.
+  ripgrep     # Fast, modern search tool that looks for patterns in files, similar to grep but with additional features like regex support.
+  tre-command # CLI tool for managing SSH connections and identities with tab-completion and command history.
+  unzip       # Command-line utility for extracting files from ZIP archives.
+  ni-visa     # Tool for querying information about network interfaces, including MAC addresses and IP details.
+  expac       # Enhanced version of the pacman package manager, providing more detailed output and easier scripting capabilities.
+  scc         # Simple Console Calculator for performing quick calculations directly in the terminal.
+  duf         # Disk usage analysis tool that provides a detailed overview of storage space usage on your system.
+  rsync       # Fast and versatile file synchronization tool, often used for backups or transferring large amounts of data efficiently.
+  dua-cli     # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
+  sox         # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
   # Gaming
   steam  # Steam platform client
   lutris # Lutris game launcher for epic or gog etc.
@@ -114,27 +114,27 @@ tools_stage=(
 
 #software for nvidia GPU only
 nvidia_stage=(
-  linux-headers
-  nvidia-dkms
-  nvidia-settings
-  nvidia-utils
-  libva
-  libva-nvidia-driver-git
-  cuda
+  linux-headers           # Kernel headers for compiling drivers
+  nvidia-dkms             # NVIDIA driver with DKMS support
+  nvidia-settings         # GUI tool for adjusting graphics settings
+  nvidia-utils            # Tools for monitoring and managing GPU usage
+  libva                   # Video acceleration library for offloading video tasks
+  libva-nvidia-driver-git # NVIDIA-specific VA drivers from Git repository
+  cuda                    # NVIDIA's platform for GPU-accelerated computing
 )
 
 uninstall_stage=(
-  dunst
-  mako
-  rofi
-  allust-git
+  dunst      # Notification daemon for managing system notifications
+  mako       # Application launcher with workspace and window management support
+  rofi       # Window switcher and application launcher with a simple, fast interface
+  allust-git # Graphical tool for monitoring system resources (fork of Alust)
 )
 
 uninstall_nvidia_stage=(
-  hyprland-git
-  hyprland-nvidia
-  hyprland-nvidia-git
-  hyprland-nvidia-hidpi-git
+  hyprland-git              # Development version of Hyprland (Wayland compositor)
+  hyprland-nvidia           # Hyprland optimized for NVIDIA GPUs with proper driver support
+  hyprland-nvidia-git       # Development version of Hyprland specifically for NVIDIA GPUs
+  hyprland-nvidia-hidpi-git # Hyprland build for NVIDIA GPUs with HiDPI (high resolution) screen support
 )
 
 # set some colors
