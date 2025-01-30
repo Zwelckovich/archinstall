@@ -16,7 +16,6 @@ hypr_base_stage=(
   sddm          # The Simple Desktop Display Manager, a display manager for Linux systems.
   hyprcursor    # Custom cursors for use with Hyprland.
   hyprutils     # Collection of tools and utilities for enhancing Hyprland functionality.
-  aquamarine    # Color scheme for Qt applications designed to enhance visual appeal.
   hypridle      # Screen locker utility for Hyprland with customization options.
   hyprlock      # Screen locking tool integrated into Hyprland, featuring blur effects.
   hyprland      # The core window manager providing tiling, floating, and fullscreen functionality.
@@ -51,20 +50,20 @@ piperwire_stage=(
 tools_stage=(
   # Display /  Audio / Core
   feh            # Lightweight image viewer for X11 with support for various image formats.
-  pacman-Contrib # Additional tools and scripts for Pacman, enhancing package management capabilities.
+  pacman-contrib # Additional tools and scripts for Pacman, enhancing package management capabilities.
   npm            # Node Package Manager for installing, sharing, and managing JavaScript packages.
   # Web Tools
   librewolf-bin       # Privacy-focused web browser based on Firefox with enhanced tracking protection and security features.
   thorium-browser-bin # Lightweight privacy-oriented browser derived from Brave, designed for minimal resource usage and ad-free browsing.
   # Programming Tools
   code                 # The Visual Studio Code editor, providing a robust development environment.
-  qt5-Graphicaleffects # Qt module for advanced graphical effects in Qt applications.
+  qt5-graphicaleffects # Qt module for advanced graphical effects in Qt applications.
   qt5-svg              # SVG support module for Qt applications.
   qt6-svg              # SVG support module compatible with Qt6 versions.
   qt5-quickcontrols2   # Module offering modern controls for creating quick, visually appealing user interfaces in Qt applications.
   eza                  # Enhanced version of the `ls` command, providing more detailed and customizable directory listings.
   hyfetch              # Lightweight system information tool optimized for Hyprland environments.
-  bfg                  # Binary File Glasses – a tool to extract strings from binary files.
+  bfg                  # Remove big files from GIT repositories
   git-crypt            # Extension for managing encrypted files in Git repositories.
   git-lfs              # Large File Storage extension for Git, allowing efficient handling of large files.
   python               # High-level programming language known for its readability and versatility.
