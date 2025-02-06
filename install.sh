@@ -491,7 +491,21 @@ function restore_dotfiles() {
 
   echo -e "$CNT ### Hyprland ###"
   rm -rf ~/.config/hypr
-  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config hypr
+  echo "Choose PC"
+  echo " 1) Desktop"
+  echo " 2) Laptop"
+  read -p "Selection: " n
+  case "$n" in
+  1)
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr desktop
+    ;;
+  2)
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr laptop
+    ;;
+  *)
+    echo default
+    ;;
+  esac
   chmod u+x ~/archinstall/dotfiles/config/hypr/.config/hypr/wallpaper.sh
 
   echo -e "$CNT ### Waybar ###"
