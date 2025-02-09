@@ -185,28 +185,54 @@ function btrfs_format() {
   echo "------------------------------------------------------------------------------------------------------------------"
   fdisk -l
   echo " "
-  read -p 'Enter disk name for installation (e.g. sda): ' disk
-  umount /dev/${disk}?*
-  umount -l /mnt
+  read -p 'Enter disk name for installation (e.g. sda or nvme0n1): ' disk
+  
+  # Unmount any mounted partitions from this disk and the mount point
+  umount /dev/${disk}?* 2>/dev/null
+  umount -l /mnt 2>/dev/null
+  
+  # Zap the disk and create two partitions:
+  #  - Partition 1: 1G for boot (EF00)
+  #  - Partition 2: The rest (8300) for encryption and data
   sgdisk --zap-all /dev/$disk
   sgdisk -n 1:0:+1G -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$disk -p
-  dn=${disk}1
-  mkfs.fat -F32 /dev/$dn
-  dn=${disk}2
+  
+  # Depending on the disk type, set the partition names.
+  if [[ "$disk" == nvme* ]]; then
+      # NVMe devices use a 'p' before the partition number
+      part1="/dev/${disk}p1"
+      part2="/dev/${disk}p2"
+  else
+      # Regular sd? disks
+      part1="/dev/${disk}1"
+      part2="/dev/${disk}2"
+  fi
+  
+  # Format the boot partition as FAT32.
+  mkfs.fat -F32 "$part1"
+  
   echo "-----------------------------------------ENCRYPTION------------------------------------------------"
-  #cryptsetup --cipher aes-xts-plain64 --hash sha512 --use-random --verify-passphrase luksFormat /dev/$dn
-  cryptsetup -c=aes-xts-plain64 --key-size=512 --hash=sha512 --iter-time=3000 --pbkdf=pbkdf2 --use-random luksFormat --type=luks1 /dev/$dn
-  cryptsetup luksOpen /dev/$dn root
+  # Set up LUKS encryption on the second partition.
+  cryptsetup -c aes-xts-plain64 --key-size=512 --hash=sha512 --iter-time=3000 \
+      --pbkdf=pbkdf2 --use-random luksFormat --type=luks1 "$part2"
+  cryptsetup luksOpen "$part2" root
+  
+  # Format the decrypted container with BTRFS.
   mkfs.btrfs -f /dev/mapper/root
+  
+  # Mount the filesystem and create BTRFS subvolumes.
   mount /dev/mapper/root /mnt
-  btrfs su cr /mnt/@
-  btrfs su cr /mnt/@home
+  btrfs subvolume create /mnt/@
+  btrfs subvolume create /mnt/@home
   umount /mnt
+  
+  # Mount the subvolumes with your desired options.
   mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ /dev/mapper/root /mnt
-  mkdir /mnt/{boot,home}
+  mkdir -p /mnt/{boot,home}
   mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home /dev/mapper/root /mnt/home
-  dn=${disk}1
-  mount /dev/$dn /mnt/boot
+  
+  # Mount the boot partition.
+  mount "$part1" /mnt/boot
 
   echo "------------------------------------------------------------------------------------------------------------------"
   echo "                                                Pacstrap Arch                                                     "
