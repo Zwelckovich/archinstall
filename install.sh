@@ -110,6 +110,10 @@ tools_stage=(
   # Gaming
   steam  # Steam platform client
   lutris # Lutris game launcher for epic or gog etc.
+  # Bluetooth
+  bluez
+  bluez-utils
+  blueman
 )
 
 #software for nvidia GPU only
