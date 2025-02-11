@@ -39,8 +39,9 @@ done
 # Remove the trailing -o from the array
 unset 'find_args[${#find_args[@]}-1]'
 
-# Find files recursively in TARGET_DIR matching any of the given extensions and sort them by relative path
-files=$(find "$TARGET_DIR" -type f \( "${find_args[@]}" \) 2>/dev/null | sort)
+# Find files recursively in TARGET_DIR matching any of the given extensions,
+# ignoring any .venv directories, and sort them by relative path.
+files=$(find "$TARGET_DIR" -type d -name ".venv" -prune -o -type f \( "${find_args[@]}" \) -print 2>/dev/null | sort)
 
 # If no files are found, show a reasoning error message and exit
 if [ -z "$files" ]; then
