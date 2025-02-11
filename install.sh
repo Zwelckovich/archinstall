@@ -22,6 +22,7 @@ hypr_base_stage=(
   pyprland      # Python utility to extend Hyprland's capabilities for custom scripting.
   swww          # Wallpaper setter designed specifically for Wayland environments.
   swaync        # Notification utility tailored for Sway, enhancing desktop notifications.
+  wl-clipboard  # Clipboard manager for wayland
   # Fonts
   adobe-source-code-pro-fonts # Monospaced font family optimized for coding environments.
   noto-fonts-emoji            # Set of emoji characters supporting various platforms and applications.
@@ -191,51 +192,51 @@ function btrfs_format() {
   fdisk -l
   echo " "
   read -p 'Enter disk name for installation (e.g. sda or nvme0n1): ' disk
-  
+
   # Unmount any mounted partitions from this disk and the mount point
   umount /dev/${disk}?* 2>/dev/null
   umount -l /mnt 2>/dev/null
-  
+
   # Zap the disk and create two partitions:
   #  - Partition 1: 1G for boot (EF00)
   #  - Partition 2: The rest (8300) for encryption and data
   sgdisk --zap-all /dev/$disk
   sgdisk -n 1:0:+1G -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$disk -p
-  
+
   # Depending on the disk type, set the partition names.
   if [[ "$disk" == nvme* ]]; then
-      # NVMe devices use a 'p' before the partition number
-      part1="/dev/${disk}p1"
-      part2="/dev/${disk}p2"
+    # NVMe devices use a 'p' before the partition number
+    part1="/dev/${disk}p1"
+    part2="/dev/${disk}p2"
   else
-      # Regular sd? disks
-      part1="/dev/${disk}1"
-      part2="/dev/${disk}2"
+    # Regular sd? disks
+    part1="/dev/${disk}1"
+    part2="/dev/${disk}2"
   fi
-  
+
   # Format the boot partition as FAT32.
   mkfs.fat -F32 "$part1"
-  
+
   echo "-----------------------------------------ENCRYPTION------------------------------------------------"
   # Set up LUKS encryption on the second partition.
   cryptsetup -c aes-xts-plain64 --key-size=512 --hash=sha512 --iter-time=3000 \
-      --pbkdf=pbkdf2 --use-random luksFormat --type=luks1 "$part2"
+    --pbkdf=pbkdf2 --use-random luksFormat --type=luks1 "$part2"
   cryptsetup luksOpen "$part2" root
-  
+
   # Format the decrypted container with BTRFS.
   mkfs.btrfs -f /dev/mapper/root
-  
+
   # Mount the filesystem and create BTRFS subvolumes.
   mount /dev/mapper/root /mnt
   btrfs subvolume create /mnt/@
   btrfs subvolume create /mnt/@home
   umount /mnt
-  
+
   # Mount the subvolumes with your desired options.
   mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ /dev/mapper/root /mnt
   mkdir -p /mnt/{boot,home}
   mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home /dev/mapper/root /mnt/home
-  
+
   # Mount the boot partition.
   mount "$part1" /mnt/boot
 
