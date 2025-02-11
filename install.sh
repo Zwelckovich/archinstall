@@ -82,6 +82,7 @@ tools_stage=(
   baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
   ncdu               # Command-line disk usage analyzer, alternative to baobab
   audacity           # Audio edit tool
+  mutt-wizard        # CLI email client
   # CLI Tools
   btop        # Interactive system monitoring tool similar to htop but built using libui.
   lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
