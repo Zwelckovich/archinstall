@@ -167,3 +167,6 @@ alias citrix="/opt/Citrix/ICAClient/wfica"
 
 # --- Citrix Aliases ---
 alias ds="ncdu --color dark"
+
+# --- Yazi Aliases ---
+alias ee="yazi"

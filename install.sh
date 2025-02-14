@@ -109,7 +109,13 @@ tools_stage=(
   dua-cli     # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
   sox         # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
   testdisk    # Data recovery and disk repair tool
-  yazi          # CLI file explorer
+  # Yazi
+  file       # Determine file type
+  ueberzugpp # File Preview
+  ffmpeg     # Complete Solution to record, convert and stream audio and video
+  chafa      # Image-to-text converter supporting a wide range of symbols and palettes, transparency, animations, etc.
+  jq         # Command-line JSON processor
+  yazi       # CLI file explorer
   # Gaming
   steam  # Steam platform client
   lutris # Lutris game launcher for epic or gog etc.
