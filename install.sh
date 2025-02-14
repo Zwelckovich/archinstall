@@ -109,7 +109,7 @@ tools_stage=(
   dua-cli     # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
   sox         # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
   testdisk    # Data recovery and disk repair tool
-  lf          # CLI file explorer
+  yazi          # CLI file explorer
   # Gaming
   steam  # Steam platform client
   lutris # Lutris game launcher for epic or gog etc.
