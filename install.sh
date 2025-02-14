@@ -81,12 +81,12 @@ tools_stage=(
   zathura-pdf-mupdf  # Zathura plugin using the MuPDF PDF renderer
   meld               # Graphical tool for merging and comparing files
   baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
-  ncdu               # Command-line disk usage analyzer, alternative to baobab
   mutt-wizard        # CLI email client
   # Audio/Video Tools
   ffmpeg   # Complete Solution to record, convert and stream audio and video
   audacity # Audio edit tool
   yt-dlp   # Video and Audio Downloader
+  mpv      # a free, open source, and cross-platform media player
   # CLI Tools
   btop        # Interactive system monitoring tool similar to htop but built using libui.
   lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
@@ -112,6 +112,8 @@ tools_stage=(
   dua-cli     # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
   sox         # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
   testdisk    # Data recovery and disk repair tool
+  ncdu        # Command-line disk usage analyzer, alternative to baobab
+  cifs-utils  # CIFS filesystem user-space tools
   # Yazi
   file       # Determine file type
   ueberzugpp # File Preview
