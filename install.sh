@@ -82,8 +82,11 @@ tools_stage=(
   meld               # Graphical tool for merging and comparing files
   baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
   ncdu               # Command-line disk usage analyzer, alternative to baobab
-  audacity           # Audio edit tool
   mutt-wizard        # CLI email client
+  # Audio/Video Tools
+  ffmpeg   # Complete Solution to record, convert and stream audio and video
+  audacity # Audio edit tool
+  yt-dlp   # Video and Audio Downloader
   # CLI Tools
   btop        # Interactive system monitoring tool similar to htop but built using libui.
   lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
@@ -112,7 +115,6 @@ tools_stage=(
   # Yazi
   file       # Determine file type
   ueberzugpp # File Preview
-  ffmpeg     # Complete Solution to record, convert and stream audio and video
   chafa      # Image-to-text converter supporting a wide range of symbols and palettes, transparency, animations, etc.
   jq         # Command-line JSON processor
   yazi       # CLI file explorer
