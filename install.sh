@@ -67,6 +67,7 @@ tools_stage=(
   bfg                  # Remove big files from GIT repositories
   git-crypt            # Extension for managing encrypted files in Git repositories.
   git-lfs              # Large File Storage extension for Git, allowing efficient handling of large files.
+  github-cli           # Github CLI client
   python               # High-level programming language known for its readability and versatility.
   python-pip           # Package installer for Python, simplifying package management.
   pyenv                # Tool to manage multiple Python versions and environments.
