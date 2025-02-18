@@ -73,6 +73,7 @@ tools_stage=(
   pyenv                # Tool to manage multiple Python versions and environments.
   tk                   # Tkinter library – Python's standard GUI toolkit.
   rust                 # Programming language focused on safety, speed, and concurrency with a modern syntax.
+  docker               # Pack, ship and excecute lightweight container
   # Science Tools
   step
   # Office Tools
