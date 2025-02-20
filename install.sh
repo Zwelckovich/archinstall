@@ -70,6 +70,7 @@ tools_stage=(
   python               # High-level programming language known for its readability and versatility.
   python-pip           # Package installer for Python, simplifying package management.
   pyenv                # Tool to manage multiple Python versions and environments.
+  python-pynvim        # Python Client for Neovim
   tk                   # Tkinter library – Python's standard GUI toolkit.
   rust                 # Programming language focused on safety, speed, and concurrency with a modern syntax.
   docker               # Pack, ship and excecute lightweight container
