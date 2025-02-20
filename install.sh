@@ -602,7 +602,6 @@ function restore_dotfiles() {
   cp -r ~/archinstall/dotfiles/home/icons/.icons ~/
   unzip ~/.icons/WhiteSur.zip -d ~/.icons/
   echo -e "$CNT ### Kitty ###"
-  rm -rf ~/.config/kitty/
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/ kitty
 
   echo -e "$CNT ### Bat ###"
