@@ -6,7 +6,6 @@
 hypr_base_stage=(
   # Hyprland
   kitty         # A fast, feature-rich terminal emulator focused on simplicity and efficiency.
-  wezterm-git   # A modern, cross-platform terminal emulator with Lua configuration support.
   pamixer       # A command-line tool to control pulseaudio volumes.
   pavucontrol   # A graphical volume control for PulseAudio sound server.
   pipewire-alsa # ALSA plugin for PipeWire, enabling audio support through PipeWire.
@@ -601,9 +600,9 @@ function restore_dotfiles() {
   rm -rf ~/.icons
   cp -r ~/archinstall/dotfiles/home/icons/.icons ~/
   unzip ~/.icons/WhiteSur.zip -d ~/.icons/
-  echo -e "$CNT ### Wezterm ###"
-  rm -rf ~/.wezterm.lua
-  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home wezterm
+  echo -e "$CNT ### Kitty ###"
+  rm -rf ~/.config/kitty/
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/ kitty
 
   echo -e "$CNT ### Bat ###"
   mkdir -p "$(bat --config-dir)/themes"
