@@ -25,15 +25,12 @@ snippet template "Basic template" b
 % figure support
 \usepackage{import}
 \usepackage{xifthen}
-\pdfminorversion=7
 \usepackage{pdfpages}
 \usepackage{transparent}
 \newcommand{\incfig}[1]{%
 	\def\svgwidth{\columnwidth}
 	\import{./figures/}{#1.pdf_tex}
 }
-
-\pdfsuppresswarningpagegroup=1
 
 \begin{document}
 	$0
