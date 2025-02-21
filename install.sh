@@ -85,10 +85,12 @@ tools_stage=(
   baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
   mutt-wizard        # CLI email client
   # Audio/Video Tools
-  ffmpeg   # Complete Solution to record, convert and stream audio and video
-  audacity # Audio edit tool
-  yt-dlp   # Video and Audio Downloader
-  mpv      # a free, open source, and cross-platform media player
+  ffmpeg    # Complete Solution to record, convert and stream audio and video
+  audacity  # Audio edit tool
+  yt-dlp    # Video and Audio Downloader
+  mpv       # a free, open source, and cross-platform media player
+  librespot # Open source client library for Spotify
+  ncpspot   # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
   # CLI Tools
   btop        # Interactive system monitoring tool similar to htop but built using libui.
   lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
