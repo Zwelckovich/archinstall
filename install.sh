@@ -84,16 +84,20 @@ tools_stage=(
   meld               # Graphical tool for merging and comparing files
   baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
   mutt-wizard        # CLI email client
-  # Audio/Video Tools
-  ffmpeg   # Complete Solution to record, convert and stream audio and video
-  audacity # Audio edit tool
-  yt-dlp   # Video and Audio Downloader
-  mpv      # a free, open source, and cross-platform media player
-  ncspot   # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
+  # Audio/Video/Foto Tools
+  ffmpeg             # Complete Solution to record, convert and stream audio and video
+  audacity           # Audio edit tool
+  yt-dlp             # Video and Audio Downloader
+  mpv                # a free, open source, and cross-platform media player
+  ncspot             # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
+  inkscape           # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
+  grim               # Screenshot utility for Wayland
+  tesseract          # An OCR program
+  tesseract-data-eng # English OCR database
+  tesseract-data-deu # German OCR database
   # CLI Tools
   btop        # Interactive system monitoring tool similar to htop but built using libui.
   lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
-  inkscape    # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
   stow        # Tool for managing symlinks, useful for installing software globally while keeping configuration files in a central location.
   zsh         # Robust shell with advanced features, including syntax highlighting and plugins support.
   fzf         # Fuzzy file finder that allows you to search through files quickly using partial matches.
