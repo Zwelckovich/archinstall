@@ -93,6 +93,7 @@ tools_stage=(
   ncspot             # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
   inkscape           # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
   grim               # Screenshot utility for Wayland
+  slurp              # Select a region in a Wayland compositor
   tesseract          # An OCR program
   tesseract-data-eng # English OCR database
   tesseract-data-deu # German OCR database
