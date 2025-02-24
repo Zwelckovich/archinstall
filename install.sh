@@ -22,6 +22,7 @@ hypr_base_stage=(
   swww          # Wallpaper setter designed specifically for Wayland environments.
   swaync        # Notification utility tailored for Sway, enhancing desktop notifications.
   wl-clipboard  # Clipboard manager for wayland
+  clipse        # A configurable TUI clipboard manager for Unix.
   # Fonts
   adobe-source-code-pro-fonts # Monospaced font family optimized for coding environments.
   noto-fonts-emoji            # Set of emoji characters supporting various platforms and applications.
