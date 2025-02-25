@@ -463,6 +463,7 @@ function i3_install() {
     install_software $SOFTWR
   done
   sudo systemctl enable sddm
+  sudo systemctl enable bluetooth.service
 
   # OH MY ZSH / Powerlever10k
   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
