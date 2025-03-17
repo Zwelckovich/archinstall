@@ -528,6 +528,37 @@ function restore_dotfiles() {
     code --install-extension Catppuccin.catppuccin-vsc
     code --install-extension Catppuccin.catppuccin-vsc-icons
   fi
+  if code --list-extensions | grep -iE latex-workshop &>>/dev/null; then
+    echo -e "VSCode Latex Workshop in Extensions is already installed."
+  else
+    echo -e "Installing Latex Workshop VSCode Extensions"
+    code --install-extension james-yu.latex-workshop
+  fi
+  if code --list-extensions | grep -iE python &>>/dev/null; then
+    echo -e "VSCode Python in Extensions is already installed."
+  else
+    echo -e "Installing Python VSCode Extensions"
+    code --install-extension ms-toolsai.jupyter
+    code --install-extension ms-python.python
+  fi
+  if code --list-extensions | grep -iE rainbow-csv &>>/dev/null; then
+    echo -e "VSCode Rainbow CSV in Extensions is already installed."
+  else
+    echo -e "Installing Rainbow CSV VSCode Extensions"
+    code --install-extension mechatroner.rainbow-csv
+  fi
+  if code --list-extensions | grep -iE excelviewer &>>/dev/null; then
+    echo -e "VSCode Excel Viewer in Extensions is already installed."
+  else
+    echo -e "Installing Excel Viewer VSCode Extensions"
+    code --install-extension grapecity.gc-excelviewer
+  fi
+  if code --list-extensions | grep -iE excelviewer &>>/dev/null; then
+    echo -e "VSCode Java in Extensions is already installed."
+  else
+    echo -e "Installing Java VSCode Extensions"
+    code --install-extension redhat.java
+  fi
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config code
 
   echo -e "$CNT ### BTOP ###"
