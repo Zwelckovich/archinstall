@@ -169,6 +169,3 @@ alias ds="ncdu --color dark"
 
 # --- Yazi Aliases ---
 alias ee="yazi"
-
-# --- VS Code ---
-alias code="code --enable-proposed-api ms-toolsai.jupyter --enable-proposed-api ms-python.python"
