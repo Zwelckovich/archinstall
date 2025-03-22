@@ -169,3 +169,19 @@ alias ds="ncdu --color dark"
 
 # --- Yazi Aliases ---
 alias ee="yazi"
+
+bindkey -v
+# Reduce the delay when switching modes
+export KEYTIMEOUT=20
+
+# Bind 'jk' to escape (switch to normal mode)
+bindkey -M viins 'jk' vi-cmd-mode
+
+# Show mode indicator in prompt
+function zle-line-init zle-keymap-select {
+    RPS1="${${KEYMAP/vicmd/[NORMAL]}/(main|viins)/[INSERT]}"
+    RPS2=$RPS1
+    zle reset-prompt
+}
+zle -N zle-line-init
+zle -N zle-keymap-select
