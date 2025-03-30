@@ -141,7 +141,7 @@ tools_stage=(
 #software for nvidia GPU only
 nvidia_stage=(
   linux-headers           # Kernel headers for compiling drivers
-  nvidia-dkms             # NVIDIA driver with DKMS support
+  nvidia                  # NVIDIA driver with DKMS support
   nvidia-settings         # GUI tool for adjusting graphics settings
   nvidia-utils            # Tools for monitoring and managing GPU usage
   libva                   # Video acceleration library for offloading video tasks
