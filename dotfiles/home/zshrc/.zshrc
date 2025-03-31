@@ -151,7 +151,7 @@ eval "$(pyenv init -)"
 # --- Python Aliases ---
 
 alias py="python"
-alias pyact="source .venv/bin/activate && which pyhton"
+alias pyact="source .venv/bin/activate && which python"
 alias pydeact="deactivate && which python"
 alias pyvenv="python -m venv .venv && cp ~/archinstall/tools/requirements.txt ./"
 
