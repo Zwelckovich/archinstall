@@ -631,6 +631,13 @@ function restore_dotfiles() {
   git pull
   popd
 
+  echo -e "$CNT ### TMUX ###"
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home tmux
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  pushd ~/.tmux/plugins/tpm
+  git pull
+  popd
+
   echo -e "$CNT ### ZSH ###"
   rm -rf ~/.zshrc
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home zshrc
