@@ -14,9 +14,17 @@ export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 source ~/archinstall/catppuccin-zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting) 
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode)
 source $ZSH/oh-my-zsh.sh
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+zvm_after_init() {
+  # Bind fzf's fuzzy completion
+  bindkey '^I' fzf-completion
+  bindkey '^[[Z' fzf-completion  # For shift-tab
+}
+# Only changing the escape key to `jk` in insert mode, we still
+# keep using the default keybindings `^[` in other modes
+ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 
 alias reload-zsh="source ~/.zshrc"
 alias edit-zsh="nvim ~/.zshrc"
@@ -170,18 +178,3 @@ alias ds="ncdu --color dark"
 # --- Yazi Aliases ---
 alias ee="yazi"
 
-bindkey -v
-# Reduce the delay when switching modes
-export KEYTIMEOUT=20
-
-# Bind 'jk' to escape (switch to normal mode)
-bindkey -M viins 'jk' vi-cmd-mode
-
-# Show mode indicator in prompt
-function zle-line-init zle-keymap-select {
-    RPS1="${${KEYMAP/vicmd/[NORMAL]}/(main|viins)/[INSERT]}"
-    RPS2=$RPS1
-    zle reset-prompt
-}
-zle -N zle-line-init
-zle -N zle-keymap-select

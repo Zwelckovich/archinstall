@@ -624,6 +624,10 @@ function restore_dotfiles() {
   pushd ~/archinstall/catppuccin-zsh-syntax-highlighting
   git pull
   popd
+  git clone --depth=1 https://github.com/jeffreytse/zsh-vi-mode ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-vi-mode
+  pushd ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-vi-mode
+  git pull
+  popd
 
   echo -e "$CNT ### FZF-Git ###"
   git clone https://github.com/junegunn/fzf-git.sh.git ~/archinstall/fzf-git
