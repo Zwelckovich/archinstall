@@ -85,6 +85,7 @@ tools_stage=(
   meld               # Graphical tool for merging and comparing files
   baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
   mutt-wizard        # CLI email client
+  d2                 # A modern diagram scripting language that turns text to diagrams
   # Audio/Video/Foto Tools
   ffmpeg             # Complete Solution to record, convert and stream audio and video
   audacity           # Audio edit tool
