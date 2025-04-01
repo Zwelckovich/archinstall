@@ -98,6 +98,7 @@ tools_stage=(
   tesseract          # An OCR program
   tesseract-data-eng # English OCR database
   tesseract-data-deu # German OCR database
+  chromium-widevine  # DRM Tool for chomium based browsers to watch Netflix in full quality
   # CLI Tools
   btop        # Interactive system monitoring tool similar to htop but built using libui.
   lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
