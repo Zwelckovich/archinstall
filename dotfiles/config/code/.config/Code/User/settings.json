@@ -111,4 +111,6 @@
     "%PDF%"
 ],
 "latex-workshop.synctex.afterBuild.enabled": true,
+"gitlens.ai.model": "gitkraken",
+"gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
 }
