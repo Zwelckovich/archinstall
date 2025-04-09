@@ -59,6 +59,7 @@ tools_stage=(
   # Programming Tools
   visual-studio-code-bin    # The Visual Studio Code editor, providing a robust development environment.
   pycharm-community-edition # Pycharm Community edition IDE
+  webstorm                  # JavaScript and Typscript IDE from Jetbrains
   qt5-graphicaleffects      # Qt module for advanced graphical effects in Qt applications.
   qt5-svg                   # SVG support module for Qt applications.
   qt6-svg                   # SVG support module compatible with Qt6 versions.
