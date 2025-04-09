@@ -178,3 +178,5 @@ alias ds="ncdu --color dark"
 # --- Yazi Aliases ---
 alias ee="yazi"
 
+# --- Webstorm ---
+alias webstorm="sh /opt/webstorm/bin/webstorm.sh"
