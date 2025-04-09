@@ -57,24 +57,25 @@ tools_stage=(
   librewolf-bin       # Privacy-focused web browser based on Firefox with enhanced tracking protection and security features.
   thorium-browser-bin # Lightweight privacy-oriented browser derived from Brave, designed for minimal resource usage and ad-free browsing.
   # Programming Tools
-  visual-studio-code-bin # The Visual Studio Code editor, providing a robust development environment.
-  qt5-graphicaleffects   # Qt module for advanced graphical effects in Qt applications.
-  qt5-svg                # SVG support module for Qt applications.
-  qt6-svg                # SVG support module compatible with Qt6 versions.
-  qt5-quickcontrols2     # Module offering modern controls for creating quick, visually appealing user interfaces in Qt applications.
-  eza                    # Enhanced version of the `ls` command, providing more detailed and customizable directory listings.
-  hyfetch                # Lightweight system information tool optimized for Hyprland environments.
-  bfg                    # Remove big files from GIT repositories
-  git-crypt              # Extension for managing encrypted files in Git repositories.
-  git-lfs                # Large File Storage extension for Git, allowing efficient handling of large files.
-  github-cli             # Github CLI client
-  python                 # High-level programming language known for its readability and versatility.
-  python-pip             # Package installer for Python, simplifying package management.
-  pyenv                  # Tool to manage multiple Python versions and environments.
-  python-pynvim          # Python Client for Neovim
-  tk                     # Tkinter library – Python's standard GUI toolkit.
-  rust                   # Programming language focused on safety, speed, and concurrency with a modern syntax.
-  docker                 # Pack, ship and excecute lightweight container
+  visual-studio-code-bin    # The Visual Studio Code editor, providing a robust development environment.
+  pycharm-community-edition # Pycharm Community edition IDE
+  qt5-graphicaleffects      # Qt module for advanced graphical effects in Qt applications.
+  qt5-svg                   # SVG support module for Qt applications.
+  qt6-svg                   # SVG support module compatible with Qt6 versions.
+  qt5-quickcontrols2        # Module offering modern controls for creating quick, visually appealing user interfaces in Qt applications.
+  eza                       # Enhanced version of the `ls` command, providing more detailed and customizable directory listings.
+  hyfetch                   # Lightweight system information tool optimized for Hyprland environments.
+  bfg                       # Remove big files from GIT repositories
+  git-crypt                 # Extension for managing encrypted files in Git repositories.
+  git-lfs                   # Large File Storage extension for Git, allowing efficient handling of large files.
+  github-cli                # Github CLI client
+  python                    # High-level programming language known for its readability and versatility.
+  python-pip                # Package installer for Python, simplifying package management.
+  pyenv                     # Tool to manage multiple Python versions and environments.
+  python-pynvim             # Python Client for Neovim
+  tk                        # Tkinter library – Python's standard GUI toolkit.
+  rust                      # Programming language focused on safety, speed, and concurrency with a modern syntax.
+  docker                    # Pack, ship and excecute lightweight container
   # Science Tools
   step
   # Office Tools
