@@ -102,7 +102,8 @@ alias cat="bat"
 
 # ---- Eza (better ls) -----
 
-alias ls="eza -al --icons=always --color=always --group-directories-first"
+alias la="eza -al --icons=always --color=always --group-directories-first"
+alias ls="eza -l --icons=always --color=always --group-directories-first"
 
 # ---- TheFuck -----
 
