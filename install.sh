@@ -651,9 +651,6 @@ function restore_dotfiles() {
   echo -e "$CNT ### P10K ###"
   rm -rf ~/.p10k.zsh
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home p10k
-  echo -e "$CNT ### ICAClient ###"
-  rm -rf ~/.ICAClient/wfclient.ini
-  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home .ICAClient
   echo -e "$CNT ### GTK Themes ###"
   rm -rf ~/.themes
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home themes
