@@ -54,7 +54,6 @@ tools_stage=(
   pacman-contrib # Additional tools and scripts for Pacman, enhancing package management capabilities.
   npm            # Node Package Manager for installing, sharing, and managing JavaScript packages.
   # Web Tools
-  librewolf-bin       # Privacy-focused web browser based on Firefox with enhanced tracking protection and security features.
   thorium-browser-bin # Lightweight privacy-oriented browser derived from Brave, designed for minimal resource usage and ad-free browsing.
   # Programming Tools
   visual-studio-code-bin    # The Visual Studio Code editor, providing a robust development environment.
@@ -73,6 +72,7 @@ tools_stage=(
   python                    # High-level programming language known for its readability and versatility.
   python-pip                # Package installer for Python, simplifying package management.
   pyenv                     # Tool to manage multiple Python versions and environments.
+  uv                        # An extremely fast Python package installer and resolver written in Rust
   python-pynvim             # Python Client for Neovim
   tk                        # Tkinter library – Python's standard GUI toolkit.
   rust                      # Programming language focused on safety, speed, and concurrency with a modern syntax.
