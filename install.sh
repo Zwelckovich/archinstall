@@ -71,6 +71,7 @@ tools_stage=(
   github-cli             # Github CLI client
   python                 # High-level programming language known for its readability and versatility.
   python-pip             # Package installer for Python, simplifying package management.
+  pyenv                  # Tool to manage multiple Python versions and environments.
   uv                     # An extremely fast Python package installer and resolver written in Rust
   python-pynvim          # Python Client for Neovim
   tk                     # Tkinter library – Python's standard GUI toolkit.
