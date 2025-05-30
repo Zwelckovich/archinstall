@@ -77,6 +77,7 @@ tools_stage=(
   tk                     # Tkinter library – Python's standard GUI toolkit.
   rust                   # Programming language focused on safety, speed, and concurrency with a modern syntax.
   docker                 # Pack, ship and excecute lightweight container
+  yarn                   # Fast, reliable, and secure dependency management
   # Science Tools
   step
   # Office Tools
