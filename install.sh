@@ -78,6 +78,7 @@ tools_stage=(
   rust                   # Programming language focused on safety, speed, and concurrency with a modern syntax.
   docker                 # Pack, ship and excecute lightweight container
   yarn                   # Fast, reliable, and secure dependency management
+  claude-code            # An agentic coding tool that lives in your terminal
   # Science Tools
   step
   # Office Tools
