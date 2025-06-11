@@ -181,3 +181,4 @@ alias ee="yazi"
 
 # --- Webstorm ---
 alias webstorm="sh /opt/webstorm/bin/webstorm.sh"
+export PATH=~/.npm-global/bin:$PATH
