@@ -10,3 +10,6 @@ local wk = require("which-key")
 wk.add({
 	{ "<leader>h", group = "harpoon", icon = "" },
 })
+wk.add({
+	{ "<leader>r", group = "iron", icon = "" },
+})
