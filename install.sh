@@ -137,8 +137,9 @@ tools_stage=(
   jq         # Command-line JSON processor
   yazi       # CLI file explorer
   # Gaming
-  steam  # Steam platform client
-  lutris # Lutris game launcher for epic or gog etc.
+  steam   # Steam platform client
+  lutris  # Lutris game launcher for epic or gog etc.
+  discord #All-in-one voice and text chat for gamers
   # Bluetooth
   bluez
   bluez-utils
