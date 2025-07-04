@@ -1,7 +1,0 @@
-pip-upgrade-tool
-pipreqs
-pynvim
-ruff
-numpy
-pandas
-pandas-stubs
