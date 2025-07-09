@@ -140,6 +140,9 @@ tools_stage=(
   steam   # Steam platform client
   lutris  # Lutris game launcher for epic or gog etc.
   discord #All-in-one voice and text chat for gamers
+  # Electronics/RF
+  qucs-s  # A spin-off of Qucs that supports other free SPICE circuit simulators like ngspice with the same Qucs GUI
+  klayout # High Performance Layout Viewer And Editor. Support of GDS and OASIS files.
   # Bluetooth
   bluez
   bluez-utils
@@ -596,15 +599,16 @@ function restore_dotfiles() {
   case "$n" in
   1)
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr desktop
+    chmod u+x ~/archinstall/dotfiles/config/hypr/desktop/.config/hypr/wallpaper.sh
     ;;
   2)
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr laptop
+    chmod u+x ~/archinstall/dotfiles/config/hypr/laptop/.config/hypr/wallpaper.sh
     ;;
   *)
     echo default
     ;;
   esac
-  chmod u+x ~/archinstall/dotfiles/config/hypr/.config/hypr/wallpaper.sh
 
   echo -e "$CNT ### Waybar ###"
   rm -rf ~/.config/waybar
