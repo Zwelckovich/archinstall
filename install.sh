@@ -104,6 +104,7 @@ tools_stage=(
   tesseract-data-eng # English OCR database
   tesseract-data-deu # German OCR database
   chromium-widevine  # DRM Tool for chomium based browsers to watch Netflix in full quality
+  blender            # A fully integrated 3D graphics creation suite
   # CLI Tools
   btop        # Interactive system monitoring tool similar to htop but built using libui.
   lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
@@ -143,6 +144,8 @@ tools_stage=(
   # Electronics/RF
   qucs-s  # A spin-off of Qucs that supports other free SPICE circuit simulators like ngspice with the same Qucs GUI
   klayout # High Performance Layout Viewer And Editor. Support of GDS and OASIS files.
+  kicad   # Electronic schematic and printed circuit board (PCB) design tools
+  freecad # Feature based parametric 3D CAD modeler
   # Bluetooth
   bluez
   bluez-utils
