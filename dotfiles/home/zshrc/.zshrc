@@ -185,3 +185,12 @@ export PATH=~/.npm-global/bin:$PATH
 
 # --- MPV Aliases ---
 alias mpv_anime="mpv --include=~/archinstall/tools/mpv/anime-quality.conf"
+
+# --- openEMS ---
+export PATH=”$HOME/opt/openEMS/bin:$PATH”
+
+# --- XDG-OPEN Aliases ---
+alias -s jpg=feh
+alias -s jpeg=feh
+alias -s png=feh
+alias -s pdf=zathura
