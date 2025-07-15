@@ -1,116 +1,111 @@
 {
-    "workbench.colorTheme": "Catppuccin Mocha",
-    // we try to make semantic highlighting look good
-    "editor.semanticHighlighting.enabled": true,
-    // prevent VSCode from modifying the terminal colors
-    "terminal.integrated.minimumContrastRatio": 1,
-    // make the window's titlebar use the workbench colors
-    "window.titleBarStyle": "custom",
-  
-    // applicable if you use Go, this is an opt-in flag!
-    "gopls": {
-      "ui.semanticTokens": true
+  "workbench.colorTheme": "Catppuccin Mocha",
+  // we try to make semantic highlighting look good
+  "editor.semanticHighlighting.enabled": true,
+  // prevent VSCode from modifying the terminal colors
+  "terminal.integrated.minimumContrastRatio": 1,
+  // make the window's titlebar use the workbench colors
+  "window.titleBarStyle": "custom",
+  "workbench.iconTheme": "catppuccin-mocha",
+  "security.workspace.trust.untrustedFiles": "open",
+  "editor.fontFamily": "'JetBrainsMono Nerd Font', 'JetBrainsMono Nerd Font', JetBrainsMono Nerd Font ,'JetBrainsMono Nerd Font'",
+  "editor.fontSize": 15,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
     },
-    "workbench.iconTheme": "catppuccin-mocha",
-    "security.workspace.trust.untrustedFiles": "open",
-    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'JetBrainsMono Nerd Font', JetBrainsMono Nerd Font ,'JetBrainsMono Nerd Font'",
-    "editor.fontSize": 15,
-    "git.confirmSync": false,
-    "git.autofetch": true,
-    "explorer.confirmDelete": false,
-    "explorer.confirmDragAndDrop": false,
-    "latex-workshop.latex.tools": [
- {
-  "name": "latexmk",
-  "command": "latexmk",
-  "args": [
-   "-synctex=1",
-   "-interaction=nonstopmode",
-   "-file-line-error",
-   "-pdf",
-   "-outdir=%OUTDIR%",
-   "%DOC%"
+    {
+      "name": "xelatex",
+      "command": "xelatex",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "pdflatex",
+      "command": "pdflatex",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "bibtex",
+      "command": "bibtex",
+      "args": [
+        "%DOCFILE%"
+      ],
+      "env": {}
+    }
   ],
-  "env": {}
- },
- {
-  "name": "xelatex",
-  "command": "xelatex",
-  "args": [
-   "-synctex=1",
-   "-interaction=nonstopmode",
-   "-file-line-error",
-   "%DOC%"
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "pdfLaTeX",
+      "tools": [
+        "pdflatex"
+      ]
+    },
+    {
+      "name": "latexmk 🔃",
+      "tools": [
+        "latexmk"
+      ]
+    },
+    {
+      "name": "xelatex",
+      "tools": [
+        "xelatex"
+      ]
+    },
+    {
+      "name": "pdflatex ➞ bibtex ➞ pdflatex`×2",
+      "tools": [
+        "pdflatex",
+        "bibtex",
+        "pdflatex",
+        "pdflatex"
+      ]
+    },
+    {
+      "name": "xelatex ➞ bibtex ➞ xelatex`×2",
+      "tools": [
+        "xelatex",
+        "bibtex",
+        "xelatex",
+        "xelatex"
+      ]
+    }
   ],
-  "env": {}
- },
- {
-  "name": "pdflatex",
-  "command": "pdflatex",
-  "args": [
-   "-synctex=1",
-   "-interaction=nonstopmode",
-   "-file-line-error",
-   "%DOC%"
-  ],
-  "env": {}
- },
- {
-  "name": "bibtex",
-  "command": "bibtex",
-  "args": [
-   "%DOCFILE%"
-  ],
-  "env": {}
- }
-],
-"latex-workshop.latex.recipes": [
- {
-  "name": "pdfLaTeX",
-  "tools": [
-   "pdflatex"
-  ]
- },
- {
-  "name": "latexmk 🔃",
-  "tools": [
-   "latexmk"
-  ]
- },
- {
-  "name": "xelatex",
-  "tools": [
-   "xelatex"
-  ]
- },
- {
-  "name": "pdflatex ➞ bibtex ➞ pdflatex`×2",
-  "tools": [
-   "pdflatex",
-   "bibtex",
-   "pdflatex",
-   "pdflatex"
-  ]
- },
- {
- "name": "xelatex ➞ bibtex ➞ xelatex`×2",
- "tools": [
-   "xelatex",
-   "bibtex",
-   "xelatex",
-   "xelatex"
-  ]
- }
-],
-"latex-workshop.view.pdf.ref.viewer": "external",
-"latex-workshop.view.pdf.viewer": "external",
-"latex-workshop.view.pdf.external.viewer.command": "zathura",
-"latex-workshop.view.pdf.external.viewer.args": [
+  "latex-workshop.view.pdf.ref.viewer": "external",
+  "latex-workshop.view.pdf.viewer": "external",
+  "latex-workshop.view.pdf.external.viewer.command": "zathura",
+  "latex-workshop.view.pdf.external.viewer.args": [
     "--synctex-editor-command",
     "code --no-sandbox -r -g %{input}:%{line}",
     "%PDF%"
-],
-"latex-workshop.synctex.afterBuild.enabled": true,
-"gitlens.ai.model": "gitkraken",
-"gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
+  ],
+  "latex-workshop.synctex.afterBuild.enabled": true,
+  "python.analysis.typeCheckingMode": "standard",
+  "python.analysis.diagnosticSeverityOverrides": {},
 }
