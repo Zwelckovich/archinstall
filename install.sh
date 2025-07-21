@@ -131,6 +131,8 @@ tools_stage=(
   testdisk    # Data recovery and disk repair tool
   ncdu        # Command-line disk usage analyzer, alternative to baobab
   cifs-utils  # CIFS filesystem user-space tools
+  smbclient   #Tools to access a server's filespace and printers via SMB
+  openssh     # SSH protocol implementation for remote login, command execution and file transfer
   # Yazi
   file       # Determine file type
   ueberzugpp # File Preview
