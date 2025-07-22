@@ -655,6 +655,10 @@ function restore_dotfiles() {
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazyvim
     ;;
   2)
+    rm -rf ~/.config/nvim/.git
+    rm -rf ~/.config/nvim/.gitignore
+    rm -rf ~/.config/nvim/lua/plugins
+    rm -rf ~/.config/nvim/lua/config
     stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config nvim
     ;;
   *)
