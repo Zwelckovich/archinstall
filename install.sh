@@ -5,151 +5,155 @@
 ## Variables
 hypr_base_stage=(
   # Hyprland
-  kitty         # A fast, feature-rich terminal emulator focused on simplicity and efficiency.
-  pamixer       # A command-line tool to control pulseaudio volumes.
-  pavucontrol   # A graphical volume control for PulseAudio sound server.
-  pipewire-alsa # ALSA plugin for PipeWire, enabling audio support through PipeWire.
-  playerctl     # A command-line tool to control media players that support the MPRIS interface.
-  rofi-wayland  #  A window switcher and application launcher with Wayland support.
-  waybar        # A lightweight status bar for Wayland environments like Hyprland or Sway.
-  sddm          # The Simple Desktop Display Manager, a display manager for Linux systems.
-  hyprcursor    # Custom cursors for use with Hyprland.
-  hyprutils     # Collection of tools and utilities for enhancing Hyprland functionality.
-  hypridle      # Screen locker utility for Hyprland with customization options.
-  hyprlock      # Screen locking tool integrated into Hyprland, featuring blur effects.
-  hyprland      # The core window manager providing tiling, floating, and fullscreen functionality.
-  pyprland      # Python utility to extend Hyprland's capabilities for custom scripting.
-  swww          # Wallpaper setter designed specifically for Wayland environments.
-  swaync        # Notification utility tailored for Sway, enhancing desktop notifications.
-  wl-clipboard  # Clipboard manager for wayland
-  clipse        # A configurable TUI clipboard manager for Unix.
-  # Fonts
-  adobe-source-code-pro-fonts # Monospaced font family optimized for coding environments.
-  noto-fonts-emoji            # Set of emoji characters supporting various platforms and applications.
-  otf-font-awesome            # Icon font providing a wide range of scalable vector icons.
-  ttf-droid                   # Open-ource fonts based on the Roboto typeface, designed for clarity and readability.
-  ttf-fira-code               # Monospaced programming font with ligature support, enhancing code legibility.
-  ttf-jetbrains-mono          # Monospaced font optimized for programming environments, offering excellent character spacing.
-  ttf-jetbrains-mono-nerd     # Jetbrains Mono variant with Nerd Font glyphs, combining programming features with additional icons and symbols.
-  # GTK / Qt Themes
-  qt5ct                    # Configuration tool for Qt5 applications to customize themes and appearance.
-  qt6ct                    # Configuration tool for Qt6 applications ensuring compatibility with modern Qt versions.
-  catppuccin-cursors-mocha # Set of cursors styled according to the Catppuccin theme, offering a cohesive visual experience with the 'mocha' color variant.
-  nwg-look                 # Tool designed to customize desktop appearance, including themes and icons for a visually appealing setup.
+  kitty                        # A fast, feature-rich terminal emulator focused on simplicity and efficiency.
+  pamixer                      # A command-line tool to control pulseaudio volumes.
+  pavucontrol                  # A graphical volume control for PulseAudio sound server.
+  pipewire-alsa                # ALSA plugin for PipeWire, enabling audio support through PipeWire.
+  playerctl                    # A command-line tool to control media players that support the MPRIS interface.
+  rofi-wayland                 #  A window switcher and application launcher with Wayland support.
+  waybar                       # A lightweight status bar for Wayland environments like Hyprland or Sway.
+  sddm                         # The Simple Desktop Display Manager, a display manager for Linux systems.
+  hyprcursor                   # Custom cursors for use with Hyprland.
+  hyprutils                    # Collection of tools and utilities for enhancing Hyprland functionality.
+  hypridle                     # Screen locker utility for Hyprland with customization options.
+  hyprlock                     # Screen locking tool integrated into Hyprland, featuring blur effects.
+  hyprland                     # The core window manager providing tiling, floating, and fullscreen functionality.
+  pyprland                     # Python utility to extend Hyprland's capabilities for custom scripting.
+  swww                         # Wallpaper setter designed specifically for Wayland environments.
+  swaync                       # Notification utility tailored for Sway, enhancing desktop notifications.
+  wl-clipboard                 # Clipboard manager for wayland
+  clipse                       # A configurable TUI clipboard manager for Unix.
+                               # Fonts
+  adobe-source-code-pro-fonts  # Monospaced font family optimized for coding environments.
+  noto-fonts-emoji             # Set of emoji characters supporting various platforms and applications.
+  otf-font-awesome             # Icon font providing a wide range of scalable vector icons.
+  ttf-droid                    # Open-ource fonts based on the Roboto typeface, designed for clarity and readability.
+  ttf-fira-code                # Monospaced programming font with ligature support, enhancing code legibility.
+  ttf-jetbrains-mono           # Monospaced font optimized for programming environments, offering excellent character spacing.
+  ttf-jetbrains-mono-nerd      # Jetbrains Mono variant with Nerd Font glyphs, combining programming features with additional icons and symbols.
+                               # GTK / Qt Themes
+  qt5ct                        # Configuration tool for Qt5 applications to customize themes and appearance.
+  qt6ct                        # Configuration tool for Qt6 applications ensuring compatibility with modern Qt versions.
+  catppuccin-cursors-mocha     # Set of cursors styled according to the Catppuccin theme, offering a cohesive visual experience with the 'mocha' color variant.
+  nwg-look                     # Tool designed to customize desktop appearance, including themes and icons for a visually appealing setup.
 )
 
 piperwire_stage=(
   # Pipewire
-  pipewire       # Core audio and media processing framework for Linux.
-  wireplumber    # Session manager for PipeWire, simplifying audio and video routing.
-  pipewire-audio # Audio support module for PipeWire.
-  pipewire-alsa  # ALSA compatibility layer for PipeWire, enabling traditional ALSA applications to work with PipeWire.
-  pipewire-pulse # PulseAudio compatibility layer for PipeWire, allowing PulseAudio-based applications to use PipeWire.
-  sof-firmware   # Firmware for Intel Sound Open Firmware (SOF) audio platforms.
+  pipewire        # Core audio and media processing framework for Linux.
+  wireplumber     # Session manager for PipeWire, simplifying audio and video routing.
+  pipewire-audio  # Audio support module for PipeWire.
+  pipewire-alsa   # ALSA compatibility layer for PipeWire, enabling traditional ALSA applications to work with PipeWire.
+  pipewire-pulse  # PulseAudio compatibility layer for PipeWire, allowing PulseAudio-based applications to use PipeWire.
+  sof-firmware    # Firmware for Intel Sound Open Firmware (SOF) audio platforms.
 )
 
 tools_stage=(
   # Display /  Audio / Core
-  feh            # Lightweight image viewer for X11 with support for various image formats.
-  pacman-contrib # Additional tools and scripts for Pacman, enhancing package management capabilities.
-  npm            # Node Package Manager for installing, sharing, and managing JavaScript packages.
-  # Web Tools
-  vivaldi               # An advanced browser made with the power user in mind.
-  vivaldi-ffmpeg-codecs # additional support for proprietary codecs for vivaldi
-  # Programming Tools
-  visual-studio-code-bin # The Visual Studio Code editor, providing a robust development environment.
-  pycharm-professional   # Pycharm Community edition IDE
-  webstorm               # JavaScript and Typscript IDE from Jetbrains
-  qt5-graphicaleffects   # Qt module for advanced graphical effects in Qt applications.
-  qt5-svg                # SVG support module for Qt applications.
-  qt6-svg                # SVG support module compatible with Qt6 versions.
-  qt5-quickcontrols2     # Module offering modern controls for creating quick, visually appealing user interfaces in Qt applications.
-  eza                    # Enhanced version of the `ls` command, providing more detailed and customizable directory listings.
-  hyfetch                # Lightweight system information tool optimized for Hyprland environments.
-  bfg                    # Remove big files from GIT repositories
-  git-crypt              # Extension for managing encrypted files in Git repositories.
-  git-lfs                # Large File Storage extension for Git, allowing efficient handling of large files.
-  github-cli             # Github CLI client
-  python                 # High-level programming language known for its readability and versatility.
-  python-pip             # Package installer for Python, simplifying package management.
-  pyenv                  # Tool to manage multiple Python versions and environments.
-  uv                     # An extremely fast Python package installer and resolver written in Rust
-  python-pynvim          # Python Client for Neovim
-  tk                     # Tkinter library – Python's standard GUI toolkit.
-  rust                   # Programming language focused on safety, speed, and concurrency with a modern syntax.
-  docker                 # Pack, ship and excecute lightweight container
-  yarn                   # Fast, reliable, and secure dependency management
-  claude-code            # An agentic coding tool that lives in your terminal
-  # Science Tools
+  feh                     # Lightweight image viewer for X11 with support for various image formats.
+  pacman-contrib          # Additional tools and scripts for Pacman, enhancing package management capabilities.
+  npm                     # Node Package Manager for installing, sharing, and managing JavaScript packages.
+                          # Web Tools
+  vivaldi                 # An advanced browser made with the power user in mind.
+  vivaldi-ffmpeg-codecs   # additional support for proprietary codecs for vivaldi
+                          # Programming Tools
+  visual-studio-code-bin  # The Visual Studio Code editor, providing a robust development environment.
+  pycharm-professional    # Pycharm Community edition IDE
+  webstorm                # JavaScript and Typscript IDE from Jetbrains
+  qt5-graphicaleffects    # Qt module for advanced graphical effects in Qt applications.
+  qt5-svg                 # SVG support module for Qt applications.
+  qt6-svg                 # SVG support module compatible with Qt6 versions.
+  qt5-quickcontrols2      # Module offering modern controls for creating quick, visually appealing user interfaces in Qt applications.
+  eza                     # Enhanced version of the `ls` command, providing more detailed and customizable directory listings.
+  hyfetch                 # Lightweight system information tool optimized for Hyprland environments.
+  bfg                     # Remove big files from GIT repositories
+  git-crypt               # Extension for managing encrypted files in Git repositories.
+  git-lfs                 # Large File Storage extension for Git, allowing efficient handling of large files.
+  github-cli              # Github CLI client
+  python                  # High-level programming language known for its readability and versatility.
+  python-pip              # Package installer for Python, simplifying package management.
+  pyenv                   # Tool to manage multiple Python versions and environments.
+  uv                      # An extremely fast Python package installer and resolver written in Rust
+  python-pynvim           # Python Client for Neovim
+  tk                      # Tkinter library – Python's standard GUI toolkit.
+  rust                    # Programming language focused on safety, speed, and concurrency with a modern syntax.
+  docker                  # Pack, ship and excecute lightweight container
+  yarn                    # Fast, reliable, and secure dependency management
+  claude-code             # An agentic coding tool that lives in your terminal
+  shfmt                   # Format shell programs
+  stylua                  # Deterministic code formatter for Lua
+  luacheck                # A tool for linting and static analysis of Lua code
+  prettier                # An opinionated code formatter
+                          # Science Tools
   step
   # Office Tools
-  texlive            # TeX Live LaTeX framework from AUR-Arch
-  texlive-langgerman # Provides German language support for TeX Live
-  zathura            # Lightweight PDF viewer with support for multiple backends (e.g., MuPDF, Poppler)
-  zathura-pdf-mupdf  # Zathura plugin using the MuPDF PDF renderer
-  meld               # Graphical tool for merging and comparing files
-  baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
-  mutt-wizard        # CLI email client
-  d2                 # A modern diagram scripting language that turns text to diagrams
-  # Audio/Video/Foto Tools
-  ffmpeg             # Complete Solution to record, convert and stream audio and video
-  audacity           # Audio edit tool
-  yt-dlp             # Video and Audio Downloader
-  mpv                # a free, open source, and cross-platform media player
-  ncspot             # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
-  inkscape           # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
-  grim               # Screenshot utility for Wayland
-  slurp              # Select a region in a Wayland compositor
-  tesseract          # An OCR program
-  tesseract-data-eng # English OCR database
-  tesseract-data-deu # German OCR database
-  chromium-widevine  # DRM Tool for chomium based browsers to watch Netflix in full quality
-  blender            # A fully integrated 3D graphics creation suite
-  # CLI Tools
-  btop        # Interactive system monitoring tool similar to htop but built using libui.
-  lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
-  stow        # Tool for managing symlinks, useful for installing software globally while keeping configuration files in a central location.
-  zsh         # Robust shell with advanced features, including syntax highlighting and plugins support.
-  fzf         # Fuzzy file finder that allows you to search through files quickly using partial matches.
-  fd          # Simple, fast, user-friendly alternative to find, optimized for common use cases.
-  bat         # Modern replacement for cat, displaying colored output in terminals when viewing text files.
-  git-delta   # Colors and formats Git diffs with syntax highlighting, making them easier to read.
-  tlrc        # Terminal-based image viewer focused on low resource usage with a dark theme by default.
-  thefuck     # Tool that corrects your mistyped commands automatically by finding similar valid commands.
-  zoxide      # CLI tool that helps you quickly jump between directories using fuzzy search.
-  reflector   # AUR helper designed to speed up updates and package installations by optimizing mirrors in /etc/pacman.conf.
-  ripgrep     # Fast, modern search tool that looks for patterns in files, similar to grep but with additional features like regex support.
-  tre-command # CLI tool for managing SSH connections and identities with tab-completion and command history.
-  unzip       # Command-line utility for extracting files from ZIP archives.
-  ni-visa     # Tool for querying information about network interfaces, including MAC addresses and IP details.
-  expac       # Enhanced version of the pacman package manager, providing more detailed output and easier scripting capabilities.
-  scc         # Simple Console Calculator for performing quick calculations directly in the terminal.
-  duf         # Disk usage analysis tool that provides a detailed overview of storage space usage on your system.
-  rsync       # Fast and versatile file synchronization tool, often used for backups or transferring large amounts of data efficiently.
-  dua-cli     # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
-  sox         # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
-  testdisk    # Data recovery and disk repair tool
-  ncdu        # Command-line disk usage analyzer, alternative to baobab
-  cifs-utils  # CIFS filesystem user-space tools
-  smbclient   #Tools to access a server's filespace and printers via SMB
-  openssh     # SSH protocol implementation for remote login, command execution and file transfer
-  # Yazi
-  file       # Determine file type
-  ueberzugpp # File Preview
-  chafa      # Image-to-text converter supporting a wide range of symbols and palettes, transparency, animations, etc.
-  jq         # Command-line JSON processor
-  yazi       # CLI file explorer
-  # Gaming
-  steam   # Steam platform client
-  lutris  # Lutris game launcher for epic or gog etc.
-  discord #All-in-one voice and text chat for gamers
-  # Electronics/RF
-  qucs-s   # A spin-off of Qucs that supports other free SPICE circuit simulators like ngspice with the same Qucs GUI
-  klayout  # High Performance Layout Viewer And Editor. Support of GDS and OASIS files.
-  kicad    # Electronic schematic and printed circuit board (PCB) design tools
-  freecad  # Feature based parametric 3D CAD modeler
-  paraview # Parallel Visualization application using VTK
-  # Bluetooth
+  texlive             # TeX Live LaTeX framework from AUR-Arch
+  texlive-langgerman  # Provides German language support for TeX Live
+  zathura             # Lightweight PDF viewer with support for multiple backends (e.g., MuPDF, Poppler)
+  zathura-pdf-mupdf   # Zathura plugin using the MuPDF PDF renderer
+  meld                # Graphical tool for merging and comparing files
+  baobab              # Disk usage analyzer with a graphical interface, alternative to Treesize
+  mutt-wizard         # CLI email client
+  d2                  # A modern diagram scripting language that turns text to diagrams
+                      # Audio/Video/Foto Tools
+  ffmpeg              # Complete Solution to record, convert and stream audio and video
+  audacity            # Audio edit tool
+  yt-dlp              # Video and Audio Downloader
+  mpv                 # a free, open source, and cross-platform media player
+  ncspot              # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
+  inkscape            # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
+  grim                # Screenshot utility for Wayland
+  slurp               # Select a region in a Wayland compositor
+  tesseract           # An OCR program
+  tesseract-data-eng  # English OCR database
+  tesseract-data-deu  # German OCR database
+  chromium-widevine   # DRM Tool for chomium based browsers to watch Netflix in full quality
+  blender             # A fully integrated 3D graphics creation suite
+                      # CLI Tools
+  btop                # Interactive system monitoring tool similar to htop but built using libui.
+  lazygit             # TUI (text user interface) for Git operations designed to be intuitive and fast.
+  stow                # Tool for managing symlinks, useful for installing software globally while keeping configuration files in a central location.
+  zsh                 # Robust shell with advanced features, including syntax highlighting and plugins support.
+  fzf                 # Fuzzy file finder that allows you to search through files quickly using partial matches.
+  fd                  # Simple, fast, user-friendly alternative to find, optimized for common use cases.
+  bat                 # Modern replacement for cat, displaying colored output in terminals when viewing text files.
+  git-delta           # Colors and formats Git diffs with syntax highlighting, making them easier to read.
+  tlrc                # Terminal-based image viewer focused on low resource usage with a dark theme by default.
+  thefuck             # Tool that corrects your mistyped commands automatically by finding similar valid commands.
+  zoxide              # CLI tool that helps you quickly jump between directories using fuzzy search.
+  reflector           # AUR helper designed to speed up updates and package installations by optimizing mirrors in /etc/pacman.conf.
+  ripgrep             # Fast, modern search tool that looks for patterns in files, similar to grep but with additional features like regex support.
+  tre-command         # CLI tool for managing SSH connections and identities with tab-completion and command history.
+  unzip               # Command-line utility for extracting files from ZIP archives.
+  ni-visa             # Tool for querying information about network interfaces, including MAC addresses and IP details.
+  expac               # Enhanced version of the pacman package manager, providing more detailed output and easier scripting capabilities.
+  scc                 # Simple Console Calculator for performing quick calculations directly in the terminal.
+  duf                 # Disk usage analysis tool that provides a detailed overview of storage space usage on your system.
+  rsync               # Fast and versatile file synchronization tool, often used for backups or transferring large amounts of data efficiently.
+  dua-cli             # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
+  sox                 # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
+  testdisk            # Data recovery and disk repair tool
+  ncdu                # Command-line disk usage analyzer, alternative to baobab
+  cifs-utils          # CIFS filesystem user-space tools
+  smbclient           #Tools to access a server's filespace and printers via SMB
+  openssh             # SSH protocol implementation for remote login, command execution and file transfer
+                      # Yazi
+  file                # Determine file type
+  ueberzugpp          # File Preview
+  chafa               # Image-to-text converter supporting a wide range of symbols and palettes, transparency, animations, etc.
+  jq                  # Command-line JSON processor
+  yazi                # CLI file explorer
+                      # Gaming
+  steam               # Steam platform client
+  lutris              # Lutris game launcher for epic or gog etc.
+  discord             #All-in-one voice and text chat for gamers
+                      # Electronics/RF
+  qucs-s              # A spin-off of Qucs that supports other free SPICE circuit simulators like ngspice with the same Qucs GUI
+  klayout             # High Performance Layout Viewer And Editor. Support of GDS and OASIS files.
+  kicad               # Electronic schematic and printed circuit board (PCB) design tools
+  freecad             # Feature based parametric 3D CAD modeler
+  paraview            # Parallel Visualization application using VTK
+                      # Bluetooth
   bluez
   bluez-utils
   blueman
@@ -157,27 +161,27 @@ tools_stage=(
 
 #software for nvidia GPU only
 nvidia_stage=(
-  linux-headers           # Kernel headers for compiling drivers
-  nvidia                  # NVIDIA driver with DKMS support
-  nvidia-settings         # GUI tool for adjusting graphics settings
-  nvidia-utils            # Tools for monitoring and managing GPU usage
-  libva                   # Video acceleration library for offloading video tasks
-  libva-nvidia-driver-git # NVIDIA-specific VA drivers from Git repository
-  cuda                    # NVIDIA's platform for GPU-accelerated computing
+  linux-headers            # Kernel headers for compiling drivers
+  nvidia                   # NVIDIA driver with DKMS support
+  nvidia-settings          # GUI tool for adjusting graphics settings
+  nvidia-utils             # Tools for monitoring and managing GPU usage
+  libva                    # Video acceleration library for offloading video tasks
+  libva-nvidia-driver-git  # NVIDIA-specific VA drivers from Git repository
+  cuda                     # NVIDIA's platform for GPU-accelerated computing
 )
 
 uninstall_stage=(
-  dunst      # Notification daemon for managing system notifications
-  mako       # Application launcher with workspace and window management support
-  rofi       # Window switcher and application launcher with a simple, fast interface
-  allust-git # Graphical tool for monitoring system resources (fork of Alust)
+  dunst       # Notification daemon for managing system notifications
+  mako        # Application launcher with workspace and window management support
+  rofi        # Window switcher and application launcher with a simple, fast interface
+  allust-git  # Graphical tool for monitoring system resources (fork of Alust)
 )
 
 uninstall_nvidia_stage=(
-  hyprland-git              # Development version of Hyprland (Wayland compositor)
-  hyprland-nvidia           # Hyprland optimized for NVIDIA GPUs with proper driver support
-  hyprland-nvidia-git       # Development version of Hyprland specifically for NVIDIA GPUs
-  hyprland-nvidia-hidpi-git # Hyprland build for NVIDIA GPUs with HiDPI (high resolution) screen support
+  hyprland-git               # Development version of Hyprland (Wayland compositor)
+  hyprland-nvidia            # Hyprland optimized for NVIDIA GPUs with proper driver support
+  hyprland-nvidia-git        # Development version of Hyprland specifically for NVIDIA GPUs
+  hyprland-nvidia-hidpi-git  # Hyprland build for NVIDIA GPUs with HiDPI (high resolution) screen support
 )
 
 # set some colors
@@ -231,8 +235,8 @@ function btrfs_format() {
   read -p 'Enter disk name for installation (e.g. sda or nvme0n1): ' disk
 
   # Unmount any mounted partitions from this disk and the mount point
-  umount /dev/${disk}?* 2>/dev/null
-  umount -l /mnt 2>/dev/null
+  umount /dev/${disk}?* 2> /dev/null
+  umount -l /mnt 2> /dev/null
 
   # Zap the disk and create two partitions:
   #  - Partition 1: 1G for boot (EF00)
@@ -287,12 +291,12 @@ function btrfs_format() {
 
   read -p 'Selection: ' n
   case $n in
-  1) pacstrap /mnt base linux linux-firmware nano intel-ucode btrfs-progs ;;
-  2) pacstrap /mnt base linux linux-firmware nano amd-ucode btrfs-progs ;;
-  3) pacstrap /mnt base linux linux-firmware nano btrfs-progs ;;
-  *) echo "invalid option" ;;
+    1) pacstrap /mnt base linux linux-firmware nano intel-ucode btrfs-progs ;;
+    2) pacstrap /mnt base linux linux-firmware nano amd-ucode btrfs-progs ;;
+    3) pacstrap /mnt base linux linux-firmware nano btrfs-progs ;;
+    *) echo "invalid option" ;;
   esac
-  genfstab -U /mnt >>/mnt/etc/fstab
+  genfstab -U /mnt >> /mnt/etc/fstab
 }
 
 function base_config() {
@@ -390,9 +394,9 @@ function base_config() {
   echo "  2)Reboot"
   read -p 'Selection: ' n
   case $n in
-  1) shutdown now ;;
-  2) reboot ;;
-  *) echo "invalid option" ;;
+    1) shutdown now ;;
+    2) reboot ;;
+    *) echo "invalid option" ;;
   esac
 }
 
@@ -409,7 +413,7 @@ function i3_install() {
 -------------------------------------------------------------------------------------------
  "
   echo ""
-  if ! command -v yay &>/dev/null; then
+  if ! command -v yay &> /dev/null; then
     echo "yay could not be found"
     git clone https://aur.archlinux.org/yay.git
     pushd yay
@@ -491,7 +495,7 @@ function i3_install() {
 }
 
 show_progress() {
-  while ps | grep $1 &>/dev/null; do
+  while ps | grep $1 &> /dev/null; do
     echo -n "."
     sleep 0.5
   done
@@ -502,7 +506,7 @@ show_progress() {
 function install_software() {
   # no package found so installing
   echo -en "$CNT - Now installing $1 ."
-  yay -S --noconfirm $1 &>>$INSTLOG &
+  yay -S --noconfirm $1 &>> $INSTLOG &
   show_progress $!
   # test to make sure package installed
   echo -e "\e[1A\e[K$COK - $1 was installed."
@@ -510,10 +514,10 @@ function install_software() {
 
 function uninstall_software() {
   local pkg="$1"
-  if yay -Qi "$pkg" &>>/dev/null; then
+  if yay -Qi "$pkg" &>> /dev/null; then
     # no package found so installing
     echo -en "$CNT - Now uninstalling $pkg ."
-    yay -R --noconfirm $pkg &>>$INSTLOG &
+    yay -R --noconfirm $pkg &>> $INSTLOG &
     show_progress $!
   else
     echo -en "$CNT $pkg is not installed, skipping uninstallation.\n"
@@ -559,17 +563,17 @@ function restore_dotfiles() {
   echo " 2) Laptop"
   read -p "Selection: " n
   case "$n" in
-  1)
-    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr desktop
-    chmod u+x ~/archinstall/dotfiles/config/hypr/desktop/.config/hypr/wallpaper.sh
-    ;;
-  2)
-    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr laptop
-    chmod u+x ~/archinstall/dotfiles/config/hypr/laptop/.config/hypr/wallpaper.sh
-    ;;
-  *)
-    echo default
-    ;;
+    1)
+      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr desktop
+      chmod u+x ~/archinstall/dotfiles/config/hypr/desktop/.config/hypr/wallpaper.sh
+      ;;
+    2)
+      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr laptop
+      chmod u+x ~/archinstall/dotfiles/config/hypr/laptop/.config/hypr/wallpaper.sh
+      ;;
+    *)
+      echo default
+      ;;
   esac
 
   echo -e "$CNT ### Waybar ###"
@@ -646,18 +650,18 @@ function restore_dotfiles() {
   echo " 2) Josean Neovim Custom"
   read -p "Selection: " n
   case "$n" in
-  1)
-    git clone https://github.com/LazyVim/starter ~/.config/nvim
-    rm -rf ~/.config/nvim
-    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazyvim
-    ;;
-  2)
-    rm -rf ~/.config/nvim
-    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config nvim
-    ;;
-  *)
-    echo default
-    ;;
+    1)
+      git clone https://github.com/LazyVim/starter ~/.config/nvim
+      rm -rf ~/.config/nvim
+      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazyvim
+      ;;
+    2)
+      rm -rf ~/.config/nvim
+      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config nvim
+      ;;
+    *)
+      echo default
+      ;;
   esac
 
 }
@@ -731,19 +735,19 @@ echo "  3)Restore Dotfiles"
 echo "  4)Update Grub/SDDM"
 read -p 'Selection: ' n
 case $n in
-1)
-  pacman_init
-  btrfs_format
-  base_config
-  ;;
-2)
-  i3_install
-  ;;
-3)
-  restore_dotfiles
-  ;;
-4)
-  update_grub_sddm
-  ;;
-*) echo "invalid option" ;;
+  1)
+    pacman_init
+    btrfs_format
+    base_config
+    ;;
+  2)
+    i3_install
+    ;;
+  3)
+    restore_dotfiles
+    ;;
+  4)
+    update_grub_sddm
+    ;;
+  *) echo "invalid option" ;;
 esac
