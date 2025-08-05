@@ -1,0 +1,67 @@
+/* BONSAI Color Palette for Waybar */
+/* Background Colors */
+@define-color bonsai-bg-deep #0a0e14;
+@define-color bonsai-bg-primary #151922;
+@define-color bonsai-bg-secondary #1e242e;
+@define-color bonsai-bg-elevated #232933;
+@define-color bonsai-bg-overlay #2a3040;
+
+/* Text Colors */
+@define-color bonsai-text-primary #e6e8eb;
+@define-color bonsai-text-secondary #b8bcc8;
+@define-color bonsai-text-muted #8b92a5;
+@define-color bonsai-text-disabled #6b7280;
+@define-color bonsai-text-inverted #0a0e14;
+
+/* Border Colors */
+@define-color bonsai-border-subtle #2d3441;
+@define-color bonsai-border-primary #3d4455;
+@define-color bonsai-border-accent #4a5568;
+@define-color bonsai-border-strong #5a6578;
+
+/* Core Accent Colors */
+/* Green Family (Nature, Growth, Success) */
+@define-color bonsai-green-primary #7c9885;
+@define-color bonsai-green-secondary #9db4a6;
+@define-color bonsai-green-tertiary #a8c0b1;
+@define-color bonsai-green-muted #677a70;
+@define-color bonsai-green-glow rgba(124, 152, 133, 0.15);
+
+/* Red Family (Attention, Errors) */
+@define-color bonsai-red-primary #c78289;
+@define-color bonsai-red-secondary #d4999f;
+@define-color bonsai-red-tertiary #dfa8ad;
+@define-color bonsai-red-muted #a56b71;
+@define-color bonsai-red-glow rgba(199, 130, 137, 0.15);
+
+/* Blue Family (Information, Links) */
+@define-color bonsai-blue-primary #82a4c7;
+@define-color bonsai-blue-secondary #9bb5d4;
+@define-color bonsai-blue-tertiary #adc2db;
+@define-color bonsai-blue-muted #6b8aa5;
+@define-color bonsai-blue-glow rgba(130, 164, 199, 0.15);
+
+/* Yellow Family (Warning, Warmth) */
+@define-color bonsai-yellow-primary #c7a882;
+@define-color bonsai-yellow-secondary #d4b99b;
+@define-color bonsai-yellow-tertiary #dbc5ad;
+@define-color bonsai-yellow-muted #a5906b;
+@define-color bonsai-yellow-glow rgba(199, 168, 130, 0.15);
+
+/* Extended Palette */
+@define-color bonsai-purple-primary #9882c7;
+@define-color bonsai-orange-primary #c7975c;
+@define-color bonsai-teal-primary #5cc7a8;
+
+/* Legacy color mappings for compatibility */
+@define-color crust @bonsai-bg-primary;
+@define-color overlay0 @bonsai-text-muted;
+@define-color overlay1 @bonsai-border-primary;
+@define-color mauve @bonsai-purple-primary;
+@define-color rosewater @bonsai-text-primary;
+@define-color maroon @bonsai-red-primary;
+@define-color blue @bonsai-blue-primary;
+@define-color yellow @bonsai-yellow-primary;
+@define-color green @bonsai-green-primary;
+@define-color red @bonsai-red-primary;
+@define-color lavender @bonsai-purple-primary;

@@ -3,3 +3,9 @@ install.log
 fzf-git/
 catppuccin-zsh-syntax-highlighting/
 lazy-lock.json
+
+# BONSAI and Claude files
+.claude/
+CLAUDE.md
+CLEANUP.md
+BONSAI.md

@@ -1,4 +1,4 @@
-@import "mocha.css"; 
+@import "bonsai.css"; 
 
 * {
     font-family: "JetBrainsMono Nerd Font";
@@ -9,11 +9,11 @@
 
 window#waybar {
     background: transparent;
-    background-color: @crust;
-    color: @overlay0;
+    background-color: @bonsai-bg-primary;
+    color: @bonsai-text-secondary;
     transition-property: background-color;
     transition-duration: 0.1s;
-    border-bottom: 1px solid @overlay1;
+    border-bottom: 1px solid @bonsai-border-subtle;
 }
 
 #window {
@@ -30,8 +30,8 @@ button {
 
 button:hover {
     background: inherit;
-    color: @mauve;
-    border-top: 2px solid @mauve;
+    color: @bonsai-green-primary;
+    border-top: 2px solid @bonsai-green-primary;
 }
 
 #workspaces button {
@@ -39,19 +39,19 @@ button:hover {
 }
 
 #workspaces button.focused {
-    background-color: rgba(0, 0, 0, 0.3);
-    color: @rosewater;
-    border-top: 2px solid @rosewater;
+    background-color: @bonsai-bg-secondary;
+    color: @bonsai-text-primary;
+    border-top: 2px solid @bonsai-green-primary;
 }
 
 #workspaces button.active {
-    background-color: rgba(0, 0, 0, 0.3);
-    color: @mauve;
-    border-top: 2px solid @mauve;
+    background-color: @bonsai-bg-secondary;
+    color: @bonsai-green-primary;
+    border-top: 2px solid @bonsai-green-primary;
 }
 
 #workspaces button.urgent {
-    background-color: #eb4d4b;
+    background-color: @bonsai-red-primary;
 }
 
 #pulseaudio,
@@ -65,6 +65,7 @@ button:hover {
 #wireplumber,
 #tray,
 #network,
+#bluetooth,
 #mode,
 #scratchpad {
   margin-top: 2px;
@@ -76,37 +77,37 @@ button:hover {
 }
 
 #clock {
-    color: @maroon;
-    border-bottom: 2px solid @maroon;
+    color: @bonsai-text-primary;
+    border-bottom: 2px solid @bonsai-text-muted;
 }
 
 #clock.date {
-    color: @mauve;
-    border-bottom: 2px solid @mauve;
+    color: @bonsai-purple-primary;
+    border-bottom: 2px solid @bonsai-purple-primary;
 }
 
 #pulseaudio {
-    color: @blue;
-    border-bottom: 2px solid @blue;
+    color: @bonsai-teal-primary;
+    border-bottom: 2px solid @bonsai-teal-primary;
 }
 
 #network {
-    color: @yellow;
-    border-bottom: 2px solid @yellow;
+    color: @bonsai-blue-primary;
+    border-bottom: 2px solid @bonsai-blue-primary;
 }
 
 #idle_inhibitor {
     margin-right: 12px;
-    color: #7cb342;
+    color: @bonsai-green-primary;
 }
 
 #idle_inhibitor.activated {
-    color: @red;
+    color: @bonsai-red-primary;
 }
 
 #battery {
-    color: @green;
-    border-bottom: 2px solid @green;
+    color: @bonsai-green-primary;
+    border-bottom: 2px solid @bonsai-green-primary;
 }
 
 /* If workspaces is the leftmost module, omit left margin */
@@ -120,8 +121,22 @@ button:hover {
 }
 
 #custom-vpn {
-    color: @lavender;
+    color: @bonsai-purple-primary;
     border-radius: 15px;
     padding-left: 6px;
     padding-right: 6px;
+}
+
+#bluetooth {
+    color: @bonsai-purple-primary;
+    border-bottom: 2px solid @bonsai-purple-primary;
+}
+
+#bluetooth.connected {
+    color: @bonsai-purple-primary;
+}
+
+#bluetooth.disconnected {
+    color: @bonsai-text-muted;
+    border-bottom: 2px solid @bonsai-text-muted;
 }

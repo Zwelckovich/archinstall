@@ -640,29 +640,24 @@ function restore_dotfiles() {
   wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
   bat cache --build
 
-  echo -e "$CNT ### Neovim ###"
-  rm -rf ~/.config/nvim
-  rm -rf ~/.local/share/nvim
-  rm -rf ~/.local/state/nvim
-  rm -rf ~/.cache/nvim
-  echo "Select Neovim Version"
-  echo " 1) Lazyvim"
-  echo " 2) Josean Neovim Custom"
-  read -p "Selection: " n
-  case "$n" in
-    1)
-      git clone https://github.com/LazyVim/starter ~/.config/nvim
-      rm -rf ~/.config/nvim
-      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazyvim
-      ;;
-    2)
-      rm -rf ~/.config/nvim
-      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config nvim
-      ;;
-    *)
-      echo default
-      ;;
-  esac
+  echo -e "$CNT ### Neovim - BONSAIVIM ###"
+  # Clone BONSAIVIM if it doesn't exist
+  if [ ! -d "$HOME/BONSAIVIM" ]; then
+    echo -e "$CNT - Cloning BONSAIVIM repository..."
+    git clone https://github.com/Zwelckovich/BONSAIVIM.git ~/BONSAIVIM
+  else
+    echo -e "$CNT - BONSAIVIM already exists, pulling latest changes..."
+    pushd ~/BONSAIVIM
+    git pull
+    popd
+  fi
+  
+  # Execute the BONSAIVIM installation script
+  echo -e "$CNT - Installing BONSAIVIM configuration..."
+  pushd ~/BONSAIVIM
+  chmod +x symlink_nvim_clean.sh
+  ./symlink_nvim_clean.sh
+  popd
 
 }
 
