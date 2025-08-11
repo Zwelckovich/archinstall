@@ -1,0 +1,19 @@
+[Unit]
+Description=BONSAI Calcurse Notification Daemon
+Documentation=man:calcurse(1)
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.config/calcurse/scripts/calcurse-notify.sh
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Environment
+Environment="DISPLAY=:0"
+Environment="WAYLAND_DISPLAY=wayland-0"
+
+[Install]
+WantedBy=default.target

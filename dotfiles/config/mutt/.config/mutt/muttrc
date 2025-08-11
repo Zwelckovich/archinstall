@@ -56,6 +56,24 @@ set status_format = "───[ %f ]───[%r%m messages%?n? (%n new)?%?d? (%
 set header_cache = ~/.cache/mutt/headers
 set message_cachedir = ~/.cache/mutt/messages
 
+# Smart Fcc (File Carbon Copy) handling to prevent errors
+# This saves sent messages without failing if folder doesn't exist
+set copy = yes  # Save copies of outgoing messages
+set fcc_clear = yes  # Store sent messages unencrypted
+set fcc_attach = yes  # Save attachments with sent messages
+
+# Create a fallback for missing Sent folders
+# If specific Sent folder fails, fall back to local Sent
+folder-hook . 'set record = "~/sent-mail"'  # Default fallback
+
+# Provider-specific sent folders (will override if they exist)
+folder-hook gmail 'set record = "+[Gmail]/Sent Mail"'
+folder-hook googlemail 'set record = "+[Gmail]/Sent Mail"'
+folder-hook outlook 'set record = "+Sent Items"'
+folder-hook hotmail 'set record = "+Sent Items"'
+folder-hook yahoo 'set record = "+Sent"'
+folder-hook t-online 'set record = "+Gesendet"'
+
 # Key Bindings (Vim-like)
 bind index,pager g noop
 bind index gg first-entry
@@ -89,6 +107,10 @@ macro attach I "<pipe-entry>~/.config/mutt/scripts/extract-images.sh<Enter>" "Ex
 bind attach ? help
 bind attach v view-mailcap
 bind attach <return> view-attach
+
+# Calendar integration with calcurse
+macro attach C "<pipe-entry>~/.config/calcurse/scripts/import-ics.sh<Enter>" "Import calendar invite to calcurse"
+macro index,pager \cc "<shell-escape>calcurse<Enter>" "Open calcurse calendar"
 
 # Quick help reminder for attachment view
 macro attach h "!cat ~/.config/mutt/attachment-help.txt<enter>" "Show attachment help"

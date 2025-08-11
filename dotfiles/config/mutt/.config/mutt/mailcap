@@ -30,6 +30,8 @@ text/plain; cat %s; copiousoutput
 video/*; mpv %s &; test=test -n "$DISPLAY"
 audio/*; mpv %s &
 
-# Calendar
+# Calendar - display and import to calcurse
+text/calendar; ~/.config/calcurse/scripts/import-ics.sh %s; needsterminal
 text/calendar; cat %s; copiousoutput
+application/ics; ~/.config/calcurse/scripts/import-ics.sh %s; needsterminal
 application/ics; cat %s; copiousoutput

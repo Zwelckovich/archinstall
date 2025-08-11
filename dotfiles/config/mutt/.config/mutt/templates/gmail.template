@@ -15,7 +15,14 @@ set folder = "imaps://imap.gmail.com:993"
 set spoolfile = "+INBOX"
 set postponed = "+[Gmail]/Drafts"
 set trash = "+[Gmail]/Trash"
+
+# Smart record folder handling
+# Gmail automatically saves sent mail, but we set this for local copies
 set record = "+[Gmail]/Sent Mail"
+set copy = yes
+# If you get Fcc errors, uncomment the line below to disable local copy
+# (Gmail saves sent messages automatically)
+# unset record
 
 # Gmail-specific settings
 set imap_check_subscribed = yes

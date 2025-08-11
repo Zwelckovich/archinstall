@@ -1,0 +1,58 @@
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ 🌱 BONSAI Calcurse Key Bindings - Strict Vim Mode                           │
+# │ Attempting to use C-u for scroll despite conflicts                          │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Movement (vim hjkl)
+generic-prev-day        h LEFT
+generic-next-day        l RIGHT
+generic-prev-week       k UP  
+generic-next-week       j DOWN
+generic-prev-month      b
+generic-next-month      w
+generic-prev-year       {
+generic-next-year       }
+generic-goto-today      t
+generic-goto            g
+
+# View control
+generic-change-view     TAB
+
+# Vim-like operations
+generic-add-appt        a
+generic-add-todo        T
+generic-copy            y
+generic-paste           p
+edit-item               e
+del-item                d
+flag-item               !
+pipe-item               |
+view-item               RET
+
+# Todo
+raise-priority          +
+lower-priority          -
+edit-note               n
+view-note               >
+
+# Scrolling - forcing vim bindings
+generic-scroll-down     C-d
+generic-scroll-up       C-u
+
+# Commands
+generic-config-menu     :
+generic-help            ?
+generic-save            :w
+generic-reload          R
+generic-import          i
+generic-export          x
+generic-quit            :q
+
+# Selection
+generic-select          v
+
+# Display
+generic-redraw          C-l
+
+# Other
+generic-other-cmd       o

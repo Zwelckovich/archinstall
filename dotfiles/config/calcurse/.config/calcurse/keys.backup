@@ -1,0 +1,59 @@
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ 🌱 BONSAI Calcurse Key Bindings                                             │
+# │ Vim-like navigation for efficient calendar management                       │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Calendar navigation (vim-like)
+generic-prev-day        h LEFT
+generic-next-day        l RIGHT
+generic-prev-week       k UP  
+generic-next-week       j DOWN
+generic-prev-month      b B
+generic-next-month      w W
+generic-prev-year       { [
+generic-next-year       } ]
+generic-goto-today      t
+generic-goto            g G
+
+# Panel switching
+generic-change-view     TAB
+
+# Item management
+generic-add-appt        a A
+generic-add-todo        T
+generic-copy            y
+generic-paste           p P
+edit-item               e E
+del-item                d D
+flag-item               !
+pipe-item               |
+view-item               RET ENTER
+
+# Todo management
+raise-priority          + =
+lower-priority          - _
+edit-note               n N
+view-note               >
+
+# Scrolling (vim-like: C-u up, C-d down)
+# Note: If C-u conflicts, try PageUp/PageDown as alternative
+generic-scroll-down     C-d
+generic-scroll-up       PgUp
+
+# System commands
+generic-config-menu     C
+generic-help            ? F1
+generic-save            s S :w
+generic-reload          R
+generic-import          i I
+generic-export          x X
+generic-quit            q Q :q
+
+# Selection
+generic-select          SPACE v
+
+# Display
+generic-redraw          C-l
+
+# Other
+generic-other-cmd       o O

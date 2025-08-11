@@ -1,0 +1,58 @@
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ 🌱 BONSAI Calcurse Configuration                                            │
+# │ Minimal • Purposeful • Beautiful                                            │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# BONSAI Color Theme and Appearance Settings
+# Using BONSAI palette: green primary (#7c9885), blue (#82a4c7), yellow (#c7a882)
+
+# Calendar view layout (1-8)
+# 1 = calendar and todo/appt side by side (BONSAI preferred)
+appearance.layout=1
+
+# Width of sidebar as percentage (0 = auto)
+appearance.sidebarwidth=0
+
+# Calendar view (monthly/weekly)
+appearance.calendarview=monthly
+
+# Theme - BONSAI custom colors
+# Format: foreground on background
+# Colors: black, red, green, yellow, blue, magenta, cyan, white, default
+appearance.theme=green on default
+
+# Date and time formats
+format.outputdate=%D
+format.inputdate=1
+format.dayheading=%a
+
+# Appointment display format
+appearance.notifybar=yes
+appearance.eventseparator=yes
+appearance.emptyday=--
+appearance.headerline=yes
+appearance.emptyline=yes
+
+# Panel settings
+appearance.compactpanels=no
+appearance.defaultpanel=calendar
+
+# General settings
+general.autosave=yes
+general.autogc=yes
+general.periodicsave=5
+general.confirmquit=yes
+general.confirmdelete=yes
+general.systemdialogs=yes
+general.progressbar=yes
+general.firstdayofweek=monday
+general.multipledays=yes
+
+# Daemon settings for notifications
+daemon.enable=yes
+daemon.log=no
+
+# Notification settings
+notification.command=~/.config/calcurse/scripts/calcurse-notify.sh
+notification.notifyall=yes
+notification.warning=15

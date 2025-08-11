@@ -1,0 +1,128 @@
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ 🌱 BONSAI Calcurse CalDAV Configuration Template                            │
+# │ Sync with Google Calendar and other CalDAV servers                          │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# This is a sample configuration file for calcurse-caldav.
+# Copy this file to ~/.config/calcurse/caldav/config and modify as needed.
+
+[General]
+# The URL of the CalDAV server
+# Google Calendar: https://apidata.googleusercontent.com/caldav/v2/YOUR_EMAIL/events/
+# Nextcloud: https://your.nextcloud.server/remote.php/dav/calendars/username/calendar_name/
+# For Google Calendar, replace YOUR_EMAIL with your Gmail address
+Hostname = apidata.googleusercontent.com
+Path = /caldav/v2/YOUR_EMAIL@gmail.com/events/
+
+# Authentication method
+# Options: basic, oauth2
+# Use oauth2 for Google Calendar
+AuthMethod = oauth2
+
+# Sync filter - what to sync
+# Options: cal (calendar only), todo (todos only), cal,todo (both)
+# Google Calendar doesn't support todos, so use 'cal'
+SyncFilter = cal
+
+# Dry run - set to No to actually sync
+DryRun = Yes
+
+# Verbose output for debugging
+Verbose = Yes
+
+# HTTPS verification
+InsecureSSL = No
+
+# Conflict resolution
+# Options: local (keep local), remote (keep remote), ask
+ConflictResolution = ask
+
+[OAuth2]
+# OAuth2 settings for Google Calendar
+# You need to create these in Google Developer Console:
+# 1. Go to https://console.developers.google.com/
+# 2. Create a new project or select existing
+# 3. Enable Calendar API and CalDAV API
+# 4. Create OAuth 2.0 credentials (type: Desktop application)
+# 5. Copy Client ID and Client Secret here
+
+ClientID = YOUR_CLIENT_ID.apps.googleusercontent.com
+ClientSecret = YOUR_CLIENT_SECRET
+Scope = https://www.googleapis.com/auth/calendar
+RedirectURI = http://127.0.0.1
+
+# Token storage (will be created automatically)
+TokenFile = ~/.config/calcurse/caldav/oauth_token
+
+[Basic]
+# Basic authentication (for non-Google CalDAV servers)
+# Username = your_username
+# Password = your_password
+# Or use password command:
+# PasswordCommand = pass show calendar/password
+
+# ===========================
+# SETUP INSTRUCTIONS
+# ===========================
+
+# FOR GOOGLE CALENDAR:
+# --------------------
+# 1. Go to Google Developer Console:
+#    https://console.developers.google.com/
+#
+# 2. Create a new project (or use existing)
+#
+# 3. Enable APIs:
+#    - Search for "Google Calendar API" and enable it
+#    - Search for "CalDAV API" and enable it
+#
+# 4. Create credentials:
+#    - Go to Credentials page
+#    - Click "Create Credentials" → "OAuth client ID"
+#    - Application type: "Desktop app"
+#    - Name it (e.g., "Calcurse Sync")
+#    - Copy the Client ID and Client Secret
+#
+# 5. Update this config:
+#    - Set Path = /caldav/v2/YOUR_EMAIL@gmail.com/events/
+#    - Set ClientID and ClientSecret from step 4
+#    - Set DryRun = No when ready to sync
+#
+# 6. First sync:
+#    calcurse-caldav --init keep-remote
+#    (This will open a browser for authorization)
+#
+# 7. Regular sync:
+#    calcurse-caldav
+
+# FOR NEXTCLOUD:
+# --------------
+# 1. Set Hostname to your Nextcloud server
+# 2. Set Path to /remote.php/dav/calendars/USERNAME/CALENDAR_NAME/
+# 3. Set AuthMethod = basic
+# 4. Set username and password in [Basic] section
+# 5. Set DryRun = No
+# 6. Run: calcurse-caldav --init keep-remote
+
+# FOR OTHER CALDAV SERVERS:
+# -------------------------
+# 1. Get the CalDAV URL from your provider
+# 2. Extract Hostname and Path from the URL
+# 3. Set AuthMethod = basic (usually)
+# 4. Configure [Basic] section with credentials
+# 5. Set DryRun = No
+# 6. Run: calcurse-caldav --init keep-remote
+
+# SYNC OPTIONS:
+# -------------
+# --init keep-remote   : Initialize, keep remote data
+# --init keep-local    : Initialize, keep local data
+# --init two-way       : Initialize, merge both
+# (no arguments)       : Regular sync after initialization
+
+# AUTOMATION:
+# -----------
+# Add to crontab for automatic sync every 30 minutes:
+# */30 * * * * /usr/bin/calcurse-caldav 2>&1 | logger -t calcurse-caldav
+
+# Or create a systemd timer (see README for details)
