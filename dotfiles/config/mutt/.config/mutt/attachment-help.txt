@@ -1,0 +1,14 @@
+╭─────────────────────────────────────────────────────────────────────╮
+│                    ATTACHMENT VIEW KEYS                             │
+├─────────────────────────────────────────────────────────────────────┤
+│  V       - Open attachment in browser (Vivaldi)                     │
+│  I       - Extract all images from email                            │
+│  Enter   - View attachment in mutt                                  │
+│  s       - Save attachment to disk                                  │
+│  |       - Pipe attachment to command                               │
+│  p       - Print attachment                                         │
+│  q       - Exit attachment view                                     │
+│  ?       - Show this help                                          │
+╰─────────────────────────────────────────────────────────────────────╯
+
+For HTML emails: Select the [text/html] part and press V to view in browser

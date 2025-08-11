@@ -1,0 +1,106 @@
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ 🌱 BONSAI Mutt Configuration                                                │
+# │ Minimal • Purposeful • Beautiful                                            │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Initialize mutt directories (ensure cache/accounts directories exist)
+source "~/.config/mutt/scripts/init-mutt.sh |"
+
+# Source BONSAI colors
+source ~/.config/mutt/colors-bonsai.muttrc
+
+# General Settings
+set charset = "utf-8"
+set send_charset = "utf-8"
+set assumed_charset = "utf-8"
+
+# HTML Email Handling
+auto_view text/html text/calendar application/ics
+alternative_order text/plain text/enriched text/html
+set mailcap_path = ~/.config/mutt/mailcap
+set implicit_autoview = yes
+set pipe_decode = yes
+
+# Editor Configuration (use BONSAIVIM)
+set editor = "nvim +/^$ +nohlsearch"
+set edit_headers = yes
+
+# Index View (BONSAI minimal style)
+set index_format = "%4C %Z %[%b %d] %-20.20L %s"
+set sort = threads
+set sort_aux = reverse-last-date-received
+set uncollapse_jump = yes
+
+# Pager Configuration
+set pager_stop = yes
+set pager_index_lines = 10
+set pager_context = 3
+set menu_scroll = yes
+set tilde = yes
+set markers = no
+
+# Sidebar Configuration (BONSAI style)
+set sidebar_visible = yes
+set sidebar_width = 30
+set sidebar_short_path = yes
+set sidebar_next_new_wrap = yes
+set mail_check_stats = yes
+set sidebar_format = "%D%?F? [%F]?%* %?N?%N/?%S"
+set sidebar_divider_char = "│"
+
+# Status Bar
+set status_chars  = " *%A"
+set status_format = "───[ %f ]───[%r%m messages%?n? (%n new)?%?d? (%d to delete)?%?t? (%t tagged)? ]───%>─%?p?( %p postponed )?───"
+
+# Cache for performance
+set header_cache = ~/.cache/mutt/headers
+set message_cachedir = ~/.cache/mutt/messages
+
+# Key Bindings (Vim-like)
+bind index,pager g noop
+bind index gg first-entry
+bind index G last-entry
+bind pager gg top
+bind pager G bottom
+bind index,pager R group-reply
+
+# Sidebar navigation
+bind index,pager \Cp sidebar-prev
+bind index,pager \Cn sidebar-next
+bind index,pager \Co sidebar-open
+
+# Attachment view settings
+set attach_format = "%u%D%I %t%4n %T%.40d%> [%.7m/%.10M, %.6e%?C?, %C?, %s] "
+set attach_sep = "\n"
+set attach_split = yes
+
+# Enhanced attachment view with clear keybindings
+bind index,pager v view-attachments
+
+# Custom help text for attachment menu
+set help = yes
+
+# HTML/URL handling
+macro index,pager \cb "<pipe-message>urlscan<Enter>" "Extract URLs"
+macro attach V "<pipe-entry>~/.config/mutt/scripts/view-html.sh<Enter>" "View HTML in browser"
+macro attach I "<pipe-entry>~/.config/mutt/scripts/extract-images.sh<Enter>" "Extract all images"
+
+# Add help text binding for attachment view  
+bind attach ? help
+bind attach v view-mailcap
+bind attach <return> view-attach
+
+# Quick help reminder for attachment view
+macro attach h "!cat ~/.config/mutt/attachment-help.txt<enter>" "Show attachment help"
+macro attach ? "!cat ~/.config/mutt/attachment-help.txt<enter>" "Show attachment help"
+
+# Account configuration (will be added by user)
+# source ~/.config/mutt/accounts/default
+# folder-hook gmail/* source ~/.config/mutt/accounts/gmail
+# folder-hook t-online/* source ~/.config/mutt/accounts/t-online
+
+# Signature
+set signature = ~/.config/mutt/signature
+# Account: zwelchmobile@googlemail.com
+source ~/.config/mutt/accounts/zwelchmobile
+folder-hook zwelchmobile/* source ~/.config/mutt/accounts/zwelchmobile

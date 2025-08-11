@@ -1,0 +1,28 @@
+# Gmail Account Template
+# Copy to ~/.config/mutt/accounts/ and customize
+# 
+# IMPORTANT: Gmail requires either:
+# 1. App Password (recommended) - Enable 2FA and generate app-specific password
+# 2. Less secure app access (not recommended)
+
+set realname = "Your Name"
+set from = "youremail@gmail.com"
+set imap_user = "youremail@gmail.com"
+set imap_pass = "`pass mutt/youremail@gmail.com`"
+set smtp_url = "smtps://youremail@gmail.com@smtp.gmail.com:465"
+set smtp_pass = "`pass mutt/youremail@gmail.com`"
+set folder = "imaps://imap.gmail.com:993"
+set spoolfile = "+INBOX"
+set postponed = "+[Gmail]/Drafts"
+set trash = "+[Gmail]/Trash"
+set record = "+[Gmail]/Sent Mail"
+
+# Gmail-specific settings
+set imap_check_subscribed = yes
+set imap_keepalive = 300
+set mail_check = 120
+set timeout = 300
+set imap_passive = no
+
+# Store password with:
+# pass insert mutt/youremail@gmail.com

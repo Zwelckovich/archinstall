@@ -1,0 +1,35 @@
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ 🌱 BONSAI Mutt Mailcap Configuration                                        │
+# │ MIME type handlers for modern email                                         │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Text/HTML - use w3m with image support as primary handler
+text/html; w3m -I %{charset} -T text/html -o display_image=1 -o auto_image=1 -dump; copiousoutput; nametemplate=%s.html
+text/html; lynx -assume_charset=%{charset} -display_charset=utf-8 -dump %s; nametemplate=%s.html; copiousoutput
+
+# Images - inline preview with chafa, open with feh
+image/*; feh -. %s &; test=test -n "$DISPLAY"
+image/*; chafa --colors=256 --size=80x40 %s; copiousoutput
+
+# PDF Documents
+application/pdf; zathura %s &; test=test -n "$DISPLAY"
+application/pdf; pdftotext -l 10 -nopgbrk -q %s -; copiousoutput
+
+# Office Documents
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; libreoffice %s &; test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; libreoffice %s &; test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.presentationml.presentation; libreoffice %s &; test=test -n "$DISPLAY"
+application/msword; libreoffice %s &; test=test -n "$DISPLAY"
+application/vnd.ms-excel; libreoffice %s &; test=test -n "$DISPLAY"
+application/vnd.ms-powerpoint; libreoffice %s &; test=test -n "$DISPLAY"
+
+# Plain text
+text/plain; cat %s; copiousoutput
+
+# Video/Audio
+video/*; mpv %s &; test=test -n "$DISPLAY"
+audio/*; mpv %s &
+
+# Calendar
+text/calendar; cat %s; copiousoutput
+application/ics; cat %s; copiousoutput

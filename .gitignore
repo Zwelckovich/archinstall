@@ -9,3 +9,4 @@ lazy-lock.json
 CLAUDE.md
 CLEANUP.md
 BONSAI.md
+dotfiles/config/mutt/.config/mutt/accounts

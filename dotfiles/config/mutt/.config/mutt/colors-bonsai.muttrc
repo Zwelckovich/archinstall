@@ -1,0 +1,54 @@
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ 🌱 BONSAI Color Theme for Mutt                                              │
+# │ Based on BONSAI design system                                               │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Reset all colors
+color normal        default default
+color indicator     black   color108  # BONSAI green selection
+color tree          color108 default  # Thread tree
+color status        color108 color235 # Status bar
+color error         color174 default  # Errors in BONSAI red
+color message       color108 default  # Info messages
+color signature     color245 default  # Signatures muted
+color attachment    color110 default  # Attachments in blue
+color search        black   color180  # Search highlight
+color tilde         color245 default  # Empty lines
+color markers       color245 default  # Wrap markers
+
+# Sidebar
+color sidebar_indicator black   color108
+color sidebar_highlight white   color237
+color sidebar_divider   color245 default
+color sidebar_flagged   color174 default
+color sidebar_new       color108 default
+
+# Headers
+color hdrdefault    color245 default
+color header        color108 default "^(From|To|Cc|Bcc):"
+color header        color110 default "^(Subject):"
+color header        color180 default "^(Date):"
+color header        color174 default "^(X-Spam-Status: Yes)"
+
+# Body
+color quoted        color108 default
+color quoted1       color110 default
+color quoted2       color180 default
+color quoted3       color174 default
+color quoted4       color140 default
+color body          color110 default "(https?|ftp)://[^ \">\t\r\n]*"
+color body          color108 default "[-a-z_0-9.]+@[-a-z_0-9.]+"
+color body          color174 default "^gpg:.*"
+color body          color180 default "^# .*"
+color body          color180 default "^## .*"
+color body          color180 default "^### .*"
+
+# Index
+color index         color245 default "~R"       # Read messages
+color index         color108 default "~N"       # New messages
+color index         color110 default "~O"       # Old messages
+color index         color174 default "~F"       # Flagged
+color index         color237 default "~D"       # Deleted
+color index         color140 default "~T"       # Tagged
+color index_author  color108 default "~N"       # New message authors
+color index_subject color110 default "~N"       # New message subjects

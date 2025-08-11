@@ -122,7 +122,14 @@ tools_stage=(
   zathura-pdf-mupdf   # Zathura plugin using the MuPDF PDF renderer
   meld                # Graphical tool for merging and comparing files
   baobab              # Disk usage analyzer with a graphical interface, alternative to Treesize
-  mutt-wizard         # CLI email client
+  neomutt             # Modern mutt email client with enhanced features
+  w3m                 # Text-based web browser with inline image support for HTML emails
+  lynx                # Alternative text browser for HTML conversion
+  urlscan             # Extract and follow URLs from emails
+  isync               # IMAP synchronization tool (mbsync)
+  msmtp               # SMTP client for sending emails
+  pass                # Password manager for secure email credentials
+  abook               # Address book for mutt
   d2                  # A modern diagram scripting language that turns text to diagrams
                       # Audio/Video/Foto Tools
   ffmpeg              # Complete Solution to record, convert and stream audio and video
@@ -837,6 +844,24 @@ function restore_dotfiles() {
   # Kitty
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Kitty terminal...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/ kitty
+  
+  # Mutt email client
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring Mutt email client...${BONSAI_RESET}"
+  mkdir -p ~/.cache/mutt/{headers,messages}
+  mkdir -p ~/.config/mutt/accounts
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config mutt
+  chmod +x ~/.config/mutt/scripts/*.sh
+  
+  # Initialize password store if not exists
+  if [ ! -d ~/.password-store ]; then
+    echo -e "${CNT} ${BONSAI_TEXT}Initializing password store...${BONSAI_RESET}"
+    gpg_key=$(gpg --list-secret-keys --keyid-format LONG 2>/dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
+    if [ -n "$gpg_key" ]; then
+      pass init "$gpg_key"
+    else
+      echo -e "${CWR} ${BONSAI_YELLOW}No GPG key found. Run 'gpg --gen-key' to create one${BONSAI_RESET}"
+    fi
+  fi
   
   # Bat
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Bat...${BONSAI_RESET}"

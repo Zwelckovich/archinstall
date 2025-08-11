@@ -1,0 +1,22 @@
+# T-Online Account Template
+# Copy to ~/.config/mutt/accounts/ and customize
+
+set realname = "Your Name"
+set from = "youremail@t-online.de"
+set imap_user = "youremail@t-online.de"
+set imap_pass = "`pass mutt/youremail@t-online.de`"
+set smtp_url = "smtps://youremail@t-online.de@securesmtp.t-online.de:465"
+set smtp_pass = "`pass mutt/youremail@t-online.de`"
+set folder = "imaps://secureimap.t-online.de:993"
+set spoolfile = "+INBOX"
+set postponed = "+Entwürfe"
+set trash = "+Papierkorb"
+set record = "+Gesendet"
+
+# T-Online specific settings
+set imap_check_subscribed = yes
+set imap_keepalive = 300
+set mail_check = 120
+
+# Store password with:
+# pass insert mutt/youremail@t-online.de
