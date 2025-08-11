@@ -163,6 +163,46 @@ This wizard will:
 - `t` - Tag/untag message
 - `;` - Apply next command to tagged messages
 
+### Deleting Multiple Emails
+
+#### Method 1: Visual Selection (Vim-like)
+- `v` - Enter visual mode
+- `j/k` - Move to select range
+- `d` - Delete selected range
+
+#### Method 2: Tag and Delete
+- `t` - Tag individual messages
+- `T` - Tag by pattern (e.g., `~s spam` for spam subjects)
+- `;d` - Delete all tagged messages
+
+#### Method 3: Delete by Pattern
+- `D` - Delete by pattern
+- Examples:
+  - `D~f annoying@example.com` - Delete all from specific address
+  - `D~f @spam-domain.com` - Delete all from domain
+  - `D~d >30d` - Delete all older than 30 days
+  - `D~s "unsubscribe" ~d >7d` - Delete old unsubscribe emails
+
+#### Quick Delete from Current Sender
+- `D~f %f` - Delete all from current message's sender
+
+#### Pattern Syntax Reference
+- `~f pattern` - From contains pattern
+- `~t pattern` - To contains pattern  
+- `~s pattern` - Subject contains pattern
+- `~b pattern` - Body contains pattern
+- `~d >30d` - Older than 30 days (`d`=days, `w`=weeks, `m`=months)
+- `~d <1w` - Less than 1 week old
+- `~N` - New messages
+- `~F` - Flagged messages
+- `!` - NOT operator (e.g., `!~F` = not flagged)
+- `|` - OR operator (e.g., `~f alice | ~f bob`)
+
+#### Undo Deletions
+- `u` - Undelete last deleted message
+- `U` - Undelete by pattern
+- Note: Deletions aren't permanent until you sync/exit
+
 ## HTML Email Handling
 
 HTML emails are automatically converted to readable text using w3m. The conversion preserves:
@@ -335,6 +375,74 @@ This mutt configuration follows BONSAI principles:
 - **Beautiful**: BONSAI color theme for visual harmony
 
 The configuration provides a powerful, keyboard-driven email experience that matches the efficiency of neovim while handling modern email requirements.
+
+## Recommended Plugins & Extensions
+
+### 1. notmuch - Fast Search and Tagging
+Powerful indexed search across all mail with tag-based organization (like Gmail labels):
+
+```bash
+# Install
+yay -S notmuch
+
+# Initialize
+notmuch setup
+notmuch new
+
+# Add to muttrc
+set nm_default_uri = "notmuch://$HOME/.mail"
+macro index,pager S "<enter-command>unset wait_key<enter><shell-escape>notmuch-mutt -r --prompt search<enter>" "Search mail (notmuch)"
+```
+
+### 2. lbdb - Little Brother Database
+Auto-collects email addresses from your correspondence:
+
+```bash
+# Install
+yay -S lbdb
+
+# Add to muttrc
+set query_command = "lbdbq '%s' 2>/dev/null"
+```
+
+### 3. mutt-ics - Calendar Integration
+View and respond to calendar invites:
+
+```bash
+# Install
+yay -S mutt-ics
+
+# Mailcap entry
+text/calendar; mutt-ics %s; copiousoutput
+application/ics; mutt-ics %s; copiousoutput
+```
+
+### 4. Useful Macros for Efficiency
+
+Add these to your `~/.config/mutt/muttrc`:
+
+```muttrc
+# Quick delete all from sender
+macro index,pager ,d "<delete-pattern>~f %f<enter>" "Delete all from sender"
+
+# Delete old emails (>30 days)
+macro index ,o "<delete-pattern>~d >30d<enter>" "Delete old messages"
+
+# Quick spam cleanup
+macro index ,s "<tag-pattern>~s spam<enter><tag-prefix><delete-message>" "Delete spam"
+
+# Archive (move to Archive folder)
+macro index,pager ,a "<save-message>=Archive<enter>" "Archive message"
+
+# Mark all as read
+macro index ,r "<tag-pattern>~N<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "Mark all as read"
+
+# Quick folder jumps
+macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"
+macro index gs "<change-folder>=[Gmail]/Sent Mail<enter>" "Go to sent"
+macro index gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to drafts"
+macro index gt "<change-folder>=[Gmail]/Trash<enter>" "Go to trash"
+```
 
 ## Tips & Tricks
 
