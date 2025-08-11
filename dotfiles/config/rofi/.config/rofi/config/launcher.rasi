@@ -1,149 +1,177 @@
-configuration {
-    show-icons:                     true;
-    display-drun: 		            "";
-    drun-display-format:            "{icon} {name}";
-    disable-history:                false;
-    click-to-exit: 		            true;
-    location:                       0;
+/**
+ * BONSAI Rofi Theme - Minimal, Purposeful, Beautiful
+ * Dark Zen aesthetic with sage green accents
+ */
+
+* {
+    /* BONSAI Color Palette */
+    bg-deep:         #0a0e14ff;  /* BONSAI background deep */
+    bg-primary:      #151922ff;  /* BONSAI background primary */
+    bg-secondary:    #1e242eff;  /* BONSAI background secondary */
+    bg-elevated:     #232933ff;  /* BONSAI background elevated */
+    
+    text-primary:    #e6e8ebff;  /* BONSAI text primary */
+    text-secondary:  #b8bcc8ff;  /* BONSAI text secondary */
+    text-muted:      #8b92a5ff;  /* BONSAI text muted */
+    
+    border-subtle:   #2d3441ff;  /* BONSAI border subtle */
+    border-accent:   #4a5568ff;  /* BONSAI border accent */
+    
+    green-primary:   #7c9885ff;  /* BONSAI green primary (selection) */
+    green-secondary: #9db4a6ff;  /* BONSAI green secondary */
+    green-muted:     #677a70ff;  /* BONSAI green muted */
+    
+    blue-primary:    #82a4c7ff;  /* BONSAI blue primary */
+    red-primary:     #c78289ff;  /* BONSAI red primary (urgent) */
+    
+    /* Font */
+    font: "JetBrains Mono 10";
 }
 
-@import "font.rasi"
-@import "colors.rasi"
+configuration {
+    show-icons:          true;
+    display-drun:        "";
+    drun-display-format: "{icon} {name}";
+    disable-history:     false;
+    click-to-exit:       true;
+    location:            0;
+}
 
 window {
-    transparency:                   "real";
-    background-color:               @BG;
-    text-color:                     @FG;
-    border:                         2px;
-    border-color:                   @BDR;
-    border-radius:                  10px;
-    width:                          500px;
-    anchor:                         center;
-    x-offset:                       0;
-    y-offset:                       0;
+    transparency:     "real";
+    background-color: @bg-primary;
+    text-color:       @text-primary;
+    border:           1px;
+    border-color:     @border-subtle;
+    border-radius:    12px;
+    width:            550px;
+    anchor:           center;
+    x-offset:         0;
+    y-offset:         0;
 }
 
 prompt {
-    enabled: 			            true;
-    padding: 			            8px;
-    background-color: 		        @BG;
-    text-color: 		            @IMG;
+    enabled:          true;
+    padding:          8px;
+    background-color: @bg-primary;
+    text-color:       @green-primary;
 }
 
 textbox-prompt-colon {
-    expand: 			            false;
-    str: 			                "";
-    border-radius:                  100%;
-    background-color:               @SEL;
-    text-color:                     @FG;
-    padding:                        8px 12px 8px 12px;
-    font:			                "Iosevka Nerd Font 10";
+    expand:           false;
+    str:              "🌱";  /* BONSAI icon */
+    border-radius:    100%;
+    background-color: @green-primary;
+    text-color:       @bg-deep;
+    padding:          8px 12px 8px 12px;
+    font:             "JetBrains Mono 10";
 }
 
 entry {
-    background-color:               @BG;
-    text-color:                     @FG;
-    placeholder-color:              @FG;
-    expand:                         true;
-    horizontal-align:               0;
-    placeholder:                    "Search...";
-    blink:                          true;
-    border:                  	    0px 0px 2px 0px;
-    border-color:                   @BDR;
-    border-radius:                  10px;
-    padding:                        8px;
+    background-color:  @bg-secondary;
+    text-color:        @text-primary;
+    placeholder-color: @text-muted;
+    expand:            true;
+    horizontal-align:  0;
+    placeholder:       "Search applications...";
+    blink:             true;
+    border:            0px 0px 1px 0px;
+    border-color:      @border-subtle;
+    border-radius:     8px;
+    padding:           8px;
 }
 
 inputbar {
-	children: 		                [ textbox-prompt-colon, prompt, entry ];
-    background-color:               @BG;
-    text-color:                     @FG;
-    expand:                         false;
-    border:                  	    0px 0px 0px 0px;
-    border-radius:                  0px;
-    border-color:                   @BDR;
-    margin:                         0px 0px 0px 0px;
-    padding:                        0px;
-    position:                       center;
+    children:          [ textbox-prompt-colon, prompt, entry ];
+    background-color:  @bg-primary;
+    text-color:        @text-primary;
+    expand:            false;
+    border:            0px;
+    border-radius:     0px;
+    margin:            0px;
+    padding:           0px;
+    position:          center;
 }
-
-case-indicator {
-    background-color:               @BG;
-    text-color:                     @FG;
-    spacing:                        0;
-}
-
 
 listview {
-    background-color:               @BG;
-    columns:                        1;
-    lines:			                7;
-    spacing:                        4px;
-    cycle:                          false;
-    dynamic:                        true;
-    layout:                         vertical;
+    background-color: @bg-primary;
+    columns:          1;
+    lines:            8;
+    spacing:          4px;
+    cycle:            true;
+    dynamic:          true;
+    layout:           vertical;
+    scrollbar:        false;
 }
 
 mainbox {
-    background-color:               @BG;
-    children:                       [ inputbar, listview ];
-    spacing:                        15px;
-    padding:                        15px;
+    background-color: @bg-primary;
+    children:         [ inputbar, listview ];
+    spacing:          12px;
+    padding:          16px;
 }
 
 element {
-    background-color:               @BG;
-    text-color:                     @FG;
-    orientation:                    horizontal;
-    border-radius:                  4px;
-    padding:                        6px 6px 6px 6px;
+    background-color: @bg-primary;
+    text-color:       @text-secondary;
+    orientation:      horizontal;
+    border-radius:    8px;
+    padding:          8px 12px;
 }
 
 element-icon {
-    background-color: 	            inherit;
-    text-color:       		        inherit;
-    horizontal-align:               0.5;
-    vertical-align:                 0.5;
-    size:                           24px;
-    border:                         0px;
+    background-color: inherit;
+    text-color:       inherit;
+    horizontal-align: 0.5;
+    vertical-align:   0.5;
+    size:             24px;
+    border:           0px;
 }
 
 element-text {
-    background-color: 		        inherit;
-    text-color:       		        inherit;
-    expand:                         true;
-    horizontal-align:               0;
-    vertical-align:                 0.5;
-    margin:                         2px 0px 2px 2px;
+    background-color: inherit;
+    text-color:       inherit;
+    expand:           true;
+    horizontal-align: 0;
+    vertical-align:   0.5;
+    margin:           2px 0px 2px 8px;
 }
 
 element normal.urgent,
 element alternate.urgent {
-    background-color:               @UGT;
-    text-color:                     @FG;
-    border-radius:                  9px;
+    background-color: @red-primary;
+    text-color:       @bg-deep;
+    border-radius:    8px;
 }
 
 element normal.active,
 element alternate.active {
-    background-color:               @BGA;
-    text-color:                     @FG;
+    background-color: @bg-elevated;
+    text-color:       @text-primary;
 }
 
 element selected {
-    background-color:               @BGA;
-    text-color:                     @SEL;
-    border:                  	    0px 0px 0px 0px;
-    border-radius:                  10px;
-    border-color:                   @BDR;
+    background-color: @green-primary;
+    text-color:       @bg-deep;
+    border:           0px;
+    border-radius:    8px;
 }
 
 element selected.urgent {
-    background-color:               @UGT;
-    text-color:                     @FG;
+    background-color: @red-primary;
+    text-color:       @bg-deep;
 }
 
 element selected.active {
-    background-color:               @BGA;
-    color:                          @FG;
+    background-color: @green-secondary;
+    text-color:       @bg-deep;
+}
+
+/* Hover effect */
+element.alternate.normal {
+    background-color: @bg-primary;
+}
+
+element.normal.normal {
+    background-color: @bg-primary;
 }

@@ -7,5 +7,26 @@ rofi \
 	-drun-display-format "{name}" \
 	-no-drun-show-actions \
 	-terminal kitty \
-	-kb-cancel Alt-F1 \
+	-kb-cancel "Escape,Alt+q" \
+	-kb-row-up "Up,Control+k,Alt+k" \
+	-kb-row-down "Down,Control+j,Alt+j" \
+	-kb-accept-entry "Return,Control+m" \
+	-kb-remove-char-back "BackSpace,Control+h" \
+	-kb-remove-char-forward "Delete,Control+d" \
+	-kb-remove-to-eol "Control+Shift+k" \
+	-kb-remove-to-sol "Control+u" \
+	-kb-move-char-back "Left,Control+b" \
+	-kb-move-char-forward "Right,Control+f" \
+	-kb-move-word-back "Alt+b" \
+	-kb-move-word-forward "Alt+w" \
+	-kb-move-front "Home,Control+a" \
+	-kb-move-end "End,Control+e" \
+	-kb-element-next "Tab" \
+	-kb-element-prev "Shift+Tab" \
+	-kb-mode-next "Control+Tab" \
+	-kb-mode-previous "Control+Shift+Tab" \
+	-kb-page-prev "Page_Up,Control+Shift+u" \
+	-kb-page-next "Page_Down,Control+Shift+d" \
+	-kb-row-first "Control+g" \
+	-kb-row-last "Control+Shift+g" \
 	-theme "$HOME"/.config/rofi/config/launcher.rasi

@@ -1,64 +1,78 @@
-<h3 align="center">
-	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/logos/exports/1544x1544_circle.png" width="100" alt="Logo"/><br/>
-	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
-	Catppuccin for <a href="https://github.com/catppuccin/rofi">Rofi - Deathemonic Theme</a>
-	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
-</h3>
+# 🌱 BONSAI Rofi Configuration
 
-<p align="center">
-	<a href="https://github.com/catppuccin/rofi/stargazers"><img src="https://img.shields.io/github/stars/catppuccin/rofi?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
-	<a href="https://github.com/catppuccin/rofi/issues"><img src="https://img.shields.io/github/issues/catppuccin/rofi?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
-	<a href="https://github.com/catppuccin/rofi/contributors"><img src="https://img.shields.io/github/contributors/catppuccin/rofi?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
-</p>
+Minimal, purposeful rofi launcher with BONSAI dark zen aesthetic and vim-style keybindings.
 
-<p align="center">
-	<img src="https://raw.githubusercontent.com/catppuccin/rofi/main/assets/deathemonic-rofi-launcher.png"/></br>
-	<img src="https://raw.githubusercontent.com/catppuccin/rofi/main/assets/deathemonic-rofi-powermenu.png"/></br>
-	<img src="https://raw.githubusercontent.com/catppuccin/rofi/main/assets/deathemonic-rofi-runmenu.png"/></br>
-	<img src="https://raw.githubusercontent.com/catppuccin/rofi/main/assets/deathemonic-rofi-screenshot.png"/></br>
-</p>
+## Features
+
+- **Single Purpose**: Application launcher only (drun mode)
+- **BONSAI Colors**: Dark background with sage green accents
+- **Vim-style Navigation**: Use Ctrl+j/k for movement
+- **Clean Design**: No clutter, just what's needed
+
+## Structure
+
+```
+.config/rofi/
+├── bin/
+│   └── launcher        # Main launcher script
+└── config/
+    └── launcher.rasi   # BONSAI theme configuration
+```
 
 ## Usage
 
-1. Clone this repository locally
-```sh
-git clone https://github.com/catppuccin/rofi && cd rofi/deathemonic
+Run the launcher:
+```bash
+~/.config/rofi/bin/launcher
 ```
 
-2. Copy the content of this Theme to Rofi's config location
-```sh
-cp -r * ~/.config/rofi
-```
+## Keybindings (Vim-inspired)
 
-3. Open Rofi with your Shortcutmanager (in this case sxhkd)
-```sh
-super + {d,r,p,s}
-	sh $HOME/.config/rofi/bin/{launcher,runner,powermenu,screenshot}
-```
+### Navigation
+- `Ctrl+j` / `Alt+j` / `Down`: Move down
+- `Ctrl+k` / `Alt+k` / `Up`: Move up
+- `Ctrl+g`: Go to first item
+- `Ctrl+Shift+g`: Go to last item
+- `Ctrl+m` / `Enter`: Launch selected item
 
-### Keybinds
-Key | Action |
-|---|---|
-|Meta + D | Open the Launcher |
-|Meta + R| Open the Run Menu (Run Commands without opening a terminal)|
-|Meta + P | Open the Powermenu |
-|Meta + S | Open the Screenshot Menu |
+### Scrolling
+- `Ctrl+Shift+u` / `Page_Up`: Page up
+- `Ctrl+Shift+d` / `Page_Down`: Page down
 
-## 💝 Thanks to
+### Search Box Editing
+- `Ctrl+h` / `BackSpace`: Delete character backward
+- `Ctrl+d` / `Delete`: Delete character forward
+- `Ctrl+u`: Clear to beginning of line
+- `Ctrl+Shift+k`: Clear to end of line
+- `Ctrl+a` / `Home`: Move to beginning of line
+- `Ctrl+e` / `End`: Move to end of line
+- `Ctrl+b` / `Left`: Move cursor left
+- `Ctrl+f` / `Right`: Move cursor right
+- `Alt+b`: Move word backward
+- `Alt+w`: Move word forward
 
-- [Deathemonic](https://github.com/Deathemonic)
-- [justTOBBI](https://github.com/justTOBBI)
+### Tab Navigation
+- `Tab`: Next element
+- `Shift+Tab`: Previous element
+- `Ctrl+Tab`: Next mode (drun → run → ssh)
+- `Ctrl+Shift+Tab`: Previous mode
 
-&nbsp;
+### Exit
+- `ESC`: Quit rofi
+- `Alt+q`: Quit rofi (vim-style alternative)
 
-<p align="center">
-	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" />
-</p>
+## Notes
 
-<p align="center">
-	Copyright &copy; 2021-present <a href="https://github.com/catppuccin" target="_blank">Catppuccin Org</a>
-</p>
+- **Type normally** to search - all letters work for filtering
+- Vim keybindings use Ctrl/Alt modifiers to avoid conflicts with typing
+- The launcher keeps rofi simple and minimal in BONSAI spirit
 
-<p align="center">
-	<a href="https://github.com/catppuccin/catppuccin/blob/main/LICENSE"><img src="https://img.shields.io/static/v1.svg?style=for-the-badge&label=License&message=MIT&logoColor=d9e0ee&colorA=363a4f&colorB=b7bdf8"/></a>
-</p>
+## Theme
+
+Uses the BONSAI color palette:
+- Background: Deep dark (#151922)
+- Text: Light gray (#e6e8eb)
+- Selection: Sage green (#7c9885)
+- Borders: Subtle (#2d3441)
+
+Font: JetBrains Mono 10
