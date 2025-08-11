@@ -149,9 +149,6 @@ tools_stage=(
   discord             #All-in-one voice and text chat for gamers
                       # Electronics/RF
   qucs-s              # A spin-off of Qucs that supports other free SPICE circuit simulators like ngspice with the same Qucs GUI
-  klayout             # High Performance Layout Viewer And Editor. Support of GDS and OASIS files.
-  kicad               # Electronic schematic and printed circuit board (PCB) design tools
-  freecad             # Feature based parametric 3D CAD modeler
   paraview            # Parallel Visualization application using VTK
                       # Bluetooth
   bluez
@@ -651,7 +648,7 @@ function restore_dotfiles() {
     git pull
     popd
   fi
-  
+
   # Execute the BONSAIVIM installation script
   echo -e "$CNT - Installing BONSAIVIM configuration..."
   pushd ~/BONSAIVIM
