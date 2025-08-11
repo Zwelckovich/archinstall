@@ -1,0 +1,16 @@
+[SddmGreeterTheme]
+Name=BONSAI
+Description=Minimal, purposeful SDDM theme with BONSAI design principles
+Author=BONSAI Theme Creator
+Copyright=(c) 2025, BONSAI
+License=MIT
+Type=sddm-theme
+Version=1.0
+Website=https://github.com/bonsai-theme
+Screenshot=preview.png
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=translations
+Email=themes@bonsai.dev
+Theme-Id=bonsai
+Theme-API=2.0

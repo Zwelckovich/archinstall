@@ -1,0 +1,125 @@
+# BONSAI GRUB Theme - Modern & Stylish
+# Minimal • Purposeful • Beautiful
+# Designed for any resolution
+
+# Global Property
+title-text: ""
+desktop-image: "background.png"
+desktop-image-scale-method: "stretch"
+desktop-color: "#0a0e14"
+terminal-font: "Unifont Regular 16"
+terminal-left: "0"
+terminal-top: "0"
+terminal-width: "100%"
+terminal-height: "100%"
+terminal-border: "0"
+
+# BONSAI Branding Title
++ label {
+  left = 50%-60
+  top = 15%
+  width = 120
+  height = 30
+  text = "BONSAI"
+  font = "Unifont Bold 24"
+  color = "#7c9885"
+  align = "center"
+}
+
+# Tagline
++ label {
+  left = 50%-100
+  top = 20%
+  width = 200
+  height = 20
+  text = "Minimal • Purposeful • Beautiful"
+  font = "Unifont Regular 11"
+  color = "#677a70"
+  align = "center"
+}
+
+# Logo image (adjusted position)
++ image {
+  left = 50%-100
+  top = 30%
+  file = "logo200.png"
+}
+
+# Show the boot menu - more spacious and modern
++ boot_menu {
+  left = 50%-250
+  top = 50%
+  width = 500
+  height = 35%
+  item_font = "Unifont Regular 16"
+  item_color = "#b8bcc8"
+  selected_item_color = "#e6e8eb"
+  icon_width = 32
+  icon_height = 32
+  item_icon_space = 20
+  item_height = 40
+  item_padding = 8
+  item_spacing = 5
+  selected_item_pixmap_style = "select_*.png"
+}
+
+# Modern progress bar
++ progress_bar {
+  id = "__timeout__"
+  left = 50%-200
+  top = 88%
+  width = 400
+  height = 8
+  fg_color = "#7c9885"
+  bg_color = "#1e242e"
+  border_color = "#3d4455"
+  text = ""
+}
+
+# Countdown message - repositioned
++ label {
+  top = 85%
+  left = 50%-100
+  width = 200
+  align = "center"
+  id = "__timeout__"
+  text = "Booting in %d seconds"
+  color = "#8b92a5"
+  font = "Unifont Regular 13"
+}
+
+# Help text at bottom
++ label {
+  left = 50%-150
+  top = 92%
+  width = 300
+  height = 20
+  text = "↑↓ Select • Enter Boot • E Edit • C Console"
+  font = "Unifont Regular 11"
+  color = "#6b7280"
+  align = "center"
+}
+
+# Version info - left corner
++ label {
+  left = 2%
+  top = 95%
+  width = 100
+  height = 15
+  text = "GRUB 2.12"
+  font = "Unifont Regular 10"
+  color = "#4a5568"
+  align = "left"
+}
+
+# Theme version - right corner
++ label {
+  left = 100%-102
+  top = 95%
+  width = 100
+  height = 15
+  text = "BONSAI v2.0"
+  font = "Unifont Regular 10"
+  color = "#4a5568"
+  align = "right"
+}

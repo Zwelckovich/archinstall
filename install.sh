@@ -664,7 +664,7 @@ function restore_dotfiles() {
 function update_grub_sddm() {
   # SDDM
   sudo cp -r ~/archinstall/dotfiles/etc/sddm.conf /etc/
-  sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/catppuccin-mocha/ /usr/share/sddm/themes/
+  sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/bonsai/ /usr/share/sddm/themes/
   # Grub
   sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/
   sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /boot/grub/themes/

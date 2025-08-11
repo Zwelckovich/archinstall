@@ -39,12 +39,13 @@ GRUB_DISABLE_RECOVERY=true
 
 # Uncomment and set to the desired menu colors.  Used by normal and wallpaper
 # modes only.  Entries specified as foreground/background.
-#GRUB_COLOR_NORMAL="light-blue/black"
-#GRUB_COLOR_HIGHLIGHT="light-cyan/blue"
+# BONSAI color scheme - enhanced visibility
+GRUB_COLOR_NORMAL="light-gray/black"
+GRUB_COLOR_HIGHLIGHT="white/green"
 
 # Uncomment one of them for the gfx desired, a image background or a gfxtheme
 #GRUB_BACKGROUND="/path/to/wallpaper"
-GRUB_THEME="/boot/grub/themes/catppuccin-mocha-grub-theme/theme.txt"
+GRUB_THEME="/boot/grub/themes/bonsai/theme.txt"
 
 # Uncomment to get a beep at GRUB start
 #GRUB_INIT_TUNE="480 440 1"
