@@ -113,6 +113,7 @@ tools_stage=(
   stylua                  # Deterministic code formatter for Lua
   luacheck                # A tool for linting and static analysis of Lua code
   prettier                # An opinionated code formatter
+  tokei                   # A blazingly fast CLOC (Count Lines Of Code) program
                           # Science Tools
   step
   # Office Tools
@@ -147,7 +148,7 @@ tools_stage=(
   chromium-widevine   # DRM Tool for chomium based browsers to watch Netflix in full quality
   blender             # A fully integrated 3D graphics creation suite
                       # CLI Tools
-  btop                # Interactive system monitoring tool similar to htop but built using libui.
+  bottom              # Cross-platform graphical process/system monitor written in Rust with BONSAI aesthetics.
   lazygit             # TUI (text user interface) for Git operations designed to be intuitive and fast.
   stow                # Tool for managing symlinks, useful for installing software globally while keeping configuration files in a central location.
   zsh                 # Robust shell with advanced features, including syntax highlighting and plugins support.
@@ -160,17 +161,18 @@ tools_stage=(
   zoxide              # CLI tool that helps you quickly jump between directories using fuzzy search.
   reflector           # AUR helper designed to speed up updates and package installations by optimizing mirrors in /etc/pacman.conf.
   ripgrep             # Fast, modern search tool that looks for patterns in files, similar to grep but with additional features like regex support.
+  procs               # Modern replacement for ps written in Rust with colorful and informative output.
   tre-command         # CLI tool for managing SSH connections and identities with tab-completion and command history.
   unzip               # Command-line utility for extracting files from ZIP archives.
   ni-visa             # Tool for querying information about network interfaces, including MAC addresses and IP details.
   expac               # Enhanced version of the pacman package manager, providing more detailed output and easier scripting capabilities.
   scc                 # Simple Console Calculator for performing quick calculations directly in the terminal.
   duf                 # Disk usage analysis tool that provides a detailed overview of storage space usage on your system.
+  ncdu                # Command-line disk usage analyzer, alternative to baobab
   rsync               # Fast and versatile file synchronization tool, often used for backups or transferring large amounts of data efficiently.
   dua-cli             # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
   sox                 # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
   testdisk            # Data recovery and disk repair tool
-  ncdu                # Command-line disk usage analyzer, alternative to baobab
   cifs-utils          # CIFS filesystem user-space tools
   smbclient           #Tools to access a server's filespace and printers via SMB
   openssh             # SSH protocol implementation for remote login, command execution and file transfer
@@ -756,9 +758,9 @@ function restore_dotfiles() {
   echo -e "${CNT} ${BONSAI_TEXT}Configuring VS Code...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config code
 
-  # BTOP
-  echo -e "${CNT} ${BONSAI_TEXT}Configuring BTOP...${BONSAI_RESET}"
-  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config btop
+  # Bottom
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring Bottom system monitor...${BONSAI_RESET}"
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config bottom
 
   # Zathura
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Zathura...${BONSAI_RESET}"
@@ -861,6 +863,10 @@ function restore_dotfiles() {
   chmod +x ~/.config/calcurse/scripts/*.sh
   # Enable notification service (but don't start it yet)
   systemctl --user enable calcurse-notify.service 2> /dev/null || true
+
+  # Procs process viewer
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring procs process viewer...${BONSAI_RESET}"
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config procs
 
   # Initialize password store if not exists
   if [ ! -d ~/.password-store ]; then
@@ -1054,4 +1060,3 @@ function main_menu() {
 
 # Start the installer
 main_menu
-

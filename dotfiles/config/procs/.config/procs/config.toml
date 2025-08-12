@@ -1,0 +1,191 @@
+# 🌱 BONSAI procs configuration
+# Minimal • Purposeful • Beautiful
+#
+# A modern process viewer with BONSAI aesthetics
+# Dark zen theme with purposeful information display
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ DISPLAY CONFIGURATION                                                      │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[display]
+# Show the header by default
+show_header = true
+
+# Use compact mode for cleaner display
+compact = false
+
+# Show tree view for process hierarchy
+tree = false
+
+# Use color output (essential for BONSAI aesthetics)
+color_mode = "Always"
+
+# Cut long text with "..." for cleaner display
+cut_to_terminal = true
+
+# Abbreviate large memory values (KB, MB, GB)
+abbreviate_large_values = true
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ COLUMN CONFIGURATION                                                       │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Define which columns to display and in what order
+# BONSAI principle: Show only essential information
+[[columns]]
+kind = "Pid"
+style = "BrightBlue|Blue"
+numeric_search = true
+nonnumeric_search = false
+
+[[columns]]
+kind = "User"
+style = "BrightGreen|Green"
+numeric_search = false
+nonnumeric_search = true
+
+[[columns]]
+kind = "Separator"
+style = "White|BrightBlack"
+numeric_search = false
+nonnumeric_search = false
+
+[[columns]]
+kind = "UsageCpu"
+style = "ByPercentage"
+numeric_search = true
+nonnumeric_search = false
+
+[[columns]]
+kind = "UsageMem"
+style = "ByPercentage"
+numeric_search = true
+nonnumeric_search = false
+
+[[columns]]
+kind = "CpuTime"
+style = "BrightCyan|Cyan"
+numeric_search = false
+nonnumeric_search = false
+
+[[columns]]
+kind = "MultiSlot"
+style = "ByUnit"
+numeric_search = false
+nonnumeric_search = false
+
+[[columns]]
+kind = "Separator"
+style = "White|BrightBlack"
+numeric_search = false
+nonnumeric_search = false
+
+[[columns]]
+kind = "Command"
+style = "BrightWhite|White"
+numeric_search = false
+nonnumeric_search = true
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ BONSAI COLOR THEME                                                         │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Style configuration using BONSAI color palette
+# These map to the terminal's 16-color palette which should be configured
+# with BONSAI colors in your terminal emulator
+
+[style]
+# Header style - using BONSAI green for headers
+header = "Green"
+
+# Unit style for memory/cpu values - muted text
+unit = "White"
+
+# Tree style for process hierarchy - BONSAI blue
+tree = "BrightBlue"
+
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ UNIT DISPLAY COLORS                                                        │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Colors for different memory/storage units
+[style.by_unit]
+color_k = "BrightGreen|Green"
+color_m = "BrightYellow|Yellow"
+color_g = "Yellow|BrightYellow"
+color_t = "BrightRed|Red"
+color_p = "BrightRed|Red"
+color_x = "BrightMagenta|Magenta"
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ CPU USAGE COLORS                                                           │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Color coding for CPU usage percentages
+# Following BONSAI principle: Green for good, Yellow for warning, Red for critical
+[style.by_percentage]
+color_000 = "BrightGreen|Green"      # 0-25% - Good
+color_025 = "BrightBlue|Blue"        # 25-50% - Normal
+color_050 = "BrightYellow|Yellow"    # 50-75% - Warning
+color_075 = "Yellow|BrightRed"       # 75-100% - High
+color_100 = "BrightRed|Red"          # 100% - Critical
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ PROCESS STATE COLORS                                                       │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[style.by_state]
+color_d = "BrightRed|Red"            # D - Uninterruptible sleep
+color_r = "BrightGreen|Green"        # R - Running
+color_s = "BrightYellow|Yellow"      # S - Sleeping
+color_t = "BrightCyan|Cyan"          # T - Stopped
+color_z = "BrightMagenta|Magenta"    # Z - Zombie
+color_x = "BrightMagenta|Magenta"    # X - Dead
+color_k = "BrightBlue|Blue"          # K - Wakekill
+color_w = "Cyan|BrightCyan"          # W - Paging
+color_p = "Yellow|BrightYellow"      # P - Parked
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ SEARCH OPTIONS                                                             │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[search]
+# Search mode for numeric columns
+numeric_search = "Exact"
+
+# Search mode for non-numeric columns
+nonnumeric_search = "Partial"
+
+# Use smart case for searching (case-insensitive unless uppercase is used)
+smart_case = true
+
+# Highlight search results
+highlight_base_color = "BrightGreen|Green"
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ PAGER CONFIGURATION                                                        │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[pager]
+# Pager mode for viewing detailed information
+mode = "Auto"
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ KEY BINDINGS                                                               │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+# Note: Key bindings are handled at runtime
+# Default bindings:
+#   q        - Quit
+#   /        - Search
+#   n        - Next search result
+#   N        - Previous search result
+#   k        - Kill process
+#   t        - Toggle tree view
+#   Space    - Tag/untag process
+#   Enter    - Show process details
+#   Tab      - Change sort column
+#   </>      - Change sort order
+#   h/j/k/l  - Vi-like navigation

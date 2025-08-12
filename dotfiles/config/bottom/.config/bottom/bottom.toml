@@ -1,0 +1,175 @@
+# 🌱 BONSAI bottom configuration
+# Minimal • Purposeful • Beautiful
+#
+# Cross-platform graphical process/system monitor with BONSAI aesthetics
+# Dark zen theme for comfortable system monitoring
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ FLAGS & OPTIONS                                                             │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[flags]
+# General Options
+hide_avg_cpu = false             # Show average CPU usage
+dot_marker = false               # Use braille dots for graphs
+temperature_type = "celsius"     # Temperature unit (celsius/fahrenheit/kelvin)
+rate = 1000                      # Update rate in milliseconds
+left_legend = false              # Put legend on left side
+current_usage = true             # Show current usage stats
+unnormalized_cpu = false         # Show each CPU separately
+group_processes = true           # Group processes with same name
+case_sensitive = false           # Case sensitivity for searches
+whole_word = false              # Match whole words in searches
+regex = true                     # Enable regex in searches
+show_disabled_data = false      # Hide disabled data entries
+basic = false                    # Use basic mode
+tree = false                     # Show process tree by default
+hide_time = false               # Hide time scale
+autohide_time = false           # Auto-hide time scale
+default_time_value = "60s"      # Default time range
+time_delta = 15000              # Time delta for graph navigation
+default_widget_type = "process"  # Default widget to show
+default_widget_count = 1        # Number of default widgets
+disable_click = false           # Enable mouse support
+color = "default"               # Use custom BONSAI colors
+mem_as_value = false            # Show memory as values not percentages
+network_use_binary_prefix = false  # Use decimal prefixes for network
+network_use_bytes = false       # Use bytes for network
+network_use_log = false         # Use log scale for network
+disable_advanced_kill = false   # Enable advanced kill menu
+enable_gpu = true               # Show GPU usage if available
+enable_cache_memory = false     # Show cache memory
+retention = "10m"               # Data retention period
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ BONSAI COLOR SCHEME                                                        │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[colors]
+# BONSAI color palette optimized for dark terminals
+# Using exact hex values from BONSAI design system
+
+# Background colors
+widget_title_color = "#7c9885"       # BONSAI green primary
+border_color = "#2d3441"             # BONSAI border subtle
+highlighted_border_color = "#7c9885" # BONSAI green primary
+text_color = "#e6e8eb"               # BONSAI text primary
+selected_text_color = "#0a0e14"      # BONSAI text inverted
+selected_bg_color = "#7c9885"        # BONSAI green primary
+disabled_text_color = "#6b7280"      # BONSAI text disabled
+graph_color = "#7c9885"              # BONSAI green primary
+table_header_color = "#b8bcc8"       # BONSAI text secondary
+
+# CPU colors - gradient from green to red based on usage
+cpu_core_colors = [
+    "#7c9885",  # BONSAI green primary
+    "#82a4c7",  # BONSAI blue primary
+    "#c7a882",  # BONSAI yellow primary
+    "#c78289",  # BONSAI red primary
+    "#9882c7",  # BONSAI purple primary
+    "#c7975c",  # BONSAI orange primary
+    "#5cc7a8",  # BONSAI teal primary
+    "#9db4a6",  # BONSAI green secondary
+]
+
+# Memory/RAM colors
+ram_color = "#82a4c7"       # BONSAI blue primary
+cache_color = "#c7a882"      # BONSAI yellow primary
+swap_color = "#9882c7"       # BONSAI purple primary
+arc_color = "#5cc7a8"        # BONSAI teal primary
+gpu_core_colors = ["#c7975c", "#c78289"]  # BONSAI orange and red
+
+# Network colors
+rx_color = "#7c9885"         # BONSAI green primary (incoming)
+tx_color = "#82a4c7"         # BONSAI blue primary (outgoing)
+rx_total_color = "#9db4a6"   # BONSAI green secondary
+tx_total_color = "#9bb5d4"   # BONSAI blue secondary
+
+# Battery colors (gradient based on charge level)
+battery_colors = [
+    "#c78289",  # Red (low)
+    "#c7a882",  # Yellow (medium)
+    "#7c9885",  # Green (high)
+]
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ LAYOUT CONFIGURATION                                                       │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[[row]]
+  [[row.child]]
+  type = "cpu"
+  ratio = 3
+  
+  [[row.child]]
+  ratio = 4
+    [[row.child.child]]
+    type = "mem"
+    ratio = 1
+    [[row.child.child]]
+    type = "net"
+    ratio = 1
+
+[[row]]
+  ratio = 3
+  [[row.child]]
+  type = "proc"
+  default = true
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ PROCESS CONFIGURATION                                                      │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[processes]
+columns = [
+    "PID",
+    "Name", 
+    "CPU%",
+    "Mem%",
+    "R/s",
+    "W/s",
+    "T.Read",
+    "T.Write",
+    "User",
+    "State"
+]
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ DISK FILTER                                                                │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[disk_filter]
+is_list_ignored = true
+list = ["/dev/loop", "/dev/dm"]
+regex = true
+case_sensitive = false
+whole_word = false
+
+[mount_filter]
+is_list_ignored = true
+list = ["/boot", "/mnt"]
+regex = false
+case_sensitive = false
+whole_word = false
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ TEMPERATURE FILTER                                                         │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[temp_filter]
+is_list_ignored = false
+list = ["coretemp", "k10temp", "zenpower"]
+regex = false
+case_sensitive = false
+whole_word = false
+
+# ╭─────────────────────────────────────────────────────────────────────────────╮
+# │ NETWORK FILTER                                                             │
+# ╰─────────────────────────────────────────────────────────────────────────────╯
+
+[net_filter]
+is_list_ignored = true
+list = ["virbr", "docker", "veth", "br-"]
+regex = true
+case_sensitive = false
+whole_word = false
