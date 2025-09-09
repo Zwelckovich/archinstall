@@ -82,6 +82,7 @@ tools_stage=(
   feh                     # Lightweight image viewer for X11 with support for various image formats.
   pacman-contrib          # Additional tools and scripts for Pacman, enhancing package management capabilities.
   npm                     # Node Package Manager for installing, sharing, and managing JavaScript packages.
+  xfsprogs                # XFS filesystem utilities
                           # Web Tools
   vivaldi                 # An advanced browser made with the power user in mind.
   vivaldi-ffmpeg-codecs   # additional support for proprietary codecs for vivaldi
