@@ -141,6 +141,8 @@ tools_stage=(
   mpv                 # a free, open source, and cross-platform media player
   ncspot              # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
   inkscape            # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
+  typst               # Modern typesetting system and document compiler, a powerful alternative to LaTeX.
+  tinymist            # Language server for Typst, providing IDE features like autocomplete, hover, and diagnostics.
   grim                # Screenshot utility for Wayland
   slurp               # Select a region in a Wayland compositor
   tesseract           # An OCR program
