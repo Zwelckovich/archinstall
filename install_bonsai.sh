@@ -115,6 +115,7 @@ tools_stage=(
   luacheck                # A tool for linting and static analysis of Lua code
   prettier                # An opinionated code formatter
   tokei                   # A blazingly fast CLOC (Count Lines Of Code) program
+  quarto-cli-bin          # An open-source scientific and technical publishing system built on Pandoc (binary from official repo)
                           # Science Tools
   step
   # Office Tools
