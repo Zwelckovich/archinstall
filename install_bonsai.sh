@@ -415,7 +415,7 @@ function btrfs_format() {
   # Zap the disk and create partitions
   echo -e "${CNT} ${BONSAI_TEXT}Creating partition layout...${BONSAI_RESET}"
   sgdisk --zap-all /dev/$SELECTED_DISK
-  sgdisk -n 1:0:+1G -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$SELECTED_DISK -p
+  sgdisk -n 1:0:+2G -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$SELECTED_DISK -p
 
   # Set partition names based on disk type
   if [[ "$SELECTED_DISK" == nvme* ]]; then
