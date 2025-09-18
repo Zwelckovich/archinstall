@@ -489,9 +489,9 @@ function btrfs_format() {
   echo -e "${BONSAI_MUTED}This may take a while...${BONSAI_RESET}\n"
 
   case $CPU_TYPE in
-    intel) pacstrap /mnt base linux linux-firmware nano intel-ucode btrfs-progs ;;
-    amd) pacstrap /mnt base linux linux-firmware nano amd-ucode btrfs-progs ;;
-    vm) pacstrap /mnt base linux linux-firmware nano btrfs-progs ;;
+    intel) pacstrap /mnt base base-devel linux linux-firmware nano intel-ucode btrfs-progs ;;
+    amd) pacstrap /mnt base base-devel linux linux-firmware nano amd-ucode btrfs-progs ;;
+    vm) pacstrap /mnt base base-devel linux linux-firmware nano btrfs-progs ;;
   esac
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Generating fstab...${BONSAI_RESET}"
@@ -543,7 +543,7 @@ function base_config() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing essential packages...${BONSAI_RESET}"
   arch-chroot /mnt pacman -Syy
-  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring bash-completion
+  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring bash-completion
   arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring initramfs...${BONSAI_RESET}"
