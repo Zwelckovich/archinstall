@@ -791,7 +791,7 @@ function base_config() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing essential packages...${BONSAI_RESET}"
   arch-chroot /mnt pacman -Syy
-  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring bash-completion
+  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring bash-completion
   arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring initramfs...${BONSAI_RESET}"
@@ -829,16 +829,16 @@ function base_config() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing GRUB bootloader...${BONSAI_RESET}"
 
-  # Install GRUB with removable option for better compatibility
-  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable
+  # Install GRUB (matching working install.sh - NO --removable flag)
+  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=BONSAI
 
   # Check if grub-install succeeded
   if [ $? -ne 0 ]; then
     echo -e "${CER} ${BONSAI_RED}GRUB installation failed!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}Attempting fallback installation...${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Attempting with fallback bootloader-id...${BONSAI_RESET}"
 
-    # Try without removable option
-    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+    # Try with simpler bootloader-id
+    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 
     if [ $? -ne 0 ]; then
       echo -e "${CER} ${BONSAI_RED}GRUB installation failed completely!${BONSAI_RESET}"
@@ -850,21 +850,23 @@ function base_config() {
     fi
   fi
 
-  # Verify GRUB was installed
-  if [ -f /mnt/boot/EFI/BOOT/BOOTX64.EFI ] || [ -f /mnt/boot/EFI/GRUB/grubx64.efi ]; then
+  # Verify GRUB was installed (check multiple possible locations)
+  if [ -f /mnt/boot/EFI/BONSAI/grubx64.efi ] || [ -f /mnt/boot/EFI/Arch/grubx64.efi ] || [ -f /mnt/boot/EFI/arch/grubx64.efi ]; then
     echo -e "${COK} ${BONSAI_TEXT}GRUB installed successfully${BONSAI_RESET}"
   else
-    echo -e "${CWR} ${BONSAI_YELLOW}GRUB installation uncertain, continuing...${BONSAI_RESET}"
+    echo -e "${CWR} ${BONSAI_YELLOW}GRUB EFI file not found in expected location, checking alternate paths...${BONSAI_RESET}"
+    find /mnt/boot/EFI -name "*.efi" -type f 2>/dev/null
   fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB...${BONSAI_RESET}"
   variable="GRUB_DISABLE_OS_PROBER=false"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
 
-  if [ "$USE_ENCRYPTION" = true ]; then
-    variable="GRUB_ENABLE_CRYPTODISK=y"
-    arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
+  # Enable cryptodisk support (install.sh does this for ALL installs, not just encrypted)
+  variable="GRUB_ENABLE_CRYPTODISK=y"
+  arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
 
+  if [ "$USE_ENCRYPTION" = true ]; then
     # Get UUID automatically
     deviceUUID=$(blkid -s UUID -o value $PARTITION2)
     variable="GRUB_CMDLINE_LINUX="""
@@ -889,6 +891,18 @@ function base_config() {
   else
     echo -e "${CER} ${BONSAI_RED}GRUB configuration file not found!${BONSAI_RESET}"
     exit 1
+  fi
+
+  # Verify EFI boot entry was created
+  echo -e "${CNT} ${BONSAI_TEXT}Verifying EFI boot entries...${BONSAI_RESET}"
+  arch-chroot /mnt efibootmgr -v
+
+  # Check if BONSAI or Arch boot entry exists
+  if arch-chroot /mnt efibootmgr | grep -E "BONSAI|Arch|arch" > /dev/null; then
+    echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
+  else
+    echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}You may need to add a boot entry manually in your UEFI settings${BONSAI_RESET}"
   fi
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Creating user account...${BONSAI_RESET}"
