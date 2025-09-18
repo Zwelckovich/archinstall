@@ -548,15 +548,42 @@ function btrfs_format() {
     vm) pacstrap /mnt base base-devel linux linux-firmware nano btrfs-progs ;;
   esac
 
+  # Check if pacstrap succeeded
+  if [ $? -ne 0 ]; then
+    echo -e "\n${CER} ${BONSAI_RED}Failed to install base system!${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Possible causes:${BONSAI_RESET}"
+    echo -e "  - Network connectivity issues"
+    echo -e "  - Package repository problems"
+    echo -e "  - Disk space issues"
+    echo -e "\n${CNT} ${BONSAI_TEXT}Please check your internet connection and try again.${BONSAI_RESET}"
+    exit 1
+  fi
+
+  # Verify critical files exist in chroot
+  if [ ! -f /mnt/bin/bash ]; then
+    echo -e "\n${CER} ${BONSAI_RED}Base system installation incomplete!${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}The base system was not properly installed.${BONSAI_RESET}"
+    echo -e "${CNT} ${BONSAI_TEXT}Please run the installer again.${BONSAI_RESET}"
+    exit 1
+  fi
+
   echo -e "\n${CNT} ${BONSAI_TEXT}Generating fstab...${BONSAI_RESET}"
   genfstab -U /mnt >> /mnt/etc/fstab
 
-  echo -e "${COK} ${BONSAI_TEXT}Base system installed${BONSAI_RESET}"
+  echo -e "${COK} ${BONSAI_TEXT}Base system installed successfully${BONSAI_RESET}"
 }
 
 function base_config() {
   show_bonsai_header
   show_section "System Configuration"
+
+  # Verify the base system is properly installed before proceeding
+  if [ ! -f /mnt/bin/bash ] || [ ! -d /mnt/etc ]; then
+    echo -e "${CER} ${BONSAI_RED}Base system not found in /mnt!${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}The base system must be installed first.${BONSAI_RESET}"
+    echo -e "${CNT} ${BONSAI_TEXT}Please run the full installation from the beginning.${BONSAI_RESET}"
+    exit 1
+  fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Please provide system information:${BONSAI_RESET}\n"
 
@@ -565,6 +592,14 @@ function base_config() {
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring timezone...${BONSAI_RESET}"
   arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+  if [ $? -ne 0 ]; then
+    echo -e "${CER} ${BONSAI_RED}Failed to configure timezone!${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}arch-chroot command failed. This usually means:${BONSAI_RESET}"
+    echo -e "  - The base system was not properly installed"
+    echo -e "  - The /mnt filesystem is not properly mounted"
+    echo -e "  - Missing arch-install-scripts package in the live environment"
+    exit 1
+  fi
   arch-chroot /mnt hwclock --systohc
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring locale...${BONSAI_RESET}"
