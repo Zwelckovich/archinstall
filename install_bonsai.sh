@@ -419,6 +419,14 @@ function btrfs_format() {
   umount /dev/${SELECTED_DISK}?* 2> /dev/null
   umount -l /mnt 2> /dev/null
 
+  # Wipe all signatures and zap the disk
+  echo -e "${CNT} ${BONSAI_TEXT}Wiping all existing signatures from disk...${BONSAI_RESET}"
+  wipefs -af /dev/$SELECTED_DISK
+
+  # Ensure kernel recognizes the changes
+  partprobe /dev/$SELECTED_DISK 2>/dev/null || true
+  sleep 1
+
   # Zap the disk and create partitions
   echo -e "${CNT} ${BONSAI_TEXT}Creating partition layout...${BONSAI_RESET}"
   sgdisk --zap-all /dev/$SELECTED_DISK
