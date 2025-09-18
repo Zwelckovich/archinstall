@@ -289,13 +289,20 @@ function select_disk() {
     local size=$(lsblk -dno SIZE /dev/$disk 2> /dev/null)
     local model=$(lsblk -dno MODEL /dev/$disk 2> /dev/null | sed 's/ *$//')
 
+    # Get filesystem information for the disk's partitions
+    local filesystems=$(lsblk -no FSTYPE /dev/$disk 2> /dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+
     if [ -z "$model" ]; then
       model="Unknown"
     fi
 
-    disk_info+=("$disk|$size|$model")
+    if [ -z "$filesystems" ]; then
+      filesystems="none"
+    fi
+
+    disk_info+=("$disk|$size|$model|$filesystems")
     local index=$((i + 1))
-    echo -e "  ${BONSAI_GREEN}[$index]${BONSAI_RESET} ${BONSAI_TEXT}/dev/$disk${BONSAI_RESET} - ${BONSAI_MUTED}$size - $model${BONSAI_RESET}"
+    echo -e "  ${BONSAI_GREEN}[$index]${BONSAI_RESET} ${BONSAI_TEXT}/dev/$disk${BONSAI_RESET} - ${BONSAI_MUTED}$size - $model${BONSAI_RESET} ${BONSAI_PURPLE}[fs: $filesystems]${BONSAI_RESET}"
   done
 
   echo ""
@@ -983,7 +990,14 @@ function update_grub_sddm() {
       for i in "${!disks[@]}"; do
         local disk="${disks[$i]}"
         local size=$(lsblk -dno SIZE /dev/$disk 2> /dev/null)
-        echo -e "  ${BONSAI_GREEN}[$((i + 1))]${BONSAI_RESET} ${BONSAI_TEXT}/dev/$disk${BONSAI_RESET} - ${BONSAI_MUTED}$size${BONSAI_RESET}"
+
+        # Get filesystem information for the disk's partitions
+        local filesystems=$(lsblk -no FSTYPE /dev/$disk 2> /dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+        if [ -z "$filesystems" ]; then
+          filesystems="none"
+        fi
+
+        echo -e "  ${BONSAI_GREEN}[$((i + 1))]${BONSAI_RESET} ${BONSAI_TEXT}/dev/$disk${BONSAI_RESET} - ${BONSAI_MUTED}$size${BONSAI_RESET} ${BONSAI_PURPLE}[fs: $filesystems]${BONSAI_RESET}"
       done
 
       echo ""
