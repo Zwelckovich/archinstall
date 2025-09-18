@@ -386,6 +386,42 @@ function select_cpu() {
   echo -e "\n${COK} ${BONSAI_TEXT}CPU Type: ${BONSAI_GREEN}$CPU_TYPE${BONSAI_RESET}"
 }
 
+function refresh_partition_table() {
+  local disk_path="$1"
+
+  if command -v udevadm >/dev/null 2>&1; then
+    udevadm settle
+  fi
+
+  partprobe "$disk_path" 2>/dev/null || true
+  blockdev --rereadpt "$disk_path" 2>/dev/null || true
+}
+
+function wait_for_partitions() {
+  local disk_path="$1"
+  shift
+
+  for _ in {1..10}; do
+    local all_present=true
+
+    for partition in "$@"; do
+      if [[ ! -b "$partition" ]]; then
+        all_present=false
+        break
+      fi
+    done
+
+    if $all_present; then
+      return 0
+    fi
+
+    refresh_partition_table "$disk_path"
+    sleep 1
+  done
+
+  return 1
+}
+
 function pacman_init() {
   show_bonsai_header
   show_section "Pacman Initialization"
@@ -422,15 +458,13 @@ function btrfs_format() {
   # Wipe all signatures and zap the disk
   echo -e "${CNT} ${BONSAI_TEXT}Wiping all existing signatures from disk...${BONSAI_RESET}"
   wipefs -af /dev/$SELECTED_DISK
-
-  # Ensure kernel recognizes the changes
-  partprobe /dev/$SELECTED_DISK 2>/dev/null || true
-  sleep 1
+  refresh_partition_table "/dev/$SELECTED_DISK"
 
   # Zap the disk and create partitions
   echo -e "${CNT} ${BONSAI_TEXT}Creating partition layout...${BONSAI_RESET}"
   sgdisk --zap-all /dev/$SELECTED_DISK
   sgdisk -n 1:0:+2G -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$SELECTED_DISK -p
+  refresh_partition_table "/dev/$SELECTED_DISK"
 
   # Set partition names based on disk type
   if [[ "$SELECTED_DISK" == nvme* ]]; then
@@ -439,6 +473,11 @@ function btrfs_format() {
   else
     PARTITION1="/dev/${SELECTED_DISK}1"
     PARTITION2="/dev/${SELECTED_DISK}2"
+  fi
+
+  if ! wait_for_partitions "/dev/$SELECTED_DISK" "$PARTITION1" "$PARTITION2"; then
+    echo -e "${CER} ${BONSAI_RED}Kernel did not expose new partitions for ${BONSAI_YELLOW}/dev/$SELECTED_DISK${BONSAI_RED}. Reconnect the device or reboot. ${BONSAI_RESET}"
+    exit 1
   fi
 
   # Format boot partition
@@ -875,11 +914,11 @@ function restore_dotfiles() {
   chmod +x ~/.config/mutt/scripts/*.sh
 
   # Calcurse calendar configuration
-  echo -e "${COK} Setting up calcurse configuration..."
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring Calcurse calendar...${BONSAI_RESET}"
   mkdir -p ~/.local/share/calcurse
   mkdir -p ~/.config/calcurse/{hooks,caldav}
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config calcurse
-  chmod +x ~/.config/calcurse/scripts/*.sh
+  chmod +x ~/.config/calcurse/scripts/*.sh 2> /dev/null || true
   # Enable notification service (but don't start it yet)
   systemctl --user enable calcurse-notify.service 2> /dev/null || true
 
