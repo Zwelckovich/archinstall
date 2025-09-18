@@ -809,8 +809,53 @@ function base_config() {
 
   show_section "Bootloader Configuration"
 
-  echo -e "${CNT} ${BONSAI_TEXT}Installing GRUB...${BONSAI_RESET}"
-  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=BONSAI
+  # Verify EFI system
+  echo -e "${CNT} ${BONSAI_TEXT}Verifying EFI system...${BONSAI_RESET}"
+  if [ -d /sys/firmware/efi ]; then
+    echo -e "${COK} ${BONSAI_TEXT}EFI system detected${BONSAI_RESET}"
+  else
+    echo -e "${CER} ${BONSAI_RED}WARNING: EFI system not detected!${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}This installer requires UEFI mode.${BONSAI_RESET}"
+    echo -e "${CNT} ${BONSAI_TEXT}Please boot the installer in UEFI mode.${BONSAI_RESET}"
+    exit 1
+  fi
+
+  # Verify boot partition is mounted
+  if ! mountpoint -q /mnt/boot; then
+    echo -e "${CER} ${BONSAI_RED}Boot partition not mounted!${BONSAI_RESET}"
+    echo -e "${CNT} ${BONSAI_TEXT}Attempting to mount boot partition...${BONSAI_RESET}"
+    mount "$PARTITION1" /mnt/boot
+  fi
+
+  echo -e "${CNT} ${BONSAI_TEXT}Installing GRUB bootloader...${BONSAI_RESET}"
+
+  # Install GRUB with removable option for better compatibility
+  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable
+
+  # Check if grub-install succeeded
+  if [ $? -ne 0 ]; then
+    echo -e "${CER} ${BONSAI_RED}GRUB installation failed!${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Attempting fallback installation...${BONSAI_RESET}"
+
+    # Try without removable option
+    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+
+    if [ $? -ne 0 ]; then
+      echo -e "${CER} ${BONSAI_RED}GRUB installation failed completely!${BONSAI_RESET}"
+      echo -e "${CAT} ${BONSAI_YELLOW}Please check:${BONSAI_RESET}"
+      echo -e "  - Boot partition is formatted as FAT32"
+      echo -e "  - EFI directory exists in /boot"
+      echo -e "  - System is booted in UEFI mode"
+      exit 1
+    fi
+  fi
+
+  # Verify GRUB was installed
+  if [ -f /mnt/boot/EFI/BOOT/BOOTX64.EFI ] || [ -f /mnt/boot/EFI/GRUB/grubx64.efi ]; then
+    echo -e "${COK} ${BONSAI_TEXT}GRUB installed successfully${BONSAI_RESET}"
+  else
+    echo -e "${CWR} ${BONSAI_YELLOW}GRUB installation uncertain, continuing...${BONSAI_RESET}"
+  fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB...${BONSAI_RESET}"
   variable="GRUB_DISABLE_OS_PROBER=false"
@@ -829,7 +874,22 @@ function base_config() {
     echo -e "${COK} ${BONSAI_TEXT}Encryption configured for GRUB${BONSAI_RESET}"
   fi
 
+  echo -e "${CNT} ${BONSAI_TEXT}Generating GRUB configuration...${BONSAI_RESET}"
   arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+
+  if [ $? -ne 0 ]; then
+    echo -e "${CER} ${BONSAI_RED}Failed to generate GRUB configuration!${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}The system may not boot properly.${BONSAI_RESET}"
+    exit 1
+  fi
+
+  # Verify GRUB config was created
+  if [ -f /mnt/boot/grub/grub.cfg ]; then
+    echo -e "${COK} ${BONSAI_TEXT}GRUB configuration generated successfully${BONSAI_RESET}"
+  else
+    echo -e "${CER} ${BONSAI_RED}GRUB configuration file not found!${BONSAI_RESET}"
+    exit 1
+  fi
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Creating user account...${BONSAI_RESET}"
   arch-chroot /mnt useradd -mG wheel $userstr
