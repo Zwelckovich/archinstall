@@ -5,13 +5,13 @@
 #
 
 ## BONSAI Color Palette
-BONSAI_GREEN="\e[38;2;124;152;133m"   # Primary accent (#7c9885)
-BONSAI_BLUE="\e[38;2;130;164;199m"    # Information (#82a4c7)
-BONSAI_YELLOW="\e[38;2;199;168;130m"  # Warnings (#c7a882)
-BONSAI_RED="\e[38;2;199;130;137m"     # Errors (#c78289)
-BONSAI_PURPLE="\e[38;2;152;130;199m"  # Special (#9882c7)
-BONSAI_TEXT="\e[38;2;230;232;235m"    # Primary text (#e6e8eb)
-BONSAI_MUTED="\e[38;2;139;146;165m"   # Secondary text (#8b92a5)
+BONSAI_GREEN="\e[38;2;124;152;133m"  # Primary accent (#7c9885)
+BONSAI_BLUE="\e[38;2;130;164;199m"   # Information (#82a4c7)
+BONSAI_YELLOW="\e[38;2;199;168;130m" # Warnings (#c7a882)
+BONSAI_RED="\e[38;2;199;130;137m"    # Errors (#c78289)
+BONSAI_PURPLE="\e[38;2;152;130;199m" # Special (#9882c7)
+BONSAI_TEXT="\e[38;2;230;232;235m"   # Primary text (#e6e8eb)
+BONSAI_MUTED="\e[38;2;139;146;165m"  # Secondary text (#8b92a5)
 BONSAI_RESET="\e[0m"
 
 # Status indicators with BONSAI colors
@@ -32,169 +32,172 @@ BOOTLOADER_TYPE=""
 PARTITION1=""
 PARTITION2=""
 
+# Absolute path to the installer root directory
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 ## Package arrays (preserved from original)
 hypr_base_stage=(
   # Hyprland
-  kitty                        # A fast, feature-rich terminal emulator focused on simplicity and efficiency.
-  pamixer                      # A command-line tool to control pulseaudio volumes.
-  pavucontrol                  # A graphical volume control for PulseAudio sound server.
-  pipewire-alsa                # ALSA plugin for PipeWire, enabling audio support through PipeWire.
-  playerctl                    # A command-line tool to control media players that support the MPRIS interface.
-  rofi-wayland                 #  A window switcher and application launcher with Wayland support.
-  waybar                       # A lightweight status bar for Wayland environments like Hyprland or Sway.
-  sddm                         # The Simple Desktop Display Manager, a display manager for Linux systems.
-  hyprcursor                   # Custom cursors for use with Hyprland.
-  hyprutils                    # Collection of tools and utilities for enhancing Hyprland functionality.
-  hypridle                     # Screen locker utility for Hyprland with customization options.
-  hyprlock                     # Screen locking tool integrated into Hyprland, featuring blur effects.
-  hyprland                     # The core window manager providing tiling, floating, and fullscreen functionality.
-  pyprland                     # Python utility to extend Hyprland's capabilities for custom scripting.
-  swww                         # Wallpaper setter designed specifically for Wayland environments.
-  swaync                       # Notification utility tailored for Sway, enhancing desktop notifications.
-  wl-clipboard                 # Clipboard manager for wayland
-  clipse                       # A configurable TUI clipboard manager for Unix.
-                               # Fonts
-  adobe-source-code-pro-fonts  # Monospaced font family optimized for coding environments.
-  noto-fonts-emoji             # Set of emoji characters supporting various platforms and applications.
-  otf-font-awesome             # Icon font providing a wide range of scalable vector icons.
-  ttf-droid                    # Open-ource fonts based on the Roboto typeface, designed for clarity and readability.
-  ttf-fira-code                # Monospaced programming font with ligature support, enhancing code legibility.
-  ttf-jetbrains-mono           # Monospaced font optimized for programming environments, offering excellent character spacing.
-  ttf-jetbrains-mono-nerd      # Jetbrains Mono variant with Nerd Font glyphs, combining programming features with additional icons and symbols.
-                               # GTK / Qt Themes
-  qt5ct                        # Configuration tool for Qt5 applications to customize themes and appearance.
-  qt6ct                        # Configuration tool for Qt6 applications ensuring compatibility with modern Qt versions.
-  catppuccin-cursors-mocha     # Set of cursors styled according to the Catppuccin theme, offering a cohesive visual experience with the 'mocha' color variant.
-  nwg-look                     # Tool designed to customize desktop appearance, including themes and icons for a visually appealing setup.
+  kitty         # A fast, feature-rich terminal emulator focused on simplicity and efficiency.
+  pamixer       # A command-line tool to control pulseaudio volumes.
+  pavucontrol   # A graphical volume control for PulseAudio sound server.
+  pipewire-alsa # ALSA plugin for PipeWire, enabling audio support through PipeWire.
+  playerctl     # A command-line tool to control media players that support the MPRIS interface.
+  rofi-wayland  #  A window switcher and application launcher with Wayland support.
+  waybar        # A lightweight status bar for Wayland environments like Hyprland or Sway.
+  sddm          # The Simple Desktop Display Manager, a display manager for Linux systems.
+  hyprcursor    # Custom cursors for use with Hyprland.
+  hyprutils     # Collection of tools and utilities for enhancing Hyprland functionality.
+  hypridle      # Screen locker utility for Hyprland with customization options.
+  hyprlock      # Screen locking tool integrated into Hyprland, featuring blur effects.
+  hyprland      # The core window manager providing tiling, floating, and fullscreen functionality.
+  pyprland      # Python utility to extend Hyprland's capabilities for custom scripting.
+  swww          # Wallpaper setter designed specifically for Wayland environments.
+  swaync        # Notification utility tailored for Sway, enhancing desktop notifications.
+  wl-clipboard  # Clipboard manager for wayland
+  clipse        # A configurable TUI clipboard manager for Unix.
+  # Fonts
+  adobe-source-code-pro-fonts # Monospaced font family optimized for coding environments.
+  noto-fonts-emoji            # Set of emoji characters supporting various platforms and applications.
+  otf-font-awesome            # Icon font providing a wide range of scalable vector icons.
+  ttf-droid                   # Open-ource fonts based on the Roboto typeface, designed for clarity and readability.
+  ttf-fira-code               # Monospaced programming font with ligature support, enhancing code legibility.
+  ttf-jetbrains-mono          # Monospaced font optimized for programming environments, offering excellent character spacing.
+  ttf-jetbrains-mono-nerd     # Jetbrains Mono variant with Nerd Font glyphs, combining programming features with additional icons and symbols.
+  # GTK / Qt Themes
+  qt5ct                    # Configuration tool for Qt5 applications to customize themes and appearance.
+  qt6ct                    # Configuration tool for Qt6 applications ensuring compatibility with modern Qt versions.
+  catppuccin-cursors-mocha # Set of cursors styled according to the Catppuccin theme, offering a cohesive visual experience with the 'mocha' color variant.
+  nwg-look                 # Tool designed to customize desktop appearance, including themes and icons for a visually appealing setup.
 )
 
 piperwire_stage=(
   # Pipewire
-  pipewire        # Core audio and media processing framework for Linux.
-  wireplumber     # Session manager for PipeWire, simplifying audio and video routing.
-  pipewire-audio  # Audio support module for PipeWire.
-  pipewire-alsa   # ALSA compatibility layer for PipeWire, enabling traditional ALSA applications to work with PipeWire.
-  pipewire-pulse  # PulseAudio compatibility layer for PipeWire, allowing PulseAudio-based applications to use PipeWire.
-  sof-firmware    # Firmware for Intel Sound Open Firmware (SOF) audio platforms.
+  pipewire       # Core audio and media processing framework for Linux.
+  wireplumber    # Session manager for PipeWire, simplifying audio and video routing.
+  pipewire-audio # Audio support module for PipeWire.
+  pipewire-alsa  # ALSA compatibility layer for PipeWire, enabling traditional ALSA applications to work with PipeWire.
+  pipewire-pulse # PulseAudio compatibility layer for PipeWire, allowing PulseAudio-based applications to use PipeWire.
+  sof-firmware   # Firmware for Intel Sound Open Firmware (SOF) audio platforms.
 )
 
 tools_stage=(
   # Display /  Audio / Core
-  feh                     # Lightweight image viewer for X11 with support for various image formats.
-  pacman-contrib          # Additional tools and scripts for Pacman, enhancing package management capabilities.
-  npm                     # Node Package Manager for installing, sharing, and managing JavaScript packages.
-  xfsprogs                # XFS filesystem utilities
-                          # Web Tools
-  vivaldi                 # An advanced browser made with the power user in mind.
-  vivaldi-ffmpeg-codecs   # additional support for proprietary codecs for vivaldi
-                          # Programming Tools
-  visual-studio-code-bin  # The Visual Studio Code editor, providing a robust development environment.
-  pycharm-professional    # Pycharm Community edition IDE
-  webstorm                # JavaScript and Typscript IDE from Jetbrains
-  qt5-graphicaleffects    # Qt module for advanced graphical effects in Qt applications.
-  qt5-svg                 # SVG support module for Qt applications.
-  qt6-svg                 # SVG support module compatible with Qt6 versions.
-  qt5-quickcontrols2      # Module offering modern controls for creating quick, visually appealing user interfaces in Qt applications.
-  eza                     # Enhanced version of the `ls` command, providing more detailed and customizable directory listings.
-  hyfetch                 # Lightweight system information tool optimized for Hyprland environments.
-  bfg                     # Remove big files from GIT repositories
-  git-crypt               # Extension for managing encrypted files in Git repositories.
-  git-lfs                 # Large File Storage extension for Git, allowing efficient handling of large files.
-  github-cli              # Github CLI client
-  python                  # High-level programming language known for its readability and versatility.
-  python-pip              # Package installer for Python, simplifying package management.
-  pyenv                   # Tool to manage multiple Python versions and environments.
-  uv                      # An extremely fast Python package installer and resolver written in Rust
-  python-pynvim           # Python Client for Neovim
-  tk                      # Tkinter library – Python's standard GUI toolkit.
-  rust                    # Programming language focused on safety, speed, and concurrency with a modern syntax.
-  docker                  # Pack, ship and excecute lightweight container
-  yarn                    # Fast, reliable, and secure dependency management
-  claude-code             # An agentic coding tool that lives in your terminal
-  shfmt                   # Format shell programs
-  stylua                  # Deterministic code formatter for Lua
-  luacheck                # A tool for linting and static analysis of Lua code
-  prettier                # An opinionated code formatter
-  tokei                   # A blazingly fast CLOC (Count Lines Of Code) program
-  quarto-cli-bin          # An open-source scientific and technical publishing system built on Pandoc (binary from official repo)
-                          # Science Tools
+  feh            # Lightweight image viewer for X11 with support for various image formats.
+  pacman-contrib # Additional tools and scripts for Pacman, enhancing package management capabilities.
+  npm            # Node Package Manager for installing, sharing, and managing JavaScript packages.
+  xfsprogs       # XFS filesystem utilities
+  # Web Tools
+  vivaldi               # An advanced browser made with the power user in mind.
+  vivaldi-ffmpeg-codecs # additional support for proprietary codecs for vivaldi
+  # Programming Tools
+  visual-studio-code-bin # The Visual Studio Code editor, providing a robust development environment.
+  pycharm-professional   # Pycharm Community edition IDE
+  webstorm               # JavaScript and Typscript IDE from Jetbrains
+  qt5-graphicaleffects   # Qt module for advanced graphical effects in Qt applications.
+  qt5-svg                # SVG support module for Qt applications.
+  qt6-svg                # SVG support module compatible with Qt6 versions.
+  qt5-quickcontrols2     # Module offering modern controls for creating quick, visually appealing user interfaces in Qt applications.
+  eza                    # Enhanced version of the `ls` command, providing more detailed and customizable directory listings.
+  hyfetch                # Lightweight system information tool optimized for Hyprland environments.
+  bfg                    # Remove big files from GIT repositories
+  git-crypt              # Extension for managing encrypted files in Git repositories.
+  git-lfs                # Large File Storage extension for Git, allowing efficient handling of large files.
+  github-cli             # Github CLI client
+  python                 # High-level programming language known for its readability and versatility.
+  python-pip             # Package installer for Python, simplifying package management.
+  pyenv                  # Tool to manage multiple Python versions and environments.
+  uv                     # An extremely fast Python package installer and resolver written in Rust
+  python-pynvim          # Python Client for Neovim
+  tk                     # Tkinter library – Python's standard GUI toolkit.
+  rust                   # Programming language focused on safety, speed, and concurrency with a modern syntax.
+  docker                 # Pack, ship and excecute lightweight container
+  yarn                   # Fast, reliable, and secure dependency management
+  claude-code            # An agentic coding tool that lives in your terminal
+  shfmt                  # Format shell programs
+  stylua                 # Deterministic code formatter for Lua
+  luacheck               # A tool for linting and static analysis of Lua code
+  prettier               # An opinionated code formatter
+  tokei                  # A blazingly fast CLOC (Count Lines Of Code) program
+  quarto-cli-bin         # An open-source scientific and technical publishing system built on Pandoc (binary from official repo)
+  # Science Tools
   step
   # Office Tools
-  texlive             # TeX Live LaTeX framework from AUR-Arch
-  texlive-langgerman  # Provides German language support for TeX Live
-  zathura             # Lightweight PDF viewer with support for multiple backends (e.g., MuPDF, Poppler)
-  zathura-pdf-mupdf   # Zathura plugin using the MuPDF PDF renderer
-  meld                # Graphical tool for merging and comparing files
-  baobab              # Disk usage analyzer with a graphical interface, alternative to Treesize
-  neomutt             # Modern mutt email client with enhanced features
-  w3m                 # Text-based web browser with inline image support for HTML emails
-  lynx                # Alternative text browser for HTML conversion
-  urlscan             # Extract and follow URLs from emails
-  isync               # IMAP synchronization tool (mbsync)
-  msmtp               # SMTP client for sending emails
-  pass                # Password manager for secure email credentials
-  abook               # Address book for mutt
-  calcurse            # Text-based calendar and scheduling application with todo lists
-  d2                  # A modern diagram scripting language that turns text to diagrams
-                      # Audio/Video/Foto Tools
-  ffmpeg              # Complete Solution to record, convert and stream audio and video
-  audacity            # Audio edit tool
-  yt-dlp              # Video and Audio Downloader
-  mpv                 # a free, open source, and cross-platform media player
-  ncspot              # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
-  inkscape            # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
-  typst               # Modern typesetting system and document compiler, a powerful alternative to LaTeX.
-  tinymist            # Language server for Typst, providing IDE features like autocomplete, hover, and diagnostics.
-  grim                # Screenshot utility for Wayland
-  slurp               # Select a region in a Wayland compositor
-  tesseract           # An OCR program
-  tesseract-data-eng  # English OCR database
-  tesseract-data-deu  # German OCR database
-  chromium-widevine   # DRM Tool for chomium based browsers to watch Netflix in full quality
-  blender             # A fully integrated 3D graphics creation suite
-                      # CLI Tools
-  bottom              # Cross-platform graphical process/system monitor written in Rust with BONSAI aesthetics.
-  lazygit             # TUI (text user interface) for Git operations designed to be intuitive and fast.
-  stow                # Tool for managing symlinks, useful for installing software globally while keeping configuration files in a central location.
-  zsh                 # Robust shell with advanced features, including syntax highlighting and plugins support.
-  fzf                 # Fuzzy file finder that allows you to search through files quickly using partial matches.
-  fd                  # Simple, fast, user-friendly alternative to find, optimized for common use cases.
-  bat                 # Modern replacement for cat, displaying colored output in terminals when viewing text files.
-  git-delta           # Colors and formats Git diffs with syntax highlighting, making them easier to read.
-  tlrc                # Terminal-based image viewer focused on low resource usage with a dark theme by default.
-  thefuck             # Tool that corrects your mistyped commands automatically by finding similar valid commands.
-  zoxide              # CLI tool that helps you quickly jump between directories using fuzzy search.
-  reflector           # AUR helper designed to speed up updates and package installations by optimizing mirrors in /etc/pacman.conf.
-  ripgrep             # Fast, modern search tool that looks for patterns in files, similar to grep but with additional features like regex support.
-  procs               # Modern replacement for ps written in Rust with colorful and informative output.
-  tre-command         # CLI tool for managing SSH connections and identities with tab-completion and command history.
-  unzip               # Command-line utility for extracting files from ZIP archives.
-  ni-visa             # Tool for querying information about network interfaces, including MAC addresses and IP details.
-  expac               # Enhanced version of the pacman package manager, providing more detailed output and easier scripting capabilities.
-  scc                 # Simple Console Calculator for performing quick calculations directly in the terminal.
-  duf                 # Disk usage analysis tool that provides a detailed overview of storage space usage on your system.
-  ncdu                # Command-line disk usage analyzer, alternative to baobab
-  rsync               # Fast and versatile file synchronization tool, often used for backups or transferring large amounts of data efficiently.
-  dua-cli             # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
-  sox                 # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
-  testdisk            # Data recovery and disk repair tool
-  cifs-utils          # CIFS filesystem user-space tools
-  smbclient           #Tools to access a server's filespace and printers via SMB
-  openssh             # SSH protocol implementation for remote login, command execution and file transfer
-                      # Yazi
-  file                # Determine file type
-  ueberzugpp          # File Preview
-  chafa               # Image-to-text converter supporting a wide range of symbols and palettes, transparency, animations, etc.
-  jq                  # Command-line JSON processor
-  yazi                # CLI file explorer
-                      # Gaming
-  steam               # Steam platform client
-  lutris              # Lutris game launcher for epic or gog etc.
-  discord             #All-in-one voice and text chat for gamers
-                      # Electronics/RF
-  qucs-s              # A spin-off of Qucs that supports other free SPICE circuit simulators like ngspice with the same Qucs GUI
-  paraview            # Parallel Visualization application using VTK
-                      # Bluetooth
+  texlive            # TeX Live LaTeX framework from AUR-Arch
+  texlive-langgerman # Provides German language support for TeX Live
+  zathura            # Lightweight PDF viewer with support for multiple backends (e.g., MuPDF, Poppler)
+  zathura-pdf-mupdf  # Zathura plugin using the MuPDF PDF renderer
+  meld               # Graphical tool for merging and comparing files
+  baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
+  neomutt            # Modern mutt email client with enhanced features
+  w3m                # Text-based web browser with inline image support for HTML emails
+  lynx               # Alternative text browser for HTML conversion
+  urlscan            # Extract and follow URLs from emails
+  isync              # IMAP synchronization tool (mbsync)
+  msmtp              # SMTP client for sending emails
+  pass               # Password manager for secure email credentials
+  abook              # Address book for mutt
+  calcurse           # Text-based calendar and scheduling application with todo lists
+  d2                 # A modern diagram scripting language that turns text to diagrams
+  # Audio/Video/Foto Tools
+  ffmpeg             # Complete Solution to record, convert and stream audio and video
+  audacity           # Audio edit tool
+  yt-dlp             # Video and Audio Downloader
+  mpv                # a free, open source, and cross-platform media player
+  ncspot             # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
+  inkscape           # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
+  typst              # Modern typesetting system and document compiler, a powerful alternative to LaTeX.
+  tinymist           # Language server for Typst, providing IDE features like autocomplete, hover, and diagnostics.
+  grim               # Screenshot utility for Wayland
+  slurp              # Select a region in a Wayland compositor
+  tesseract          # An OCR program
+  tesseract-data-eng # English OCR database
+  tesseract-data-deu # German OCR database
+  chromium-widevine  # DRM Tool for chomium based browsers to watch Netflix in full quality
+  blender            # A fully integrated 3D graphics creation suite
+  # CLI Tools
+  bottom      # Cross-platform graphical process/system monitor written in Rust with BONSAI aesthetics.
+  lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
+  stow        # Tool for managing symlinks, useful for installing software globally while keeping configuration files in a central location.
+  zsh         # Robust shell with advanced features, including syntax highlighting and plugins support.
+  fzf         # Fuzzy file finder that allows you to search through files quickly using partial matches.
+  fd          # Simple, fast, user-friendly alternative to find, optimized for common use cases.
+  bat         # Modern replacement for cat, displaying colored output in terminals when viewing text files.
+  git-delta   # Colors and formats Git diffs with syntax highlighting, making them easier to read.
+  tlrc        # Terminal-based image viewer focused on low resource usage with a dark theme by default.
+  thefuck     # Tool that corrects your mistyped commands automatically by finding similar valid commands.
+  zoxide      # CLI tool that helps you quickly jump between directories using fuzzy search.
+  reflector   # AUR helper designed to speed up updates and package installations by optimizing mirrors in /etc/pacman.conf.
+  ripgrep     # Fast, modern search tool that looks for patterns in files, similar to grep but with additional features like regex support.
+  procs       # Modern replacement for ps written in Rust with colorful and informative output.
+  tre-command # CLI tool for managing SSH connections and identities with tab-completion and command history.
+  unzip       # Command-line utility for extracting files from ZIP archives.
+  ni-visa     # Tool for querying information about network interfaces, including MAC addresses and IP details.
+  expac       # Enhanced version of the pacman package manager, providing more detailed output and easier scripting capabilities.
+  scc         # Simple Console Calculator for performing quick calculations directly in the terminal.
+  duf         # Disk usage analysis tool that provides a detailed overview of storage space usage on your system.
+  ncdu        # Command-line disk usage analyzer, alternative to baobab
+  rsync       # Fast and versatile file synchronization tool, often used for backups or transferring large amounts of data efficiently.
+  dua-cli     # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
+  sox         # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
+  testdisk    # Data recovery and disk repair tool
+  cifs-utils  # CIFS filesystem user-space tools
+  smbclient   #Tools to access a server's filespace and printers via SMB
+  openssh     # SSH protocol implementation for remote login, command execution and file transfer
+  # Yazi
+  file       # Determine file type
+  ueberzugpp # File Preview
+  chafa      # Image-to-text converter supporting a wide range of symbols and palettes, transparency, animations, etc.
+  jq         # Command-line JSON processor
+  yazi       # CLI file explorer
+  # Gaming
+  steam   # Steam platform client
+  lutris  # Lutris game launcher for epic or gog etc.
+  discord #All-in-one voice and text chat for gamers
+  # Electronics/RF
+  qucs-s   # A spin-off of Qucs that supports other free SPICE circuit simulators like ngspice with the same Qucs GUI
+  paraview # Parallel Visualization application using VTK
+  # Bluetooth
   bluez
   bluez-utils
   blueman
@@ -202,27 +205,27 @@ tools_stage=(
 
 #software for nvidia GPU only
 nvidia_stage=(
-  linux-headers            # Kernel headers for compiling drivers
-  nvidia                   # NVIDIA driver with DKMS support
-  nvidia-settings          # GUI tool for adjusting graphics settings
-  nvidia-utils             # Tools for monitoring and managing GPU usage
-  libva                    # Video acceleration library for offloading video tasks
-  libva-nvidia-driver-git  # NVIDIA-specific VA drivers from Git repository
-  cuda                     # NVIDIA's platform for GPU-accelerated computing
+  linux-headers           # Kernel headers for compiling drivers
+  nvidia                  # NVIDIA driver with DKMS support
+  nvidia-settings         # GUI tool for adjusting graphics settings
+  nvidia-utils            # Tools for monitoring and managing GPU usage
+  libva                   # Video acceleration library for offloading video tasks
+  libva-nvidia-driver-git # NVIDIA-specific VA drivers from Git repository
+  cuda                    # NVIDIA's platform for GPU-accelerated computing
 )
 
 uninstall_stage=(
-  dunst       # Notification daemon for managing system notifications
-  mako        # Application launcher with workspace and window management support
-  rofi        # Window switcher and application launcher with a simple, fast interface
-  allust-git  # Graphical tool for monitoring system resources (fork of Alust)
+  dunst      # Notification daemon for managing system notifications
+  mako       # Application launcher with workspace and window management support
+  rofi       # Window switcher and application launcher with a simple, fast interface
+  allust-git # Graphical tool for monitoring system resources (fork of Alust)
 )
 
 uninstall_nvidia_stage=(
-  hyprland-git               # Development version of Hyprland (Wayland compositor)
-  hyprland-nvidia            # Hyprland optimized for NVIDIA GPUs with proper driver support
-  hyprland-nvidia-git        # Development version of Hyprland specifically for NVIDIA GPUs
-  hyprland-nvidia-hidpi-git  # Hyprland build for NVIDIA GPUs with HiDPI (high resolution) screen support
+  hyprland-git              # Development version of Hyprland (Wayland compositor)
+  hyprland-nvidia           # Hyprland optimized for NVIDIA GPUs with proper driver support
+  hyprland-nvidia-git       # Development version of Hyprland specifically for NVIDIA GPUs
+  hyprland-nvidia-hidpi-git # Hyprland build for NVIDIA GPUs with HiDPI (high resolution) screen support
 )
 
 # BONSAI styled header
@@ -266,7 +269,7 @@ function show_progress() {
 
   echo -en "${CNT} ${BONSAI_TEXT}${message}${BONSAI_RESET} "
 
-  while ps -p $pid &> /dev/null; do
+  while ps -p $pid &>/dev/null; do
     echo -en "${BONSAI_GREEN}•${BONSAI_RESET}"
     sleep 0.5
   done
@@ -287,11 +290,11 @@ function select_disk() {
 
   for i in "${!disks[@]}"; do
     local disk="${disks[$i]}"
-    local size=$(lsblk -dno SIZE /dev/$disk 2> /dev/null)
-    local model=$(lsblk -dno MODEL /dev/$disk 2> /dev/null | sed 's/ *$//')
+    local size=$(lsblk -dno SIZE /dev/$disk 2>/dev/null)
+    local model=$(lsblk -dno MODEL /dev/$disk 2>/dev/null | sed 's/ *$//')
 
     # Get filesystem information for the disk's partitions
-    local filesystems=$(lsblk -no FSTYPE /dev/$disk 2> /dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+    local filesystems=$(lsblk -no FSTYPE /dev/$disk 2>/dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
 
     if [ -z "$model" ]; then
       model="Unknown"
@@ -309,7 +312,7 @@ function select_disk() {
   echo ""
   read -p "$(echo -e ${BONSAI_YELLOW}Select disk for installation [1-${#disks[@]}]: ${BONSAI_RESET})" disk_choice
 
-  if [[ "$disk_choice" =~ ^[0-9]+$ ]] && [ "$disk_choice" -ge 1 ] && [ "$disk_choice" -le "${#disks[@]}" ]; then
+  if [[ $disk_choice =~ ^[0-9]+$ ]] && [ "$disk_choice" -ge 1 ] && [ "$disk_choice" -le "${#disks[@]}" ]; then
     SELECTED_DISK="${disks[$((disk_choice - 1))]}"
     SELECTED_DISK_NAME="/dev/$SELECTED_DISK"
 
@@ -325,7 +328,7 @@ function select_disk() {
     echo -e "\n${CWR} ${BONSAI_YELLOW}WARNING: This will DESTROY all data on $SELECTED_DISK_NAME${BONSAI_RESET}"
     read -p "$(echo -e ${BONSAI_RED}Are you sure? [y/N]: ${BONSAI_RESET})" confirm
 
-    if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+    if [[ $confirm != "y" && $confirm != "Y" ]]; then
       echo -e "${CER} ${BONSAI_RED}Installation cancelled${BONSAI_RESET}"
       exit 1
     fi
@@ -347,18 +350,18 @@ function select_encryption() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-2]: ${BONSAI_RESET})" enc_choice
 
   case $enc_choice in
-    1)
-      USE_ENCRYPTION=true
-      echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_GREEN}ENABLED${BONSAI_RESET}"
-      ;;
-    2)
-      USE_ENCRYPTION=false
-      echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_YELLOW}DISABLED${BONSAI_RESET}"
-      ;;
-    *)
-      echo -e "${CER} ${BONSAI_RED}Invalid selection, defaulting to encrypted${BONSAI_RESET}"
-      USE_ENCRYPTION=true
-      ;;
+  1)
+    USE_ENCRYPTION=true
+    echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_GREEN}ENABLED${BONSAI_RESET}"
+    ;;
+  2)
+    USE_ENCRYPTION=false
+    echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_YELLOW}DISABLED${BONSAI_RESET}"
+    ;;
+  *)
+    echo -e "${CER} ${BONSAI_RED}Invalid selection, defaulting to encrypted${BONSAI_RESET}"
+    USE_ENCRYPTION=true
+    ;;
   esac
 }
 
@@ -375,13 +378,13 @@ function select_cpu() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select CPU [1-3]: ${BONSAI_RESET})" cpu_choice
 
   case $cpu_choice in
-    1) CPU_TYPE="intel" ;;
-    2) CPU_TYPE="amd" ;;
-    3) CPU_TYPE="vm" ;;
-    *)
-      echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
-      exit 1
-      ;;
+  1) CPU_TYPE="intel" ;;
+  2) CPU_TYPE="amd" ;;
+  3) CPU_TYPE="vm" ;;
+  *)
+    echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
+    exit 1
+    ;;
   esac
 
   echo -e "\n${COK} ${BONSAI_TEXT}CPU Type: ${BONSAI_GREEN}$CPU_TYPE${BONSAI_RESET}"
@@ -399,18 +402,18 @@ function select_bootloader() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select bootloader [1-2]: ${BONSAI_RESET})" bootloader_choice
 
   case $bootloader_choice in
-    1)
-      BOOTLOADER_TYPE="grub"
-      echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}GRUB${BONSAI_RESET}"
-      ;;
-    2)
-      BOOTLOADER_TYPE="systemd-boot"
-      echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}systemd-boot${BONSAI_RESET}"
-      ;;
-    *)
-      echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to GRUB${BONSAI_RESET}"
-      BOOTLOADER_TYPE="grub"
-      ;;
+  1)
+    BOOTLOADER_TYPE="grub"
+    echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}GRUB${BONSAI_RESET}"
+    ;;
+  2)
+    BOOTLOADER_TYPE="systemd-boot"
+    echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}systemd-boot${BONSAI_RESET}"
+    ;;
+  *)
+    echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to GRUB${BONSAI_RESET}"
+    BOOTLOADER_TYPE="grub"
+    ;;
   esac
 }
 
@@ -418,7 +421,7 @@ function select_bootloader() {
 function detect_bootloader() {
   if [ -f /boot/grub/grub.cfg ] || [ -d /boot/grub ]; then
     echo "grub"
-  elif [ -f /boot/loader/loader.conf ] || command -v bootctl &> /dev/null; then
+  elif [ -f /boot/loader/loader.conf ] || command -v bootctl &>/dev/null; then
     echo "systemd-boot"
   else
     echo "none"
@@ -444,7 +447,7 @@ function wait_for_partitions() {
     local all_present=true
 
     for partition in "$@"; do
-      if [[ ! -b "$partition" ]]; then
+      if [[ ! -b $partition ]]; then
         all_present=false
         break
       fi
@@ -490,7 +493,7 @@ function optimize_mirrors() {
   echo ""
   read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-2]: ${BONSAI_RESET})" mirror_choice
 
-  if [[ "$mirror_choice" == "2" ]]; then
+  if [[ $mirror_choice == "2" ]]; then
     echo -e "${CNT} ${BONSAI_TEXT}Using existing mirrorlist...${BONSAI_RESET}"
     return 0
   fi
@@ -518,7 +521,7 @@ function optimize_mirrors() {
     if [ $? -ne 0 ]; then
       echo -e "${CWR} ${BONSAI_YELLOW}Reflector failed, using fallback method...${BONSAI_RESET}"
       # Fallback: Use known reliable mirrors
-      cat > /etc/pacman.d/mirrorlist << 'MIRRORS'
+      cat >/etc/pacman.d/mirrorlist <<'MIRRORS'
 ## Arch Linux repository mirrorlist
 ## Generated by BONSAI installer fallback
 
@@ -549,7 +552,7 @@ MIRRORS
     else
       echo -e "${CWR} ${BONSAI_YELLOW}Using fallback mirror list...${BONSAI_RESET}"
       # Use the fallback mirrors above
-      cat > /etc/pacman.d/mirrorlist << 'MIRRORS'
+      cat >/etc/pacman.d/mirrorlist <<'MIRRORS'
 ## Arch Linux repository mirrorlist
 ## Generated by BONSAI installer fallback
 
@@ -615,8 +618,8 @@ function btrfs_format() {
   echo -e "\n${CNT} ${BONSAI_TEXT}Preparing disk...${BONSAI_RESET}"
 
   # Unmount any mounted partitions
-  umount /dev/${SELECTED_DISK}?* 2> /dev/null
-  umount -l /mnt 2> /dev/null
+  umount /dev/${SELECTED_DISK}?* 2>/dev/null
+  umount -l /mnt 2>/dev/null
 
   # Wipe all signatures and zap the disk
   echo -e "${CNT} ${BONSAI_TEXT}Wiping all existing signatures from disk...${BONSAI_RESET}"
@@ -630,7 +633,7 @@ function btrfs_format() {
   refresh_partition_table "/dev/$SELECTED_DISK"
 
   # Set partition names based on disk type
-  if [[ "$SELECTED_DISK" == nvme* ]]; then
+  if [[ $SELECTED_DISK == nvme* ]]; then
     PARTITION1="/dev/${SELECTED_DISK}p1"
     PARTITION2="/dev/${SELECTED_DISK}p2"
   else
@@ -723,9 +726,9 @@ function btrfs_format() {
     fi
 
     case $CPU_TYPE in
-      intel) pacstrap /mnt base base-devel linux linux-firmware nano intel-ucode btrfs-progs ;;
-      amd) pacstrap /mnt base base-devel linux linux-firmware nano amd-ucode btrfs-progs ;;
-      vm) pacstrap /mnt base base-devel linux linux-firmware nano btrfs-progs ;;
+    intel) pacstrap /mnt base base-devel linux linux-firmware nano intel-ucode btrfs-progs ;;
+    amd) pacstrap /mnt base base-devel linux linux-firmware nano amd-ucode btrfs-progs ;;
+    vm) pacstrap /mnt base base-devel linux linux-firmware nano btrfs-progs ;;
     esac
 
     if [ $? -eq 0 ]; then
@@ -737,9 +740,9 @@ function btrfs_format() {
 
         # Rotate the mirrorlist to try next mirror
         sed -i '1,/^Server/d' /etc/pacman.d/mirrorlist
-        echo "" >> /etc/pacman.d/mirrorlist
-        grep -m 1 "^##" /etc/pacman.d/mirrorlist.backup >> /etc/pacman.d/mirrorlist
-        grep -m 1 "^Server" /etc/pacman.d/mirrorlist.backup >> /etc/pacman.d/mirrorlist
+        echo "" >>/etc/pacman.d/mirrorlist
+        grep -m 1 "^##" /etc/pacman.d/mirrorlist.backup >>/etc/pacman.d/mirrorlist
+        grep -m 1 "^Server" /etc/pacman.d/mirrorlist.backup >>/etc/pacman.d/mirrorlist
 
         # Clear package cache and retry
         pacman -Scc --noconfirm
@@ -769,7 +772,7 @@ function btrfs_format() {
   fi
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Generating fstab...${BONSAI_RESET}"
-  genfstab -U /mnt >> /mnt/etc/fstab
+  genfstab -U /mnt >>/mnt/etc/fstab
 
   echo -e "${COK} ${BONSAI_TEXT}Base system installed successfully${BONSAI_RESET}"
 }
@@ -788,8 +791,32 @@ function base_config() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Please provide system information:${BONSAI_RESET}\n"
 
-  read -p "$(echo -e ${BONSAI_YELLOW}Enter username: ${BONSAI_RESET})" userstr
-  read -p "$(echo -e ${BONSAI_YELLOW}Enter hostname: ${BONSAI_RESET})" hoststr
+  while true; do
+    read -rp "$(echo -e ${BONSAI_YELLOW}Enter username: ${BONSAI_RESET})" userstr
+    if [[ -z $userstr ]]; then
+      echo -e "${CER} ${BONSAI_RED}Username cannot be empty.${BONSAI_RESET}"
+      continue
+    fi
+    if [[ ! $userstr =~ ^[a-z_][a-z0-9_-]*$ ]] || [ "${#userstr}" -gt 32 ]; then
+      echo -e "${CER} ${BONSAI_RED}Invalid username. Use lowercase letters, numbers, underscores, or dashes (max 32 characters).${BONSAI_RESET}"
+      continue
+    fi
+    break
+  done
+
+  while true; do
+    read -rp "$(echo -e ${BONSAI_YELLOW}Enter hostname: ${BONSAI_RESET})" hoststr
+    hoststr=${hoststr,,}
+    if [[ -z $hoststr ]]; then
+      echo -e "${CER} ${BONSAI_RED}Hostname cannot be empty.${BONSAI_RESET}"
+      continue
+    fi
+    if [ "${#hoststr}" -gt 253 ] || [[ ! $hoststr =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$ ]]; then
+      echo -e "${CER} ${BONSAI_RED}Invalid hostname. Use lowercase letters, numbers, and dashes (RFC 1123 compliant).${BONSAI_RESET}"
+      continue
+    fi
+    break
+  done
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring timezone...${BONSAI_RESET}"
   arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
@@ -805,18 +832,18 @@ function base_config() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring locale...${BONSAI_RESET}"
   variable="en_US.UTF-8 UTF-8"
-  arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/locale.gen
+  arch-chroot /mnt sed -i "s/^#\?$variable$/$variable/" /etc/locale.gen
   arch-chroot /mnt locale-gen
-  arch-chroot /mnt bash -c "echo \"LANG=en_US.UTF-8\" >> /etc/locale.conf"
-  arch-chroot /mnt bash -c "echo \"KEYMAP=de-latin1-nodeadkeys\"  >> /etc/vconsole.conf"
+  arch-chroot /mnt tee /etc/locale.conf >/dev/null <<<'LANG=en_US.UTF-8'
+  arch-chroot /mnt tee /etc/vconsole.conf >/dev/null <<<'KEYMAP=de-latin1-nodeadkeys'
 
   echo -e "${CNT} ${BONSAI_TEXT}Setting hostname...${BONSAI_RESET}"
-  cmdstr="echo \"$hoststr\" >> /etc/hostname"
-  arch-chroot /mnt bash -c "$cmdstr"
-  arch-chroot /mnt bash -c "echo \"127.0.0.1	localhost\" >> /etc/hosts"
-  arch-chroot /mnt bash -c "echo \"::1		localhost\" >> /etc/hosts"
-  cmdstr="echo \"127.0.1.1	$hoststr.localdomain	$hoststr\" >> /etc/hosts"
-  arch-chroot /mnt bash -c "$cmdstr"
+  arch-chroot /mnt tee /etc/hostname >/dev/null <<<"$hoststr"
+  arch-chroot /mnt tee /etc/hosts >/dev/null <<EOF
+127.0.0.1 localhost
+::1 localhost
+127.0.1.1 ${hoststr}.localdomain ${hoststr}
+EOF
 
   show_section "Root Password"
   echo -e "${CWR} ${BONSAI_YELLOW}Please set the root password:${BONSAI_RESET}"
@@ -851,6 +878,112 @@ function base_config() {
 
   show_section "Bootloader Configuration"
 
+  # Function to install GRUB bootloader
+  install_grub() {
+    if [ -z "$PARTITION2" ]; then
+      echo -e "${CER} ${BONSAI_RED}Root partition information is missing. Unable to configure GRUB.${BONSAI_RESET}"
+      return 1
+    fi
+
+    echo -e "${CNT} ${BONSAI_TEXT}Installing GRUB bootloader...${BONSAI_RESET}"
+
+    if ! arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB; then
+      echo -e "${CER} ${BONSAI_RED}Failed to install GRUB to the EFI system partition.${BONSAI_RESET}"
+      return 1
+    fi
+
+    local grub_args="loglevel=3 quiet"
+
+    if [ "$USE_ENCRYPTION" = true ]; then
+      local encrypted_uuid
+      if ! encrypted_uuid=$(blkid -s UUID -o value "$PARTITION2" 2>/dev/null); then
+        echo -e "${CER} ${BONSAI_RED}Unable to determine UUID for encrypted partition ${BONSAI_YELLOW}$PARTITION2${BONSAI_RED}.${BONSAI_RESET}"
+        return 1
+      fi
+      grub_args+=" cryptdevice=UUID=${encrypted_uuid}:cryptroot root=/dev/mapper/cryptroot"
+    fi
+
+    if ! arch-chroot /mnt sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"${grub_args}\"|" /etc/default/grub; then
+      echo -e "${CER} ${BONSAI_RED}Failed to update GRUB kernel parameters.${BONSAI_RESET}"
+      return 1
+    fi
+
+    if arch-chroot /mnt grep -q '^#\?GRUB_DISABLE_OS_PROBER=' /etc/default/grub; then
+      arch-chroot /mnt sed -i 's|^#\?GRUB_DISABLE_OS_PROBER=.*|GRUB_DISABLE_OS_PROBER=false|' /etc/default/grub
+    else
+      arch-chroot /mnt bash -c "echo 'GRUB_DISABLE_OS_PROBER=false' >> /etc/default/grub"
+    fi
+
+    if ! arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg; then
+      echo -e "${CER} ${BONSAI_RED}Failed to generate GRUB configuration file.${BONSAI_RESET}"
+      return 1
+    fi
+
+    echo -e "${COK} ${BONSAI_TEXT}GRUB installed successfully${BONSAI_RESET}"
+    return 0
+  }
+
+  # Function to install systemd-boot
+  install_systemd_boot() {
+    if [ -z "$PARTITION1" ] || [ -z "$PARTITION2" ]; then
+      echo -e "${CER} ${BONSAI_RED}Partition information is incomplete. Unable to configure systemd-boot.${BONSAI_RESET}"
+      return 1
+    fi
+
+    echo -e "${CNT} ${BONSAI_TEXT}Installing systemd-boot...${BONSAI_RESET}"
+
+    if ! arch-chroot /mnt bootctl --path=/boot install; then
+      echo -e "${CER} ${BONSAI_RED}Failed to install systemd-boot to /boot.${BONSAI_RESET}"
+      return 1
+    fi
+
+    mkdir -p /mnt/boot/loader/entries
+
+    cat <<'EOF' >/mnt/boot/loader/loader.conf
+default  arch.conf
+timeout  5
+console-mode max
+editor   no
+EOF
+
+    local entry_path="/mnt/boot/loader/entries/arch.conf"
+
+    if [ "$USE_ENCRYPTION" = true ]; then
+      local encrypted_uuid
+      if ! encrypted_uuid=$(blkid -s UUID -o value "$PARTITION2" 2>/dev/null); then
+        echo -e "${CER} ${BONSAI_RED}Unable to determine UUID for encrypted partition ${BONSAI_YELLOW}$PARTITION2${BONSAI_RED}.${BONSAI_RESET}"
+        return 1
+      fi
+      cat <<EOF >"$entry_path"
+title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options cryptdevice=UUID=$encrypted_uuid:cryptroot root=/dev/mapper/cryptroot rootflags=subvol=@ rw quiet
+EOF
+    else
+      local root_uuid
+      if ! root_uuid=$(blkid -s UUID -o value "$PARTITION2" 2>/dev/null); then
+        echo -e "${CER} ${BONSAI_RED}Unable to determine UUID for root partition ${BONSAI_YELLOW}$PARTITION2${BONSAI_RED}.${BONSAI_RESET}"
+        return 1
+      fi
+      cat <<EOF >"$entry_path"
+title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options root=UUID=$root_uuid rootflags=subvol=@ rw quiet
+EOF
+    fi
+
+    if [ -f /mnt/boot/intel-ucode.img ]; then
+      sed -i '/^initrd.*initramfs-linux.img/i initrd  /intel-ucode.img' "$entry_path"
+    elif [ -f /mnt/boot/amd-ucode.img ]; then
+      sed -i '/^initrd.*initramfs-linux.img/i initrd  /amd-ucode.img' "$entry_path"
+    fi
+
+    echo -e "${COK} ${BONSAI_TEXT}systemd-boot installed successfully${BONSAI_RESET}"
+    return 0
+  }
+
   # Verify EFI system
   echo -e "${CNT} ${BONSAI_TEXT}Verifying EFI system...${BONSAI_RESET}"
   if [ -d /sys/firmware/efi ]; then
@@ -862,35 +995,48 @@ function base_config() {
     exit 1
   fi
 
+  if [ -z "$PARTITION1" ]; then
+    echo -e "${CER} ${BONSAI_RED}Boot partition information is missing. Cannot continue.${BONSAI_RESET}"
+    exit 1
+  fi
+
   # Verify boot partition is mounted
   if ! mountpoint -q /mnt/boot; then
     echo -e "${CER} ${BONSAI_RED}Boot partition not mounted!${BONSAI_RESET}"
     echo -e "${CNT} ${BONSAI_TEXT}Attempting to mount boot partition...${BONSAI_RESET}"
-    mount "$PARTITION1" /mnt/boot
+    if ! mount "$PARTITION1" /mnt/boot; then
+      echo -e "${CER} ${BONSAI_RED}Failed to mount ${BONSAI_YELLOW}$PARTITION1${BONSAI_RED} to /mnt/boot.${BONSAI_RESET}"
+      exit 1
+    fi
   fi
 
   # Install selected bootloader
   if [ "$BOOTLOADER_TYPE" = "systemd-boot" ]; then
-    install_systemd_boot
+    if ! install_systemd_boot; then
+      exit 1
+    fi
   else
-    # Default to GRUB if not specified or invalid
-    install_grub
+    if ! install_grub; then
+      exit 1
+    fi
   fi
 
   # Verify EFI boot entry was created
   echo -e "${CNT} ${BONSAI_TEXT}Verifying EFI boot entries...${BONSAI_RESET}"
-  arch-chroot /mnt efibootmgr -v
+  if ! arch-chroot /mnt efibootmgr -v; then
+    echo -e "${CWR} ${BONSAI_YELLOW}efibootmgr could not enumerate entries. Please verify UEFI settings manually.${BONSAI_RESET}"
+  fi
 
   # Check if boot entry exists based on bootloader type
   if [ "$BOOTLOADER_TYPE" = "systemd-boot" ]; then
-    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot" > /dev/null; then
+    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot" >/dev/null; then
       echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
       echo -e "${CAT} ${BONSAI_YELLOW}You may need to add a boot entry manually in your UEFI settings${BONSAI_RESET}"
     fi
   else
-    if arch-chroot /mnt efibootmgr | grep -E "BONSAI|Arch|arch" > /dev/null; then
+    if arch-chroot /mnt efibootmgr | grep -E "BONSAI|Arch|arch" >/dev/null; then
       echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
@@ -899,11 +1045,17 @@ function base_config() {
   fi
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Creating user account...${BONSAI_RESET}"
-  arch-chroot /mnt useradd -mG wheel $userstr
+  if ! arch-chroot /mnt useradd -m -G wheel -- "$userstr"; then
+    echo -e "${CER} ${BONSAI_RED}Failed to create user ${BONSAI_YELLOW}$userstr${BONSAI_RED}.${BONSAI_RESET}"
+    exit 1
+  fi
 
   show_section "User Password"
   echo -e "${CWR} ${BONSAI_YELLOW}Please set password for user $userstr:${BONSAI_RESET}"
-  arch-chroot /mnt passwd $userstr
+  if ! arch-chroot /mnt passwd -- "$userstr"; then
+    echo -e "${CER} ${BONSAI_RED}Failed to set password for ${BONSAI_YELLOW}$userstr${BONSAI_RED}.${BONSAI_RESET}"
+    exit 1
+  fi
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring sudo...${BONSAI_RESET}"
   variable="%wheel ALL=(ALL:ALL) ALL"
@@ -914,8 +1066,14 @@ function base_config() {
   arch-chroot /mnt systemctl enable ntpd.service
 
   echo -e "${CNT} ${BONSAI_TEXT}Copying installation files...${BONSAI_RESET}"
-  cp -r ~/archinstall /mnt/home/$userstr
-  chmod 777 /mnt/home/$userstr/archinstall
+  if ! cp -a "$SCRIPT_ROOT" "/mnt/home/$userstr/archinstall"; then
+    echo -e "${CER} ${BONSAI_RED}Failed to copy installer files to the new user home.${BONSAI_RESET}"
+    exit 1
+  fi
+  if ! chown -R "$userstr:$userstr" "/mnt/home/$userstr/archinstall"; then
+    echo -e "${CER} ${BONSAI_RED}Failed to adjust ownership for /mnt/home/$userstr/archinstall.${BONSAI_RESET}"
+    exit 1
+  fi
 
   umount -l /mnt
 
@@ -930,9 +1088,9 @@ function base_config() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select action [1-2]: ${BONSAI_RESET})" action_choice
 
   case $action_choice in
-    1) shutdown now ;;
-    2) reboot ;;
-    *) echo -e "${CWR} ${BONSAI_YELLOW}No action taken${BONSAI_RESET}" ;;
+  1) shutdown now ;;
+  2) reboot ;;
+  *) echo -e "${CWR} ${BONSAI_YELLOW}No action taken${BONSAI_RESET}" ;;
   esac
 }
 
@@ -942,7 +1100,7 @@ function install_hyprland() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Preparing to install Hyprland and tools...${BONSAI_RESET}\n"
 
-  if ! command -v yay &> /dev/null; then
+  if ! command -v yay &>/dev/null; then
     echo -e "${CNT} ${BONSAI_TEXT}Installing yay AUR helper...${BONSAI_RESET}"
     git clone https://aur.archlinux.org/yay.git
     pushd yay
@@ -976,7 +1134,7 @@ function install_hyprland() {
     ISNVIDIA=false
   fi
 
-  if [[ "$ISNVIDIA" == true ]]; then
+  if [[ $ISNVIDIA == true ]]; then
     show_section "NVIDIA GPU Configuration"
 
     echo -e "${CNT} ${BONSAI_TEXT}NVIDIA GPU detected, installing drivers...${BONSAI_RESET}"
@@ -1037,16 +1195,16 @@ function install_hyprland() {
 
 function install_software() {
   echo -en "${CNT} ${BONSAI_TEXT}Installing ${BONSAI_GREEN}$1${BONSAI_RESET} "
-  yay -S --noconfirm $1 &>> $INSTLOG &
+  yay -S --noconfirm $1 &>>$INSTLOG &
   show_progress $!
   echo -e "\e[1A\e[K${COK} ${BONSAI_GREEN}$1${BONSAI_TEXT} installed${BONSAI_RESET}"
 }
 
 function uninstall_software() {
   local pkg="$1"
-  if yay -Qi "$pkg" &>> /dev/null; then
+  if yay -Qi "$pkg" &>>/dev/null; then
     echo -en "${CNT} ${BONSAI_TEXT}Removing ${BONSAI_YELLOW}$pkg${BONSAI_RESET} "
-    yay -R --noconfirm $pkg &>> $INSTLOG &
+    yay -R --noconfirm $pkg &>>$INSTLOG &
     show_progress $!
   else
     echo -e "${CNT} ${BONSAI_MUTED}$pkg not installed, skipping${BONSAI_RESET}"
@@ -1105,19 +1263,19 @@ function restore_dotfiles() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select device [1-2]: ${BONSAI_RESET})" device_choice
 
   case "$device_choice" in
-    1)
-      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr desktop
-      chmod u+x ~/archinstall/dotfiles/config/hypr/desktop/.config/hypr/wallpaper.sh
-      echo -e "${COK} ${BONSAI_TEXT}Desktop configuration applied${BONSAI_RESET}"
-      ;;
-    2)
-      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr laptop
-      chmod u+x ~/archinstall/dotfiles/config/hypr/laptop/.config/hypr/wallpaper.sh
-      echo -e "${COK} ${BONSAI_TEXT}Laptop configuration applied${BONSAI_RESET}"
-      ;;
-    *)
-      echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
-      ;;
+  1)
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr desktop
+    chmod u+x ~/archinstall/dotfiles/config/hypr/desktop/.config/hypr/wallpaper.sh
+    echo -e "${COK} ${BONSAI_TEXT}Desktop configuration applied${BONSAI_RESET}"
+    ;;
+  2)
+    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr laptop
+    chmod u+x ~/archinstall/dotfiles/config/hypr/laptop/.config/hypr/wallpaper.sh
+    echo -e "${COK} ${BONSAI_TEXT}Laptop configuration applied${BONSAI_RESET}"
+    ;;
+  *)
+    echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
+    ;;
   esac
 
   # Continue with other dotfiles...
@@ -1179,9 +1337,9 @@ function restore_dotfiles() {
   mkdir -p ~/.local/share/calcurse
   mkdir -p ~/.config/calcurse/{hooks,caldav}
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config calcurse
-  chmod +x ~/.config/calcurse/scripts/*.sh 2> /dev/null || true
+  chmod +x ~/.config/calcurse/scripts/*.sh 2>/dev/null || true
   # Enable notification service (but don't start it yet)
-  systemctl --user enable calcurse-notify.service 2> /dev/null || true
+  systemctl --user enable calcurse-notify.service 2>/dev/null || true
 
   # Procs process viewer
   echo -e "${CNT} ${BONSAI_TEXT}Configuring procs process viewer...${BONSAI_RESET}"
@@ -1190,7 +1348,7 @@ function restore_dotfiles() {
   # Initialize password store if not exists
   if [ ! -d ~/.password-store ]; then
     echo -e "${CNT} ${BONSAI_TEXT}Initializing password store...${BONSAI_RESET}"
-    gpg_key=$(gpg --list-secret-keys --keyid-format LONG 2> /dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
+    gpg_key=$(gpg --list-secret-keys --keyid-format LONG 2>/dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
     if [ -n "$gpg_key" ]; then
       pass init "$gpg_key"
     else
@@ -1247,21 +1405,21 @@ function update_bootloader_sddm() {
   sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/bonsai/ /usr/share/sddm/themes/
 
   # Bootloader-specific configuration
-  if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+  if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
     echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB with BONSAI theme...${BONSAI_RESET}"
     sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/
     sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /boot/grub/themes/
   fi
 
   # Nvidia configuration if needed (only for GRUB)
-  if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+  if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
     if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
       ISNVIDIA=true
     else
       ISNVIDIA=false
     fi
 
-    if [[ "$ISNVIDIA" == true ]]; then
+    if [[ $ISNVIDIA == true ]]; then
       echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB for NVIDIA...${BONSAI_RESET}"
 
       if [ -f /etc/default/grub ]; then
@@ -1276,7 +1434,7 @@ function update_bootloader_sddm() {
         fi
       fi
     fi
-  elif [[ "$DETECTED_BOOTLOADER" == "systemd-boot" ]]; then
+  elif [[ $DETECTED_BOOTLOADER == "systemd-boot" ]]; then
     # For systemd-boot with NVIDIA
     if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
       echo -e "${CNT} ${BONSAI_TEXT}Configuring systemd-boot for NVIDIA...${BONSAI_RESET}"
@@ -1293,7 +1451,7 @@ function update_bootloader_sddm() {
   fi
 
   # Handle bootloader-specific configuration
-  if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+  if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
     show_section "GRUB Encryption Configuration"
   else
     show_section "systemd-boot Configuration"
@@ -1306,7 +1464,7 @@ function update_bootloader_sddm() {
   echo ""
   read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-2]: ${BONSAI_RESET})" enc_status
 
-  if [[ "$enc_status" == "1" ]]; then
+  if [[ $enc_status == "1" ]]; then
     echo -e "\n${CNT} ${BONSAI_TEXT}Detecting encrypted partition...${BONSAI_RESET}"
 
     # Show available partitions
@@ -1330,10 +1488,10 @@ function update_bootloader_sddm() {
 
       for i in "${!disks[@]}"; do
         local disk="${disks[$i]}"
-        local size=$(lsblk -dno SIZE /dev/$disk 2> /dev/null)
+        local size=$(lsblk -dno SIZE /dev/$disk 2>/dev/null)
 
         # Get filesystem information for the disk's partitions
-        local filesystems=$(lsblk -no FSTYPE /dev/$disk 2> /dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+        local filesystems=$(lsblk -no FSTYPE /dev/$disk 2>/dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
         if [ -z "$filesystems" ]; then
           filesystems="none"
         fi
@@ -1344,11 +1502,11 @@ function update_bootloader_sddm() {
       echo ""
       read -p "$(echo -e ${BONSAI_YELLOW}Select disk [1-${#disks[@]}]: ${BONSAI_RESET})" disk_choice
 
-      if [[ "$disk_choice" =~ ^[0-9]+$ ]] && [ "$disk_choice" -ge 1 ] && [ "$disk_choice" -le "${#disks[@]}" ]; then
+      if [[ $disk_choice =~ ^[0-9]+$ ]] && [ "$disk_choice" -ge 1 ] && [ "$disk_choice" -le "${#disks[@]}" ]; then
         selected_disk="${disks[$((disk_choice - 1))]}"
 
         # Determine partition number
-        if [[ "$selected_disk" == nvme* ]]; then
+        if [[ $selected_disk == nvme* ]]; then
           SELECTED_PART="/dev/${selected_disk}p2"
         else
           SELECTED_PART="/dev/${selected_disk}2"
@@ -1359,7 +1517,7 @@ function update_bootloader_sddm() {
     if [ ! -z "$SELECTED_PART" ]; then
       deviceUUID=$(sudo blkid -s UUID -o value $SELECTED_PART)
 
-      if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+      if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
         variable="GRUB_CMDLINE_LINUX="""
         variable_changed="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\""
         sudo sed -i "/^$variable/ c$variable_changed" /etc/default/grub
@@ -1370,7 +1528,7 @@ function update_bootloader_sddm() {
   fi
 
   # Apply configuration based on bootloader type
-  if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+  if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
     echo -e "\n${CNT} ${BONSAI_TEXT}Regenerating GRUB configuration...${BONSAI_RESET}"
     sudo grub-mkconfig -o /boot/grub/grub.cfg
     echo -e "\n${COK} ${BONSAI_GREEN}GRUB and SDDM themes updated successfully!${BONSAI_RESET}"
@@ -1378,7 +1536,7 @@ function update_bootloader_sddm() {
     echo -e "\n${CNT} ${BONSAI_TEXT}Updating systemd-boot entries...${BONSAI_RESET}"
 
     # Check if we need to update systemd-boot entries for encryption
-    if [[ "$enc_status" == "1" ]] && [ ! -z "$SELECTED_PART" ]; then
+    if [[ $enc_status == "1" ]] && [ ! -z "$SELECTED_PART" ]; then
       deviceUUID=$(sudo blkid -s UUID -o value $SELECTED_PART)
 
       # Update existing boot entries
@@ -1417,30 +1575,30 @@ function main_menu() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-5]: ${BONSAI_RESET})" menu_choice
 
   case $menu_choice in
-    1)
-      pacman_init
-      btrfs_format
-      base_config
-      ;;
-    2)
-      install_hyprland
-      ;;
-    3)
-      restore_dotfiles
-      ;;
-    4)
-      update_bootloader_sddm
-      ;;
-    5)
-      echo -e "\n${COK} ${BONSAI_GREEN}Thank you for using BONSAI installer!${BONSAI_RESET}"
-      echo -e "${BONSAI_MUTED}May your system grow with purpose 🌱${BONSAI_RESET}\n"
-      exit 0
-      ;;
-    *)
-      echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
-      sleep 2
-      main_menu
-      ;;
+  1)
+    pacman_init
+    btrfs_format
+    base_config
+    ;;
+  2)
+    install_hyprland
+    ;;
+  3)
+    restore_dotfiles
+    ;;
+  4)
+    update_bootloader_sddm
+    ;;
+  5)
+    echo -e "\n${COK} ${BONSAI_GREEN}Thank you for using BONSAI installer!${BONSAI_RESET}"
+    echo -e "${BONSAI_MUTED}May your system grow with purpose 🌱${BONSAI_RESET}\n"
+    exit 0
+    ;;
+  *)
+    echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
+    sleep 2
+    main_menu
+    ;;
   esac
 }
 
