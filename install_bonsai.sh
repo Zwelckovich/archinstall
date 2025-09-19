@@ -700,6 +700,9 @@ function btrfs_format() {
   # Select CPU type
   select_cpu
 
+  # Select bootloader
+  select_bootloader
+
   # Optimize mirrors before installing packages
   optimize_mirrors
 
