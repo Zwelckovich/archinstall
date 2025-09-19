@@ -28,6 +28,7 @@ SELECTED_DISK=""
 SELECTED_DISK_NAME=""
 USE_ENCRYPTION=true
 CPU_TYPE=""
+BOOTLOADER_TYPE=""
 PARTITION1=""
 PARTITION2=""
 
@@ -384,6 +385,44 @@ function select_cpu() {
   esac
 
   echo -e "\n${COK} ${BONSAI_TEXT}CPU Type: ${BONSAI_GREEN}$CPU_TYPE${BONSAI_RESET}"
+}
+
+# Bootloader selection with BONSAI styling
+function select_bootloader() {
+  show_section "Bootloader Selection"
+
+  echo -e "${CNT} ${BONSAI_TEXT}Choose your bootloader:${BONSAI_RESET}\n"
+  echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}GRUB${BONSAI_RESET} ${BONSAI_MUTED}(Traditional, themes, dual-boot friendly)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[2]${BONSAI_RESET} ${BONSAI_TEXT}systemd-boot${BONSAI_RESET} ${BONSAI_MUTED}(Simple, fast, modern EFI-only)${BONSAI_RESET}"
+
+  echo ""
+  read -p "$(echo -e ${BONSAI_YELLOW}Select bootloader [1-2]: ${BONSAI_RESET})" bootloader_choice
+
+  case $bootloader_choice in
+    1)
+      BOOTLOADER_TYPE="grub"
+      echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}GRUB${BONSAI_RESET}"
+      ;;
+    2)
+      BOOTLOADER_TYPE="systemd-boot"
+      echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}systemd-boot${BONSAI_RESET}"
+      ;;
+    *)
+      echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to GRUB${BONSAI_RESET}"
+      BOOTLOADER_TYPE="grub"
+      ;;
+  esac
+}
+
+# Helper function to detect installed bootloader
+function detect_bootloader() {
+  if [ -f /boot/grub/grub.cfg ] || [ -d /boot/grub ]; then
+    echo "grub"
+  elif [ -f /boot/loader/loader.conf ] || command -v bootctl &> /dev/null; then
+    echo "systemd-boot"
+  else
+    echo "none"
+  fi
 }
 
 function refresh_partition_table() {
@@ -827,82 +866,33 @@ function base_config() {
     mount "$PARTITION1" /mnt/boot
   fi
 
-  echo -e "${CNT} ${BONSAI_TEXT}Installing GRUB bootloader...${BONSAI_RESET}"
-
-  # Install GRUB (matching working install.sh - NO --removable flag)
-  arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=BONSAI
-
-  # Check if grub-install succeeded
-  if [ $? -ne 0 ]; then
-    echo -e "${CER} ${BONSAI_RED}GRUB installation failed!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}Attempting with fallback bootloader-id...${BONSAI_RESET}"
-
-    # Try with simpler bootloader-id
-    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
-
-    if [ $? -ne 0 ]; then
-      echo -e "${CER} ${BONSAI_RED}GRUB installation failed completely!${BONSAI_RESET}"
-      echo -e "${CAT} ${BONSAI_YELLOW}Please check:${BONSAI_RESET}"
-      echo -e "  - Boot partition is formatted as FAT32"
-      echo -e "  - EFI directory exists in /boot"
-      echo -e "  - System is booted in UEFI mode"
-      exit 1
-    fi
-  fi
-
-  # Verify GRUB was installed (check multiple possible locations)
-  if [ -f /mnt/boot/EFI/BONSAI/grubx64.efi ] || [ -f /mnt/boot/EFI/Arch/grubx64.efi ] || [ -f /mnt/boot/EFI/arch/grubx64.efi ]; then
-    echo -e "${COK} ${BONSAI_TEXT}GRUB installed successfully${BONSAI_RESET}"
+  # Install selected bootloader
+  if [ "$BOOTLOADER_TYPE" = "systemd-boot" ]; then
+    install_systemd_boot
   else
-    echo -e "${CWR} ${BONSAI_YELLOW}GRUB EFI file not found in expected location, checking alternate paths...${BONSAI_RESET}"
-    find /mnt/boot/EFI -name "*.efi" -type f 2>/dev/null
-  fi
-
-  echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB...${BONSAI_RESET}"
-  variable="GRUB_DISABLE_OS_PROBER=false"
-  arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
-
-  # Enable cryptodisk support (install.sh does this for ALL installs, not just encrypted)
-  variable="GRUB_ENABLE_CRYPTODISK=y"
-  arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/default/grub
-
-  if [ "$USE_ENCRYPTION" = true ]; then
-    # Get UUID automatically
-    deviceUUID=$(blkid -s UUID -o value $PARTITION2)
-    variable="GRUB_CMDLINE_LINUX="""
-    variable_changed="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\""
-    arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/default/grub
-
-    echo -e "${COK} ${BONSAI_TEXT}Encryption configured for GRUB${BONSAI_RESET}"
-  fi
-
-  echo -e "${CNT} ${BONSAI_TEXT}Generating GRUB configuration...${BONSAI_RESET}"
-  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-
-  if [ $? -ne 0 ]; then
-    echo -e "${CER} ${BONSAI_RED}Failed to generate GRUB configuration!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}The system may not boot properly.${BONSAI_RESET}"
-    exit 1
-  fi
-
-  # Verify GRUB config was created
-  if [ -f /mnt/boot/grub/grub.cfg ]; then
-    echo -e "${COK} ${BONSAI_TEXT}GRUB configuration generated successfully${BONSAI_RESET}"
-  else
-    echo -e "${CER} ${BONSAI_RED}GRUB configuration file not found!${BONSAI_RESET}"
-    exit 1
+    # Default to GRUB if not specified or invalid
+    install_grub
   fi
 
   # Verify EFI boot entry was created
   echo -e "${CNT} ${BONSAI_TEXT}Verifying EFI boot entries...${BONSAI_RESET}"
   arch-chroot /mnt efibootmgr -v
 
-  # Check if BONSAI or Arch boot entry exists
-  if arch-chroot /mnt efibootmgr | grep -E "BONSAI|Arch|arch" > /dev/null; then
-    echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
+  # Check if boot entry exists based on bootloader type
+  if [ "$BOOTLOADER_TYPE" = "systemd-boot" ]; then
+    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot" > /dev/null; then
+      echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
+    else
+      echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
+      echo -e "${CAT} ${BONSAI_YELLOW}You may need to add a boot entry manually in your UEFI settings${BONSAI_RESET}"
+    fi
   else
-    echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}You may need to add a boot entry manually in your UEFI settings${BONSAI_RESET}"
+    if arch-chroot /mnt efibootmgr | grep -E "BONSAI|Arch|arch" > /dev/null; then
+      echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
+    else
+      echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
+      echo -e "${CAT} ${BONSAI_YELLOW}You may need to add a boot entry manually in your UEFI settings${BONSAI_RESET}"
+    fi
   fi
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Creating user account...${BONSAI_RESET}"
@@ -1231,47 +1221,80 @@ function restore_dotfiles() {
   echo -e "\n${COK} ${BONSAI_GREEN}Dotfiles restoration complete!${BONSAI_RESET}"
 }
 
-function update_grub_sddm() {
+function update_bootloader_sddm() {
   show_bonsai_header
-  show_section "GRUB & SDDM Theme Update"
+  show_section "Bootloader & SDDM Theme Update"
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing BONSAI themes...${BONSAI_RESET}\n"
 
-  # SDDM
+  # Detect which bootloader is installed
+  local DETECTED_BOOTLOADER=$(detect_bootloader)
+
+  if [ "$DETECTED_BOOTLOADER" = "none" ]; then
+    echo -e "${CER} ${BONSAI_RED}No supported bootloader detected!${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Please install GRUB or systemd-boot first.${BONSAI_RESET}"
+    return 1
+  fi
+
+  echo -e "${CNT} ${BONSAI_TEXT}Detected bootloader: ${BONSAI_GREEN}$DETECTED_BOOTLOADER${BONSAI_RESET}\n"
+
+  # SDDM (works for both bootloaders)
   echo -e "${CNT} ${BONSAI_TEXT}Configuring SDDM with BONSAI theme...${BONSAI_RESET}"
   sudo cp -r ~/archinstall/dotfiles/etc/sddm.conf /etc/
   sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/bonsai/ /usr/share/sddm/themes/
 
-  # GRUB
-  echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB with BONSAI theme...${BONSAI_RESET}"
-  sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/
-  sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /boot/grub/themes/
-
-  # Nvidia configuration if needed
-  if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
-    ISNVIDIA=true
-  else
-    ISNVIDIA=false
+  # Bootloader-specific configuration
+  if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+    echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB with BONSAI theme...${BONSAI_RESET}"
+    sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/
+    sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /boot/grub/themes/
   fi
 
-  if [[ "$ISNVIDIA" == true ]]; then
-    echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB for NVIDIA...${BONSAI_RESET}"
+  # Nvidia configuration if needed (only for GRUB)
+  if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+    if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
+      ISNVIDIA=true
+    else
+      ISNVIDIA=false
+    fi
 
-    if [ -f /etc/default/grub ]; then
-      if ! sudo grep -q "nvidia-drm.modeset=1" /etc/default/grub; then
-        sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia-drm.modeset=1"/' /etc/default/grub
-        echo -e "${COK} ${BONSAI_TEXT}nvidia-drm.modeset=1 added${BONSAI_RESET}"
-      fi
+    if [[ "$ISNVIDIA" == true ]]; then
+      echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB for NVIDIA...${BONSAI_RESET}"
 
-      if ! sudo grep -q "nvidia_drm.fbdev=1" /etc/default/grub; then
-        sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia_drm.fbdev=1"/' /etc/default/grub
-        echo -e "${COK} ${BONSAI_TEXT}nvidia_drm.fbdev=1 added${BONSAI_RESET}"
+      if [ -f /etc/default/grub ]; then
+        if ! sudo grep -q "nvidia-drm.modeset=1" /etc/default/grub; then
+          sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia-drm.modeset=1"/' /etc/default/grub
+          echo -e "${COK} ${BONSAI_TEXT}nvidia-drm.modeset=1 added${BONSAI_RESET}"
+        fi
+
+        if ! sudo grep -q "nvidia_drm.fbdev=1" /etc/default/grub; then
+          sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia_drm.fbdev=1"/' /etc/default/grub
+          echo -e "${COK} ${BONSAI_TEXT}nvidia_drm.fbdev=1 added${BONSAI_RESET}"
+        fi
       fi
+    fi
+  elif [[ "$DETECTED_BOOTLOADER" == "systemd-boot" ]]; then
+    # For systemd-boot with NVIDIA
+    if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
+      echo -e "${CNT} ${BONSAI_TEXT}Configuring systemd-boot for NVIDIA...${BONSAI_RESET}"
+      # Update boot entries with NVIDIA parameters
+      for entry in /boot/loader/entries/*.conf; do
+        if [ -f "$entry" ]; then
+          if ! grep -q "nvidia-drm.modeset=1" "$entry"; then
+            sudo sed -i "/^options/ s/$/ nvidia-drm.modeset=1 nvidia_drm.fbdev=1/" "$entry"
+            echo -e "${COK} ${BONSAI_TEXT}NVIDIA parameters added to $(basename $entry)${BONSAI_RESET}"
+          fi
+        fi
+      done
     fi
   fi
 
-  # Handle encryption configuration
-  show_section "GRUB Encryption Configuration"
+  # Handle bootloader-specific configuration
+  if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+    show_section "GRUB Encryption Configuration"
+  else
+    show_section "systemd-boot Configuration"
+  fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Is your system encrypted?${BONSAI_RESET}\n"
   echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}Yes (encrypted)${BONSAI_RESET}"
@@ -1332,18 +1355,45 @@ function update_grub_sddm() {
 
     if [ ! -z "$SELECTED_PART" ]; then
       deviceUUID=$(sudo blkid -s UUID -o value $SELECTED_PART)
-      variable="GRUB_CMDLINE_LINUX="""
-      variable_changed="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\""
-      sudo sed -i "/^$variable/ c$variable_changed" /etc/default/grub
 
-      echo -e "${COK} ${BONSAI_TEXT}GRUB configured for encrypted partition${BONSAI_RESET}"
+      if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+        variable="GRUB_CMDLINE_LINUX="""
+        variable_changed="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\""
+        sudo sed -i "/^$variable/ c$variable_changed" /etc/default/grub
+        echo -e "${COK} ${BONSAI_TEXT}GRUB configured for encrypted partition${BONSAI_RESET}"
+      fi
+      # systemd-boot encryption handling is done in the Apply configuration section below
     fi
   fi
 
-  echo -e "\n${CNT} ${BONSAI_TEXT}Regenerating GRUB configuration...${BONSAI_RESET}"
-  sudo grub-mkconfig -o /boot/grub/grub.cfg
+  # Apply configuration based on bootloader type
+  if [[ "$DETECTED_BOOTLOADER" == "grub" ]]; then
+    echo -e "\n${CNT} ${BONSAI_TEXT}Regenerating GRUB configuration...${BONSAI_RESET}"
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+    echo -e "\n${COK} ${BONSAI_GREEN}GRUB and SDDM themes updated successfully!${BONSAI_RESET}"
+  else
+    echo -e "\n${CNT} ${BONSAI_TEXT}Updating systemd-boot entries...${BONSAI_RESET}"
 
-  echo -e "\n${COK} ${BONSAI_GREEN}GRUB and SDDM themes updated successfully!${BONSAI_RESET}"
+    # Check if we need to update systemd-boot entries for encryption
+    if [[ "$enc_status" == "1" ]] && [ ! -z "$SELECTED_PART" ]; then
+      deviceUUID=$(sudo blkid -s UUID -o value $SELECTED_PART)
+
+      # Update existing boot entries
+      for entry in /boot/loader/entries/*.conf; do
+        if [ -f "$entry" ]; then
+          # Check if entry already has cryptdevice
+          if ! grep -q "cryptdevice=" "$entry"; then
+            # Add encryption parameters
+            sudo sed -i "/^options/ s/$/ cryptdevice=UUID=${deviceUUID}:root root=\/dev\/mapper\/root/" "$entry"
+            echo -e "${COK} ${BONSAI_TEXT}Updated $(basename $entry) with encryption parameters${BONSAI_RESET}"
+          fi
+        fi
+      done
+    fi
+
+    echo -e "${CNT} ${BONSAI_TEXT}Note: systemd-boot uses text-based menu (no graphical themes)${BONSAI_RESET}"
+    echo -e "\n${COK} ${BONSAI_GREEN}systemd-boot and SDDM configuration updated successfully!${BONSAI_RESET}"
+  fi
 }
 
 # Main menu with BONSAI styling
@@ -1357,7 +1407,7 @@ function main_menu() {
   echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}Install Arch Linux${BONSAI_RESET} ${BONSAI_MUTED}(Base system)${BONSAI_RESET}"
   echo -e "  ${BONSAI_GREEN}[2]${BONSAI_RESET} ${BONSAI_TEXT}Install Hyprland${BONSAI_RESET} ${BONSAI_MUTED}(Desktop environment)${BONSAI_RESET}"
   echo -e "  ${BONSAI_GREEN}[3]${BONSAI_RESET} ${BONSAI_TEXT}Restore Dotfiles${BONSAI_RESET} ${BONSAI_MUTED}(Configuration files)${BONSAI_RESET}"
-  echo -e "  ${BONSAI_GREEN}[4]${BONSAI_RESET} ${BONSAI_TEXT}Update GRUB/SDDM${BONSAI_RESET} ${BONSAI_MUTED}(Themes)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[4]${BONSAI_RESET} ${BONSAI_TEXT}Update Bootloader/SDDM${BONSAI_RESET} ${BONSAI_MUTED}(Themes)${BONSAI_RESET}"
   echo -e "  ${BONSAI_GREEN}[5]${BONSAI_RESET} ${BONSAI_TEXT}Exit${BONSAI_RESET}"
 
   echo ""
@@ -1376,7 +1426,7 @@ function main_menu() {
       restore_dotfiles
       ;;
     4)
-      update_grub_sddm
+      update_bootloader_sddm
       ;;
     5)
       echo -e "\n${COK} ${BONSAI_GREEN}Thank you for using BONSAI installer!${BONSAI_RESET}"
