@@ -660,23 +660,23 @@ function btrfs_format() {
       --pbkdf=pbkdf2 --use-random luksFormat --type=luks1 "$PARTITION2"
 
     echo -e "\n${CNT} ${BONSAI_TEXT}Opening encrypted container...${BONSAI_RESET}"
-    cryptsetup luksOpen "$PARTITION2" root
+    cryptsetup luksOpen "$PARTITION2" cryptroot
 
     # Format with BTRFS
     echo -e "${CNT} ${BONSAI_TEXT}Creating BTRFS filesystem...${BONSAI_RESET}"
-    mkfs.btrfs -f /dev/mapper/root
+    mkfs.btrfs -f /dev/mapper/cryptroot
 
     # Create subvolumes
     echo -e "${CNT} ${BONSAI_TEXT}Creating BTRFS subvolumes...${BONSAI_RESET}"
-    mount /dev/mapper/root /mnt
+    mount /dev/mapper/cryptroot /mnt
     btrfs subvolume create /mnt/@
     btrfs subvolume create /mnt/@home
     umount /mnt
 
     # Mount subvolumes
-    mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ /dev/mapper/root /mnt
+    mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ /dev/mapper/cryptroot /mnt
     mkdir -p /mnt/{boot,home}
-    mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home /dev/mapper/root /mnt/home
+    mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home /dev/mapper/cryptroot /mnt/home
   else
     # Non-encrypted installation
     echo -e "${CNT} ${BONSAI_TEXT}Creating BTRFS filesystem (non-encrypted)...${BONSAI_RESET}"
@@ -932,52 +932,97 @@ EOF
 
     echo -e "${CNT} ${BONSAI_TEXT}Installing systemd-boot...${BONSAI_RESET}"
 
-    if ! arch-chroot /mnt bootctl --path=/boot install; then
+    if ! arch-chroot /mnt bootctl install --esp-path=/boot --boot-path=/boot --make-entry=yes; then
       echo -e "${CER} ${BONSAI_RED}Failed to install systemd-boot to /boot.${BONSAI_RESET}"
       return 1
+    fi
+
+    if ! arch-chroot /mnt bootctl status --no-pager >/dev/null 2>&1; then
+      echo -e "${CWR} ${BONSAI_YELLOW}systemd-boot status check returned warnings; continuing with manual verification.${BONSAI_RESET}"
     fi
 
     mkdir -p /mnt/boot/loader/entries
 
     cat <<'EOF' >/mnt/boot/loader/loader.conf
-default  arch.conf
+default  arch
 timeout  5
 console-mode max
 editor   no
 EOF
 
     local entry_path="/mnt/boot/loader/entries/arch.conf"
+    local fallback_entry_path="/mnt/boot/loader/entries/arch-fallback.conf"
 
+    local kernel_opts
     if [ "$USE_ENCRYPTION" = true ]; then
       local encrypted_uuid
       if ! encrypted_uuid=$(blkid -s UUID -o value "$PARTITION2" 2>/dev/null); then
         echo -e "${CER} ${BONSAI_RED}Unable to determine UUID for encrypted partition ${BONSAI_YELLOW}$PARTITION2${BONSAI_RED}.${BONSAI_RESET}"
         return 1
       fi
-      cat <<EOF >"$entry_path"
-title   Arch Linux
-linux   /vmlinuz-linux
-initrd  /initramfs-linux.img
-options cryptdevice=UUID=$encrypted_uuid:cryptroot root=/dev/mapper/cryptroot rootflags=subvol=@ rw quiet
-EOF
+      kernel_opts="cryptdevice=UUID=$encrypted_uuid:cryptroot root=/dev/mapper/cryptroot rootflags=subvol=@ rw quiet"
     else
       local root_uuid
       if ! root_uuid=$(blkid -s UUID -o value "$PARTITION2" 2>/dev/null); then
         echo -e "${CER} ${BONSAI_RED}Unable to determine UUID for root partition ${BONSAI_YELLOW}$PARTITION2${BONSAI_RED}.${BONSAI_RESET}"
         return 1
       fi
-      cat <<EOF >"$entry_path"
+      kernel_opts="root=UUID=$root_uuid rootflags=subvol=@ rw quiet"
+    fi
+
+    cat <<EOF >"$entry_path"
 title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /initramfs-linux.img
-options root=UUID=$root_uuid rootflags=subvol=@ rw quiet
+options $kernel_opts
 EOF
-    fi
+
+    cat <<EOF >"$fallback_entry_path"
+title   Arch Linux (Fallback)
+linux   /vmlinuz-linux
+initrd  /initramfs-linux-fallback.img
+options $kernel_opts
+EOF
 
     if [ -f /mnt/boot/intel-ucode.img ]; then
-      sed -i '/^initrd.*initramfs-linux.img/i initrd  /intel-ucode.img' "$entry_path"
+      sed -i '/^initrd  \/initramfs-linux/img initrd  /intel-ucode.img' "$entry_path"
+      sed -i '/^initrd  \/initramfs-linux-fallback/img initrd  /intel-ucode.img' "$fallback_entry_path"
     elif [ -f /mnt/boot/amd-ucode.img ]; then
-      sed -i '/^initrd.*initramfs-linux.img/i initrd  /amd-ucode.img' "$entry_path"
+      sed -i '/^initrd  \/initramfs-linux/img initrd  /amd-ucode.img' "$entry_path"
+      sed -i '/^initrd  \/initramfs-linux-fallback/img initrd  /amd-ucode.img' "$fallback_entry_path"
+    fi
+
+    local entry_label="BONSAI Linux (systemd-boot)"
+    local loader_path='\\EFI\\systemd\\systemd-bootx64.efi'
+
+    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|BONSAI Linux \(systemd-boot\)" >/dev/null 2>&1; then
+      echo -e "${COK} ${BONSAI_TEXT}Detected existing EFI entry for systemd-boot${BONSAI_RESET}"
+    else
+      local boot_disk=""
+      local boot_part=""
+      if [[ "$PARTITION1" =~ ^(/dev/nvme[0-9]+n[0-9]+)p([0-9]+)$ ]]; then
+        boot_disk="${BASH_REMATCH[1]}"
+        boot_part="${BASH_REMATCH[2]}"
+      elif [[ "$PARTITION1" =~ ^(/dev/mmcblk[0-9]+)p([0-9]+)$ ]]; then
+        boot_disk="${BASH_REMATCH[1]}"
+        boot_part="${BASH_REMATCH[2]}"
+      elif [[ "$PARTITION1" =~ ^(/dev/[a-zA-Z]+)([0-9]+)$ ]]; then
+        boot_disk="${BASH_REMATCH[1]}"
+        boot_part="${BASH_REMATCH[2]}"
+      fi
+
+      if [ -n "$boot_disk" ] && [ -n "$boot_part" ]; then
+        echo -e "${CWR} ${BONSAI_YELLOW}EFI entry not detected. Registering ${entry_label} via efibootmgr...${BONSAI_RESET}"
+        if ! arch-chroot /mnt efibootmgr --create --disk "$boot_disk" --part "$boot_part" --label "$entry_label" --loader "$loader_path"; then
+          echo -e "${CER} ${BONSAI_RED}Failed to create EFI boot entry automatically.${BONSAI_RESET}"
+          return 1
+        else
+          echo -e "${COK} ${BONSAI_TEXT}${entry_label} EFI entry registered successfully${BONSAI_RESET}"
+        fi
+      else
+        echo -e "${CER} ${BONSAI_RED}Unable to parse boot partition ${BONSAI_YELLOW}$PARTITION1${BONSAI_RED} for EFI entry creation.${BONSAI_RESET}"
+        return 1
+      fi
     fi
 
     echo -e "${COK} ${BONSAI_TEXT}systemd-boot installed successfully${BONSAI_RESET}"
@@ -1029,7 +1074,7 @@ EOF
 
   # Check if boot entry exists based on bootloader type
   if [ "$BOOTLOADER_TYPE" = "systemd-boot" ]; then
-    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot" >/dev/null; then
+    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|BONSAI Linux \(systemd-boot\)" >/dev/null; then
       echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
