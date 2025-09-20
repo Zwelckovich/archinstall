@@ -1115,7 +1115,7 @@ EOF
     echo -e "${CER} ${BONSAI_RED}Failed to copy installer files to the new user home.${BONSAI_RESET}"
     exit 1
   fi
-  if ! chown -R "$userstr:$userstr" "/mnt/home/$userstr/archinstall"; then
+  if ! arch-chroot /mnt chown -R "$userstr:$userstr" "/home/$userstr/archinstall"; then
     echo -e "${CER} ${BONSAI_RED}Failed to adjust ownership for /mnt/home/$userstr/archinstall.${BONSAI_RESET}"
     exit 1
   fi
