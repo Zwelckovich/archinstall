@@ -850,7 +850,17 @@ EOF
     local ESP_SRC ESP_DISK ESP_PARTNUM entry_label loader_path
     ESP_SRC=$(findmnt -no SOURCE /mnt/boot)
     ESP_DISK="/dev/$(lsblk -no PKNAME "$ESP_SRC")"
-    ESP_PARTNUM="$(lsblk -no PARTNUM "$ESP_SRC")"
+    ESP_PARTNUM="$(lsblk -no PARTNUM "$ESP_SRC" 2>/dev/null | head -n1)"
+    if [[ -z "$ESP_PARTNUM" ]] && command -v udevadm >/dev/null 2>&1; then
+      ESP_PARTNUM="$(udevadm info --query=property --name "$ESP_SRC" 2>/dev/null | awk -F= '/^ID_PART_ENTRY_NUMBER=/{print $2; exit}')"
+    fi
+    if [[ -z "$ESP_PARTNUM" ]]; then
+      ESP_PARTNUM="$(lsblk -no NAME "$ESP_SRC" 2>/dev/null | awk 'match($0, /([0-9]+)$/) { print substr($0, RSTART, RLENGTH); exit }')"
+    fi
+    if [[ -z "$ESP_PARTNUM" ]]; then
+      echo -e "${CER} ${BONSAI_RED}Unable to determine EFI System Partition number for ${BONSAI_YELLOW}$ESP_SRC${BONSAI_RED}.${BONSAI_RESET}"
+      return 1
+    fi
     entry_label="BONSAI Linux (systemd-boot)"
     loader_path='\\EFI\\systemd\\systemd-bootx64.efi'
 
