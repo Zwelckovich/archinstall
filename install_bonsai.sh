@@ -37,167 +37,152 @@ SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ## Package arrays (preserved from original)
 hypr_base_stage=(
-  # Hyprland
-  kitty         # A fast, feature-rich terminal emulator focused on simplicity and efficiency.
-  pamixer       # A command-line tool to control pulseaudio volumes.
-  pavucontrol   # A graphical volume control for PulseAudio sound server.
-  pipewire-alsa # ALSA plugin for PipeWire, enabling audio support through PipeWire.
-  playerctl     # A command-line tool to control media players that support the MPRIS interface.
-  rofi-wayland  #  A window switcher and application launcher with Wayland support.
-  waybar        # A lightweight status bar for Wayland environments like Hyprland or Sway.
-  sddm          # The Simple Desktop Display Manager, a display manager for Linux systems.
-  hyprcursor    # Custom cursors for use with Hyprland.
-  hyprutils     # Collection of tools and utilities for enhancing Hyprland functionality.
-  hypridle      # Screen locker utility for Hyprland with customization options.
-  hyprlock      # Screen locking tool integrated into Hyprland, featuring blur effects.
-  hyprland      # The core window manager providing tiling, floating, and fullscreen functionality.
-  pyprland      # Python utility to extend Hyprland's capabilities for custom scripting.
-  swww          # Wallpaper setter designed specifically for Wayland environments.
-  swaync        # Notification utility tailored for Sway, enhancing desktop notifications.
-  wl-clipboard  # Clipboard manager for wayland
-  clipse        # A configurable TUI clipboard manager for Unix.
-  # Fonts
-  adobe-source-code-pro-fonts # Monospaced font family optimized for coding environments.
-  noto-fonts-emoji            # Set of emoji characters supporting various platforms and applications.
-  otf-font-awesome            # Icon font providing a wide range of scalable vector icons.
-  ttf-droid                   # Open-ource fonts based on the Roboto typeface, designed for clarity and readability.
-  ttf-fira-code               # Monospaced programming font with ligature support, enhancing code legibility.
-  ttf-jetbrains-mono          # Monospaced font optimized for programming environments, offering excellent character spacing.
-  ttf-jetbrains-mono-nerd     # Jetbrains Mono variant with Nerd Font glyphs, combining programming features with additional icons and symbols.
-  # GTK / Qt Themes
-  qt5ct                    # Configuration tool for Qt5 applications to customize themes and appearance.
-  qt6ct                    # Configuration tool for Qt6 applications ensuring compatibility with modern Qt versions.
-  catppuccin-cursors-mocha # Set of cursors styled according to the Catppuccin theme, offering a cohesive visual experience with the 'mocha' color variant.
-  nwg-look                 # Tool designed to customize desktop appearance, including themes and icons for a visually appealing setup.
+  kitty
+  pamixer
+  pavucontrol
+  pipewire-alsa
+  playerctl
+  rofi-wayland
+  waybar
+  sddm
+  hyprcursor
+  hyprutils
+  hypridle
+  hyprlock
+  hyprland
+  pyprland
+  swww
+  swaync
+  wl-clipboard
+  clipse
+  adobe-source-code-pro-fonts
+  noto-fonts-emoji
+  otf-font-awesome
+  ttf-droid
+  ttf-fira-code
+  ttf-jetbrains-mono
+  ttf-jetbrains-mono-nerd
+  qt5ct
+  qt6ct
+  catppuccin-cursors-mocha
+  nwg-look
 )
 
 piperwire_stage=(
-  # Pipewire
-  pipewire       # Core audio and media processing framework for Linux.
-  wireplumber    # Session manager for PipeWire, simplifying audio and video routing.
-  pipewire-audio # Audio support module for PipeWire.
-  pipewire-alsa  # ALSA compatibility layer for PipeWire, enabling traditional ALSA applications to work with PipeWire.
-  pipewire-pulse # PulseAudio compatibility layer for PipeWire, allowing PulseAudio-based applications to use PipeWire.
-  sof-firmware   # Firmware for Intel Sound Open Firmware (SOF) audio platforms.
+  pipewire
+  wireplumber
+  pipewire-audio
+  pipewire-alsa
+  pipewire-pulse
+  sof-firmware
 )
 
 tools_stage=(
-  # Display /  Audio / Core
-  feh            # Lightweight image viewer for X11 with support for various image formats.
-  pacman-contrib # Additional tools and scripts for Pacman, enhancing package management capabilities.
-  npm            # Node Package Manager for installing, sharing, and managing JavaScript packages.
-  xfsprogs       # XFS filesystem utilities
-  # Web Tools
-  vivaldi               # An advanced browser made with the power user in mind.
-  vivaldi-ffmpeg-codecs # additional support for proprietary codecs for vivaldi
-  # Programming Tools
-  visual-studio-code-bin # The Visual Studio Code editor, providing a robust development environment.
-  pycharm-professional   # Pycharm Community edition IDE
-  webstorm               # JavaScript and Typscript IDE from Jetbrains
-  qt5-graphicaleffects   # Qt module for advanced graphical effects in Qt applications.
-  qt5-svg                # SVG support module for Qt applications.
-  qt6-svg                # SVG support module compatible with Qt6 versions.
-  qt5-quickcontrols2     # Module offering modern controls for creating quick, visually appealing user interfaces in Qt applications.
-  eza                    # Enhanced version of the `ls` command, providing more detailed and customizable directory listings.
-  hyfetch                # Lightweight system information tool optimized for Hyprland environments.
-  bfg                    # Remove big files from GIT repositories
-  git-crypt              # Extension for managing encrypted files in Git repositories.
-  git-lfs                # Large File Storage extension for Git, allowing efficient handling of large files.
-  github-cli             # Github CLI client
-  python                 # High-level programming language known for its readability and versatility.
-  python-pip             # Package installer for Python, simplifying package management.
-  pyenv                  # Tool to manage multiple Python versions and environments.
-  uv                     # An extremely fast Python package installer and resolver written in Rust
-  python-pynvim          # Python Client for Neovim
-  tk                     # Tkinter library – Python's standard GUI toolkit.
-  rust                   # Programming language focused on safety, speed, and concurrency with a modern syntax.
-  docker                 # Pack, ship and excecute lightweight container
-  yarn                   # Fast, reliable, and secure dependency management
-  claude-code            # An agentic coding tool that lives in your terminal
-  shfmt                  # Format shell programs
-  stylua                 # Deterministic code formatter for Lua
-  luacheck               # A tool for linting and static analysis of Lua code
-  prettier               # An opinionated code formatter
-  tokei                  # A blazingly fast CLOC (Count Lines Of Code) program
-  quarto-cli-bin         # An open-source scientific and technical publishing system built on Pandoc (binary from official repo)
-  # Science Tools
+  feh
+  pacman-contrib
+  npm
+  xfsprogs
+  vivaldi
+  vivaldi-ffmpeg-codecs
+  visual-studio-code-bin
+  pycharm-professional
+  webstorm
+  qt5-graphicaleffects
+  qt5-svg
+  qt6-svg
+  qt5-quickcontrols2
+  eza
+  hyfetch
+  bfg
+  git-crypt
+  git-lfs
+  github-cli
+  python
+  python-pip
+  pyenv
+  uv
+  python-pynvim
+  tk
+  rust
+  docker
+  yarn
+  claude-code
+  shfmt
+  stylua
+  luacheck
+  prettier
+  tokei
+  quarto-cli-bin
   step
-  # Office Tools
-  texlive            # TeX Live LaTeX framework from AUR-Arch
-  texlive-langgerman # Provides German language support for TeX Live
-  zathura            # Lightweight PDF viewer with support for multiple backends (e.g., MuPDF, Poppler)
-  zathura-pdf-mupdf  # Zathura plugin using the MuPDF PDF renderer
-  meld               # Graphical tool for merging and comparing files
-  baobab             # Disk usage analyzer with a graphical interface, alternative to Treesize
-  neomutt            # Modern mutt email client with enhanced features
-  w3m                # Text-based web browser with inline image support for HTML emails
-  lynx               # Alternative text browser for HTML conversion
-  urlscan            # Extract and follow URLs from emails
-  isync              # IMAP synchronization tool (mbsync)
-  msmtp              # SMTP client for sending emails
-  pass               # Password manager for secure email credentials
-  abook              # Address book for mutt
-  calcurse           # Text-based calendar and scheduling application with todo lists
-  d2                 # A modern diagram scripting language that turns text to diagrams
-  # Audio/Video/Foto Tools
-  ffmpeg             # Complete Solution to record, convert and stream audio and video
-  audacity           # Audio edit tool
-  yt-dlp             # Video and Audio Downloader
-  mpv                # a free, open source, and cross-platform media player
-  ncspot             # Cross-platform ncurses Spotify client written in Rust, inspired by ncmpc and the likes.
-  inkscape           # Open-source vector graphics editor with capabilities similar to Adobe Illustrator.
-  typst              # Modern typesetting system and document compiler, a powerful alternative to LaTeX.
-  tinymist           # Language server for Typst, providing IDE features like autocomplete, hover, and diagnostics.
-  grim               # Screenshot utility for Wayland
-  slurp              # Select a region in a Wayland compositor
-  tesseract          # An OCR program
-  tesseract-data-eng # English OCR database
-  tesseract-data-deu # German OCR database
-  chromium-widevine  # DRM Tool for chomium based browsers to watch Netflix in full quality
-  blender            # A fully integrated 3D graphics creation suite
-  # CLI Tools
-  bottom      # Cross-platform graphical process/system monitor written in Rust with BONSAI aesthetics.
-  lazygit     # TUI (text user interface) for Git operations designed to be intuitive and fast.
-  stow        # Tool for managing symlinks, useful for installing software globally while keeping configuration files in a central location.
-  zsh         # Robust shell with advanced features, including syntax highlighting and plugins support.
-  fzf         # Fuzzy file finder that allows you to search through files quickly using partial matches.
-  fd          # Simple, fast, user-friendly alternative to find, optimized for common use cases.
-  bat         # Modern replacement for cat, displaying colored output in terminals when viewing text files.
-  git-delta   # Colors and formats Git diffs with syntax highlighting, making them easier to read.
-  tlrc        # Terminal-based image viewer focused on low resource usage with a dark theme by default.
-  thefuck     # Tool that corrects your mistyped commands automatically by finding similar valid commands.
-  zoxide      # CLI tool that helps you quickly jump between directories using fuzzy search.
-  reflector   # AUR helper designed to speed up updates and package installations by optimizing mirrors in /etc/pacman.conf.
-  ripgrep     # Fast, modern search tool that looks for patterns in files, similar to grep but with additional features like regex support.
-  procs       # Modern replacement for ps written in Rust with colorful and informative output.
-  tre-command # CLI tool for managing SSH connections and identities with tab-completion and command history.
-  unzip       # Command-line utility for extracting files from ZIP archives.
-  ni-visa     # Tool for querying information about network interfaces, including MAC addresses and IP details.
-  expac       # Enhanced version of the pacman package manager, providing more detailed output and easier scripting capabilities.
-  scc         # Simple Console Calculator for performing quick calculations directly in the terminal.
-  duf         # Disk usage analysis tool that provides a detailed overview of storage space usage on your system.
-  ncdu        # Command-line disk usage analyzer, alternative to baobab
-  rsync       # Fast and versatile file synchronization tool, often used for backups or transferring large amounts of data efficiently.
-  dua-cli     # Command-line tool to analyze disk usage across directories, providing insights into which files and folders consume the most space.
-  sox         # Sound eXchange - A command-line audio player, recorder, and editor with support for various audio formats and effects.
-  testdisk    # Data recovery and disk repair tool
-  cifs-utils  # CIFS filesystem user-space tools
-  smbclient   #Tools to access a server's filespace and printers via SMB
-  openssh     # SSH protocol implementation for remote login, command execution and file transfer
-  # Yazi
-  file       # Determine file type
-  ueberzugpp # File Preview
-  chafa      # Image-to-text converter supporting a wide range of symbols and palettes, transparency, animations, etc.
-  jq         # Command-line JSON processor
-  yazi       # CLI file explorer
-  # Gaming
-  steam   # Steam platform client
-  lutris  # Lutris game launcher for epic or gog etc.
-  discord #All-in-one voice and text chat for gamers
-  # Electronics/RF
-  qucs-s   # A spin-off of Qucs that supports other free SPICE circuit simulators like ngspice with the same Qucs GUI
-  paraview # Parallel Visualization application using VTK
-  # Bluetooth
+  texlive
+  texlive-langgerman
+  zathura
+  zathura-pdf-mupdf
+  meld
+  baobab
+  neomutt
+  w3m
+  lynx
+  urlscan
+  isync
+  msmtp
+  pass
+  abook
+  calcurse
+  d2
+  ffmpeg
+  audacity
+  yt-dlp
+  mpv
+  ncspot
+  inkscape
+  typst
+  tinymist
+  grim
+  slurp
+  tesseract
+  tesseract-data-eng
+  tesseract-data-deu
+  chromium-widevine
+  blender
+  bottom
+  lazygit
+  stow
+  zsh
+  fzf
+  fd
+  bat
+  git-delta
+  tlrc
+  thefuck
+  zoxide
+  reflector
+  ripgrep
+  procs
+  tre-command
+  unzip
+  ni-visa
+  expac
+  scc
+  duf
+  ncdu
+  rsync
+  dua-cli
+  sox
+  testdisk
+  cifs-utils
+  smbclient
+  openssh
+  file
+  ueberzugpp
+  chafa
+  jq
+  yazi
+  steam
+  lutris
+  discord
+  qucs-s
+  paraview
   bluez
   bluez-utils
   blueman
@@ -205,27 +190,27 @@ tools_stage=(
 
 #software for nvidia GPU only
 nvidia_stage=(
-  linux-headers           # Kernel headers for compiling drivers
-  nvidia                  # NVIDIA driver with DKMS support
-  nvidia-settings         # GUI tool for adjusting graphics settings
-  nvidia-utils            # Tools for monitoring and managing GPU usage
-  libva                   # Video acceleration library for offloading video tasks
-  libva-nvidia-driver-git # NVIDIA-specific VA drivers from Git repository
-  cuda                    # NVIDIA's platform for GPU-accelerated computing
+  linux-headers
+  nvidia
+  nvidia-settings
+  nvidia-utils
+  libva
+  libva-nvidia-driver-git
+  cuda
 )
 
 uninstall_stage=(
-  dunst      # Notification daemon for managing system notifications
-  mako       # Application launcher with workspace and window management support
-  rofi       # Window switcher and application launcher with a simple, fast interface
-  allust-git # Graphical tool for monitoring system resources (fork of Alust)
+  dunst
+  mako
+  rofi
+  allust-git
 )
 
 uninstall_nvidia_stage=(
-  hyprland-git              # Development version of Hyprland (Wayland compositor)
-  hyprland-nvidia           # Hyprland optimized for NVIDIA GPUs with proper driver support
-  hyprland-nvidia-git       # Development version of Hyprland specifically for NVIDIA GPUs
-  hyprland-nvidia-hidpi-git # Hyprland build for NVIDIA GPUs with HiDPI (high resolution) screen support
+  hyprland-git
+  hyprland-nvidia
+  hyprland-nvidia-git
+  hyprland-nvidia-hidpi-git
 )
 
 # BONSAI styled header
@@ -286,27 +271,16 @@ function select_disk() {
   # Get disk information
   local disks=($(lsblk -dno NAME,TYPE | grep disk | awk '{print $1}'))
   local disk_info=()
-  local menu_items=()
 
   for i in "${!disks[@]}"; do
     local disk="${disks[$i]}"
     local size=$(lsblk -dno SIZE /dev/$disk 2>/dev/null)
     local model=$(lsblk -dno MODEL /dev/$disk 2>/dev/null | sed 's/ *$//')
-
-    # Get filesystem information for the disk's partitions
     local filesystems=$(lsblk -no FSTYPE /dev/$disk 2>/dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+    [[ -z "$model" ]] && model="Unknown"
+    [[ -z "$filesystems" ]] && filesystems="none"
 
-    if [ -z "$model" ]; then
-      model="Unknown"
-    fi
-
-    if [ -z "$filesystems" ]; then
-      filesystems="none"
-    fi
-
-    disk_info+=("$disk|$size|$model|$filesystems")
-    local index=$((i + 1))
-    echo -e "  ${BONSAI_GREEN}[$index]${BONSAI_RESET} ${BONSAI_TEXT}/dev/$disk${BONSAI_RESET} - ${BONSAI_MUTED}$size - $model${BONSAI_RESET} ${BONSAI_PURPLE}[fs: $filesystems]${BONSAI_RESET}"
+    echo -e "  ${BONSAI_GREEN}[$((i + 1))]${BONSAI_RESET} ${BONSAI_TEXT}/dev/$disk${BONSAI_RESET} - ${BONSAI_MUTED}$size - $model${BONSAI_RESET} ${BONSAI_PURPLE}[fs: $filesystems]${BONSAI_RESET}"
   done
 
   echo ""
@@ -318,13 +292,11 @@ function select_disk() {
 
     echo -e "\n${COK} ${BONSAI_TEXT}Selected: ${BONSAI_GREEN}$SELECTED_DISK_NAME${BONSAI_RESET}"
 
-    # Show current partition layout
     echo -e "\n${CNT} ${BONSAI_TEXT}Current partition layout:${BONSAI_RESET}"
     echo -e "${BONSAI_MUTED}"
     lsblk $SELECTED_DISK_NAME
     echo -e "${BONSAI_RESET}"
 
-    # Confirmation
     echo -e "\n${CWR} ${BONSAI_YELLOW}WARNING: This will DESTROY all data on $SELECTED_DISK_NAME${BONSAI_RESET}"
     read -p "$(echo -e ${BONSAI_RED}Are you sure? [y/N]: ${BONSAI_RESET})" confirm
 
@@ -350,18 +322,9 @@ function select_encryption() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-2]: ${BONSAI_RESET})" enc_choice
 
   case $enc_choice in
-  1)
-    USE_ENCRYPTION=true
-    echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_GREEN}ENABLED${BONSAI_RESET}"
-    ;;
-  2)
-    USE_ENCRYPTION=false
-    echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_YELLOW}DISABLED${BONSAI_RESET}"
-    ;;
-  *)
-    echo -e "${CER} ${BONSAI_RED}Invalid selection, defaulting to encrypted${BONSAI_RESET}"
-    USE_ENCRYPTION=true
-    ;;
+  1) USE_ENCRYPTION=true;  echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_GREEN}ENABLED${BONSAI_RESET}";;
+  2) USE_ENCRYPTION=false; echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_YELLOW}DISABLED${BONSAI_RESET}";;
+  *) USE_ENCRYPTION=true;  echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to encrypted${BONSAI_RESET}";;
   esac
 }
 
@@ -381,10 +344,7 @@ function select_cpu() {
   1) CPU_TYPE="intel" ;;
   2) CPU_TYPE="amd" ;;
   3) CPU_TYPE="vm" ;;
-  *)
-    echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
-    exit 1
-    ;;
+  *) echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"; exit 1 ;;
   esac
 
   echo -e "\n${COK} ${BONSAI_TEXT}CPU Type: ${BONSAI_GREEN}$CPU_TYPE${BONSAI_RESET}"
@@ -402,18 +362,9 @@ function select_bootloader() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select bootloader [1-2]: ${BONSAI_RESET})" bootloader_choice
 
   case $bootloader_choice in
-  1)
-    BOOTLOADER_TYPE="grub"
-    echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}GRUB${BONSAI_RESET}"
-    ;;
-  2)
-    BOOTLOADER_TYPE="systemd-boot"
-    echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}systemd-boot${BONSAI_RESET}"
-    ;;
-  *)
-    echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to GRUB${BONSAI_RESET}"
-    BOOTLOADER_TYPE="grub"
-    ;;
+  1) BOOTLOADER_TYPE="grub";          echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}GRUB${BONSAI_RESET}";;
+  2) BOOTLOADER_TYPE="systemd-boot";  echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}systemd-boot${BONSAI_RESET}";;
+  *) BOOTLOADER_TYPE="grub";          echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to GRUB${BONSAI_RESET}";;
   esac
 }
 
@@ -430,11 +381,9 @@ function detect_bootloader() {
 
 function refresh_partition_table() {
   local disk_path="$1"
-
   if command -v udevadm >/dev/null 2>&1; then
     udevadm settle
   fi
-
   partprobe "$disk_path" 2>/dev/null || true
   blockdev --rereadpt "$disk_path" 2>/dev/null || true
 }
@@ -442,25 +391,20 @@ function refresh_partition_table() {
 function wait_for_partitions() {
   local disk_path="$1"
   shift
-
   for _ in {1..10}; do
     local all_present=true
-
     for partition in "$@"; do
       if [[ ! -b $partition ]]; then
         all_present=false
         break
       fi
     done
-
     if $all_present; then
       return 0
     fi
-
     refresh_partition_table "$disk_path"
     sleep 1
   done
-
   return 1
 }
 
@@ -500,10 +444,8 @@ function optimize_mirrors() {
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Optimizing package mirrors for best performance...${BONSAI_RESET}"
 
-  # Backup existing mirrorlist
   cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 
-  # Test connectivity first
   echo -e "${CNT} ${BONSAI_TEXT}Testing network connectivity...${BONSAI_RESET}"
   if ! ping -c 1 archlinux.org &>/dev/null; then
     echo -e "${CER} ${BONSAI_RED}No internet connection detected!${BONSAI_RESET}"
@@ -511,97 +453,56 @@ function optimize_mirrors() {
     exit 1
   fi
 
-  # Use reflector to get the best mirrors
   echo -e "${CNT} ${BONSAI_TEXT}Finding fastest mirrors (this may take a minute)...${BONSAI_RESET}"
-
-  # Try to use reflector if available
   if command -v reflector &>/dev/null; then
-    reflector --verbose --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist 2>/dev/null
-
-    if [ $? -ne 0 ]; then
+    reflector --verbose --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist 2>/dev/null || true
+    if ! grep -q '^Server' /etc/pacman.d/mirrorlist; then
       echo -e "${CWR} ${BONSAI_YELLOW}Reflector failed, using fallback method...${BONSAI_RESET}"
-      # Fallback: Use known reliable mirrors
       cat >/etc/pacman.d/mirrorlist <<'MIRRORS'
 ## Arch Linux repository mirrorlist
 ## Generated by BONSAI installer fallback
-
-## Worldwide
 Server = https://mirror.rackspace.com/archlinux/$repo/os/$arch
 Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch
-
-## Germany
 Server = https://mirror.f4st.host/archlinux/$repo/os/$arch
 Server = https://mirror.chaoticum.net/arch/$repo/os/$arch
 Server = https://mirror.netcologne.de/archlinux/$repo/os/$arch
-
-## United States
 Server = https://mirror.arizona.edu/archlinux/$repo/os/$arch
 Server = https://arlm.tyzoid.com/$repo/os/$arch
 Server = https://mirror.pit.teraswitch.com/archlinux/$repo/os/$arch
-
-## Netherlands
 Server = https://mirror.i3d.net/pub/archlinux/$repo/os/$arch
 Server = https://mirror.ams1.nl.leaseweb.net/archlinux/$repo/os/$arch
 MIRRORS
     fi
   else
     echo -e "${CWR} ${BONSAI_YELLOW}Reflector not found, installing it...${BONSAI_RESET}"
-    pacman -Sy --noconfirm reflector
-    if [ $? -eq 0 ]; then
-      reflector --verbose --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist 2>/dev/null
-    else
+    pacman -Sy --noconfirm reflector || true
+    if command -v reflector &>/dev/null; then
+      reflector --verbose --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist 2>/dev/null || true
+    fi
+    if ! grep -q '^Server' /etc/pacman.d/mirrorlist; then
       echo -e "${CWR} ${BONSAI_YELLOW}Using fallback mirror list...${BONSAI_RESET}"
-      # Use the fallback mirrors above
       cat >/etc/pacman.d/mirrorlist <<'MIRRORS'
 ## Arch Linux repository mirrorlist
 ## Generated by BONSAI installer fallback
-
-## Worldwide
 Server = https://mirror.rackspace.com/archlinux/$repo/os/$arch
 Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch
-
-## Germany
 Server = https://mirror.f4st.host/archlinux/$repo/os/$arch
 Server = https://mirror.chaoticum.net/arch/$repo/os/$arch
 Server = https://mirror.netcologne.de/archlinux/$repo/os/$arch
-
-## United States
 Server = https://mirror.arizona.edu/archlinux/$repo/os/$arch
 Server = https://arlm.tyzoid.com/$repo/os/$arch
 Server = https://mirror.pit.teraswitch.com/archlinux/$repo/os/$arch
-
-## Netherlands
 Server = https://mirror.i3d.net/pub/archlinux/$repo/os/$arch
 Server = https://mirror.ams1.nl.leaseweb.net/archlinux/$repo/os/$arch
 MIRRORS
     fi
   fi
 
-  # Test the first mirror
-  echo -e "${CNT} ${BONSAI_TEXT}Testing mirror connectivity...${BONSAI_RESET}"
-  first_mirror=$(grep -m 1 "^Server" /etc/pacman.d/mirrorlist | awk '{print $3}')
-
-  if [ -n "$first_mirror" ]; then
-    # Extract just the domain from the mirror URL
-    mirror_domain=$(echo "$first_mirror" | sed 's|https\?://||' | cut -d'/' -f1)
-
-    if ping -c 1 "$mirror_domain" &>/dev/null; then
-      echo -e "${COK} ${BONSAI_TEXT}Mirror connectivity verified${BONSAI_RESET}"
-    else
-      echo -e "${CWR} ${BONSAI_YELLOW}Primary mirror unreachable, but backup mirrors available${BONSAI_RESET}"
-    fi
-  fi
-
-  # Force pacman database sync with new mirrors
   echo -e "${CNT} ${BONSAI_TEXT}Synchronizing package databases...${BONSAI_RESET}"
-  pacman -Syy
-
-  if [ $? -ne 0 ]; then
+  pacman -Syy || {
     echo -e "${CER} ${BONSAI_RED}Failed to sync package databases!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}All mirrors may be experiencing issues.${BONSAI_RESET}"
-    echo -e "${CNT} ${BONSAI_TEXT}You can manually edit /etc/pacman.d/mirrorlist and try again.${BONSAI_RESET}"
     exit 1
-  fi
+  }
 
   echo -e "${COK} ${BONSAI_TEXT}Mirrors optimized successfully${BONSAI_RESET}"
 }
@@ -621,19 +522,17 @@ function btrfs_format() {
   umount /dev/${SELECTED_DISK}?* 2>/dev/null
   umount -l /mnt 2>/dev/null
 
-  # Wipe all signatures and zap the disk
   echo -e "${CNT} ${BONSAI_TEXT}Wiping all existing signatures from disk...${BONSAI_RESET}"
   wipefs -af /dev/$SELECTED_DISK
   refresh_partition_table "/dev/$SELECTED_DISK"
 
-  # Zap the disk and create partitions
   echo -e "${CNT} ${BONSAI_TEXT}Creating partition layout...${BONSAI_RESET}"
   sgdisk --zap-all /dev/$SELECTED_DISK
   sgdisk -n 1:0:+2G -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$SELECTED_DISK -p
   refresh_partition_table "/dev/$SELECTED_DISK"
 
   # Set partition names based on disk type
-  if [[ $SELECTED_DISK == nvme* ]]; then
+  if [[ $SELECTED_DISK == nvme* || $SELECTED_DISK == mmcblk* ]]; then
     PARTITION1="/dev/${SELECTED_DISK}p1"
     PARTITION2="/dev/${SELECTED_DISK}p2"
   else
@@ -646,13 +545,11 @@ function btrfs_format() {
     exit 1
   fi
 
-  # Format boot partition
   echo -e "${CNT} ${BONSAI_TEXT}Formatting boot partition...${BONSAI_RESET}"
   mkfs.fat -F32 "$PARTITION1"
 
   if [ "$USE_ENCRYPTION" = true ]; then
     show_section "Setting Up Encryption"
-
     echo -e "${CWR} ${BONSAI_YELLOW}You will be prompted to enter the encryption password${BONSAI_RESET}"
     echo -e "${CNT} ${BONSAI_TEXT}Choose a strong password and remember it!${BONSAI_RESET}\n"
 
@@ -662,34 +559,28 @@ function btrfs_format() {
     echo -e "\n${CNT} ${BONSAI_TEXT}Opening encrypted container...${BONSAI_RESET}"
     cryptsetup luksOpen "$PARTITION2" cryptroot
 
-    # Format with BTRFS
     echo -e "${CNT} ${BONSAI_TEXT}Creating BTRFS filesystem...${BONSAI_RESET}"
     mkfs.btrfs -f /dev/mapper/cryptroot
 
-    # Create subvolumes
     echo -e "${CNT} ${BONSAI_TEXT}Creating BTRFS subvolumes...${BONSAI_RESET}"
     mount /dev/mapper/cryptroot /mnt
     btrfs subvolume create /mnt/@
     btrfs subvolume create /mnt/@home
     umount /mnt
 
-    # Mount subvolumes
     mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ /dev/mapper/cryptroot /mnt
     mkdir -p /mnt/{boot,home}
     mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home /dev/mapper/cryptroot /mnt/home
   else
-    # Non-encrypted installation
     echo -e "${CNT} ${BONSAI_TEXT}Creating BTRFS filesystem (non-encrypted)...${BONSAI_RESET}"
     mkfs.btrfs -f "$PARTITION2"
 
-    # Create subvolumes
     echo -e "${CNT} ${BONSAI_TEXT}Creating BTRFS subvolumes...${BONSAI_RESET}"
     mount "$PARTITION2" /mnt
     btrfs subvolume create /mnt/@
     btrfs subvolume create /mnt/@home
     umount /mnt
 
-    # Mount subvolumes
     mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@ "$PARTITION2" /mnt
     mkdir -p /mnt/{boot,home}
     mount -o noatime,space_cache=v2,compress=zstd,ssd,discard=async,subvol=@home "$PARTITION2" /mnt/home
@@ -706,7 +597,7 @@ function btrfs_format() {
   # Select bootloader
   select_bootloader
 
-  # Optimize mirrors before installing packages
+  # Optimize mirrors
   optimize_mirrors
 
   show_section "Installing Base System"
@@ -714,21 +605,19 @@ function btrfs_format() {
   echo -e "${CNT} ${BONSAI_TEXT}Installing Arch Linux base system...${BONSAI_RESET}"
   echo -e "${BONSAI_MUTED}This may take a while...${BONSAI_RESET}\n"
 
-  # Add retry mechanism for pacstrap
   RETRY_COUNT=0
   MAX_RETRIES=3
 
   while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    # Show current mirror being used
     current_mirror=$(grep -m 1 "^Server" /etc/pacman.d/mirrorlist | awk '{print $3}')
     if [ -n "$current_mirror" ]; then
       echo -e "${CNT} ${BONSAI_TEXT}Using mirror: ${BONSAI_MUTED}$current_mirror${BONSAI_RESET}"
     fi
 
     case $CPU_TYPE in
-    intel) pacstrap /mnt base base-devel linux linux-firmware nano intel-ucode btrfs-progs ;;
-    amd) pacstrap /mnt base base-devel linux linux-firmware nano amd-ucode btrfs-progs ;;
-    vm) pacstrap /mnt base base-devel linux linux-firmware nano btrfs-progs ;;
+      intel) pacstrap /mnt base base-devel linux linux-firmware nano intel-ucode btrfs-progs ;;
+      amd)   pacstrap /mnt base base-devel linux linux-firmware nano amd-ucode   btrfs-progs ;;
+      vm)    pacstrap /mnt base base-devel linux linux-firmware nano             btrfs-progs ;;
     esac
 
     if [ $? -eq 0 ]; then
@@ -736,38 +625,19 @@ function btrfs_format() {
     else
       RETRY_COUNT=$((RETRY_COUNT + 1))
       if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-        echo -e "\n${CWR} ${BONSAI_YELLOW}Installation failed, retrying with different mirror (attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)...${BONSAI_RESET}"
-
-        # Rotate the mirrorlist to try next mirror
-        sed -i '1,/^Server/d' /etc/pacman.d/mirrorlist
-        echo "" >>/etc/pacman.d/mirrorlist
-        grep -m 1 "^##" /etc/pacman.d/mirrorlist.backup >>/etc/pacman.d/mirrorlist
-        grep -m 1 "^Server" /etc/pacman.d/mirrorlist.backup >>/etc/pacman.d/mirrorlist
-
-        # Clear package cache and retry
-        pacman -Scc --noconfirm
+        echo -e "\n${CWR} ${BONSAI_YELLOW}Installation failed, retrying (attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)...${BONSAI_RESET}"
         pacman -Syy
       fi
     fi
   done
 
-  # Check if pacstrap succeeded after all retries
   if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
     echo -e "\n${CER} ${BONSAI_RED}Failed to install base system after $MAX_RETRIES attempts!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}All mirrors appear to be having issues.${BONSAI_RESET}"
-    echo -e "\n${CNT} ${BONSAI_TEXT}You can try:${BONSAI_RESET}"
-    echo -e "  1. Wait a few minutes and run the installer again"
-    echo -e "  2. Manually edit /etc/pacman.d/mirrorlist to add different mirrors"
-    echo -e "  3. Check https://archlinux.org/mirrors/status/ for mirror status"
-    echo -e "\n${CNT} ${BONSAI_TEXT}To manually select a mirror, edit: /etc/pacman.d/mirrorlist${BONSAI_RESET}"
     exit 1
   fi
 
-  # Verify critical files exist in chroot
   if [ ! -f /mnt/bin/bash ]; then
     echo -e "\n${CER} ${BONSAI_RED}Base system installation incomplete!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}The base system was not properly installed.${BONSAI_RESET}"
-    echo -e "${CNT} ${BONSAI_TEXT}Please run the installer again.${BONSAI_RESET}"
     exit 1
   fi
 
@@ -781,11 +651,8 @@ function base_config() {
   show_bonsai_header
   show_section "System Configuration"
 
-  # Verify the base system is properly installed before proceeding
   if [ ! -f /mnt/bin/bash ] || [ ! -d /mnt/etc ]; then
     echo -e "${CER} ${BONSAI_RED}Base system not found in /mnt!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}The base system must be installed first.${BONSAI_RESET}"
-    echo -e "${CNT} ${BONSAI_TEXT}Please run the full installation from the beginning.${BONSAI_RESET}"
     exit 1
   fi
 
@@ -798,7 +665,7 @@ function base_config() {
       continue
     fi
     if [[ ! $userstr =~ ^[a-z_][a-z0-9_-]*$ ]] || [ "${#userstr}" -gt 32 ]; then
-      echo -e "${CER} ${BONSAI_RED}Invalid username. Use lowercase letters, numbers, underscores, or dashes (max 32 characters).${BONSAI_RESET}"
+      echo -e "${CER} ${BONSAI_RED}Invalid username. Use lowercase letters, numbers, underscores, or dashes (max 32).${BONSAI_RESET}"
       continue
     fi
     break
@@ -812,22 +679,17 @@ function base_config() {
       continue
     fi
     if [ "${#hoststr}" -gt 253 ] || [[ ! $hoststr =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$ ]]; then
-      echo -e "${CER} ${BONSAI_RED}Invalid hostname. Use lowercase letters, numbers, and dashes (RFC 1123 compliant).${BONSAI_RESET}"
+      echo -e "${CER} ${BONSAI_RED}Invalid hostname. Use lowercase letters, numbers, and dashes.${BONSAI_RESET}"
       continue
     fi
     break
   done
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring timezone...${BONSAI_RESET}"
-  arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
-  if [ $? -ne 0 ]; then
+  arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime || {
     echo -e "${CER} ${BONSAI_RED}Failed to configure timezone!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}arch-chroot command failed. This usually means:${BONSAI_RESET}"
-    echo -e "  - The base system was not properly installed"
-    echo -e "  - The /mnt filesystem is not properly mounted"
-    echo -e "  - Missing arch-install-scripts package in the live environment"
     exit 1
-  fi
+  }
   arch-chroot /mnt hwclock --systohc
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring locale...${BONSAI_RESET}"
@@ -861,7 +723,7 @@ EOF
   echo -e "${CNT} ${BONSAI_TEXT}Installing essential packages...${BONSAI_RESET}"
   arch-chroot /mnt pacman -Syy
   arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring bash-completion
-  arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms
+  arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms || true
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring initramfs...${BONSAI_RESET}"
   variable="MODULES=()"
@@ -878,13 +740,28 @@ EOF
 
   show_section "Bootloader Configuration"
 
-  # Function to install GRUB bootloader
-  install_grub() {
-    if [ -z "$PARTITION2" ]; then
-      echo -e "${CER} ${BONSAI_RED}Root partition information is missing. Unable to configure GRUB.${BONSAI_RESET}"
-      return 1
+  # ---------- FIXED: robust GRUB/systemd-boot setup uses findmnt and cryptsetup ----------
+  # Helper to derive kernel/root options from what's actually mounted under /mnt
+  derive_kernel_opts() {
+    local root_src esp_src luks_part luks_uuid root_uuid
+    root_src=$(findmnt -no SOURCE /mnt)
+    if [[ "$root_src" == /dev/mapper/* ]]; then
+      local mapname="${root_src#/dev/mapper/}"
+      luks_part=$(cryptsetup status "$mapname" 2>/dev/null | awk '/device:/ {print $2}')
+      if [[ -z "$luks_part" ]]; then
+        # Fallback to lsblk if cryptsetup status is unavailable
+        luks_part="/dev/$(lsblk -no PKNAME "$root_src" | head -n1)"
+      fi
+      luks_uuid=$(blkid -s UUID -o value "$luks_part")
+      echo "cryptdevice=UUID=$luks_uuid:cryptroot root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
+    else
+      root_uuid=$(blkid -s UUID -o value "$root_src")
+      echo "root=UUID=$root_uuid rootflags=subvol=@ rw quiet"
     fi
+  }
 
+  # Function to install GRUB bootloader (uses derived opts)
+  install_grub() {
     echo -e "${CNT} ${BONSAI_TEXT}Installing GRUB bootloader...${BONSAI_RESET}"
 
     if ! arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB; then
@@ -892,20 +769,14 @@ EOF
       return 1
     fi
 
-    local grub_args="loglevel=3 quiet"
+    local grub_args
+    grub_args="$(derive_kernel_opts)"
 
-    if [ "$USE_ENCRYPTION" = true ]; then
-      local encrypted_uuid
-      if ! encrypted_uuid=$(blkid -s UUID -o value "$PARTITION2" 2>/dev/null); then
-        echo -e "${CER} ${BONSAI_RED}Unable to determine UUID for encrypted partition ${BONSAI_YELLOW}$PARTITION2${BONSAI_RED}.${BONSAI_RESET}"
-        return 1
-      fi
-      grub_args+=" cryptdevice=UUID=${encrypted_uuid}:cryptroot root=/dev/mapper/cryptroot"
-    fi
-
-    if ! arch-chroot /mnt sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"${grub_args}\"|" /etc/default/grub; then
-      echo -e "${CER} ${BONSAI_RED}Failed to update GRUB kernel parameters.${BONSAI_RESET}"
-      return 1
+    # Keep quiet/loglevel, append derived root/crypt opts
+    if arch-chroot /mnt grep -q '^GRUB_CMDLINE_LINUX_DEFAULT=' /etc/default/grub; then
+      arch-chroot /mnt sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet ${grub_args}\"|" /etc/default/grub
+    else
+      arch-chroot /mnt bash -c "echo 'GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet ${grub_args}\"' >> /etc/default/grub"
     fi
 
     if arch-chroot /mnt grep -q '^#\?GRUB_DISABLE_OS_PROBER=' /etc/default/grub; then
@@ -923,13 +794,8 @@ EOF
     return 0
   }
 
-  # Function to install systemd-boot
+  # Function to install systemd-boot (robust root/ESP detection)
   install_systemd_boot() {
-    if [ -z "$PARTITION1" ] || [ -z "$PARTITION2" ]; then
-      echo -e "${CER} ${BONSAI_RED}Partition information is incomplete. Unable to configure systemd-boot.${BONSAI_RESET}"
-      return 1
-    fi
-
     echo -e "${CNT} ${BONSAI_TEXT}Installing systemd-boot...${BONSAI_RESET}"
 
     if ! arch-chroot /mnt bootctl install --esp-path=/boot --boot-path=/boot --make-entry=yes; then
@@ -937,9 +803,9 @@ EOF
       return 1
     fi
 
-    if ! arch-chroot /mnt bootctl status --no-pager >/dev/null 2>&1; then
-      echo -e "${CWR} ${BONSAI_YELLOW}systemd-boot status check returned warnings; continuing with manual verification.${BONSAI_RESET}"
-    fi
+    # Ensure fallback path exists (important for firmware that wipes NVRAM)
+    arch-chroot /mnt mkdir -p /boot/EFI/BOOT
+    arch-chroot /mnt cp -f /boot/EFI/systemd/systemd-bootx64.efi /boot/EFI/BOOT/BOOTX64.EFI || true
 
     mkdir -p /mnt/boot/loader/entries
 
@@ -953,22 +819,9 @@ EOF
     local entry_path="/mnt/boot/loader/entries/arch.conf"
     local fallback_entry_path="/mnt/boot/loader/entries/arch-fallback.conf"
 
+    # ---------- FIXED: build kernel options from the actual mounted root ----------
     local kernel_opts
-    if [ "$USE_ENCRYPTION" = true ]; then
-      local encrypted_uuid
-      if ! encrypted_uuid=$(blkid -s UUID -o value "$PARTITION2" 2>/dev/null); then
-        echo -e "${CER} ${BONSAI_RED}Unable to determine UUID for encrypted partition ${BONSAI_YELLOW}$PARTITION2${BONSAI_RED}.${BONSAI_RESET}"
-        return 1
-      fi
-      kernel_opts="cryptdevice=UUID=$encrypted_uuid:cryptroot root=/dev/mapper/cryptroot rootflags=subvol=@ rw quiet"
-    else
-      local root_uuid
-      if ! root_uuid=$(blkid -s UUID -o value "$PARTITION2" 2>/dev/null); then
-        echo -e "${CER} ${BONSAI_RED}Unable to determine UUID for root partition ${BONSAI_YELLOW}$PARTITION2${BONSAI_RED}.${BONSAI_RESET}"
-        return 1
-      fi
-      kernel_opts="root=UUID=$root_uuid rootflags=subvol=@ rw quiet"
-    fi
+    kernel_opts="$(derive_kernel_opts)"
 
     cat <<EOF >"$entry_path"
 title   Arch Linux
@@ -984,6 +837,7 @@ initrd  /initramfs-linux-fallback.img
 options $kernel_opts
 EOF
 
+    # Microcode if present
     if [ -f /mnt/boot/intel-ucode.img ]; then
       sed -i '/^initrd  \/initramfs-linux/img initrd  /intel-ucode.img' "$entry_path"
       sed -i '/^initrd  \/initramfs-linux-fallback/img initrd  /intel-ucode.img' "$fallback_entry_path"
@@ -992,36 +846,23 @@ EOF
       sed -i '/^initrd  \/initramfs-linux-fallback/img initrd  /amd-ucode.img' "$fallback_entry_path"
     fi
 
-    local entry_label="BONSAI Linux (systemd-boot)"
-    local loader_path='\\EFI\\systemd\\systemd-bootx64.efi'
+    # ---------- FIXED: Create NVRAM entry against the ESP that's actually mounted ----------
+    local ESP_SRC ESP_DISK ESP_PARTNUM entry_label loader_path
+    ESP_SRC=$(findmnt -no SOURCE /mnt/boot)
+    ESP_DISK="/dev/$(lsblk -no PKNAME "$ESP_SRC")"
+    ESP_PARTNUM="$(lsblk -no PARTNUM "$ESP_SRC")"
+    entry_label="BONSAI Linux (systemd-boot)"
+    loader_path='\\EFI\\systemd\\systemd-bootx64.efi'
 
-    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|BONSAI Linux \(systemd-boot\)" >/dev/null 2>&1; then
+    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|${entry_label}" >/dev/null 2>&1; then
       echo -e "${COK} ${BONSAI_TEXT}Detected existing EFI entry for systemd-boot${BONSAI_RESET}"
     else
-      local boot_disk=""
-      local boot_part=""
-      if [[ "$PARTITION1" =~ ^(/dev/nvme[0-9]+n[0-9]+)p([0-9]+)$ ]]; then
-        boot_disk="${BASH_REMATCH[1]}"
-        boot_part="${BASH_REMATCH[2]}"
-      elif [[ "$PARTITION1" =~ ^(/dev/mmcblk[0-9]+)p([0-9]+)$ ]]; then
-        boot_disk="${BASH_REMATCH[1]}"
-        boot_part="${BASH_REMATCH[2]}"
-      elif [[ "$PARTITION1" =~ ^(/dev/[a-zA-Z]+)([0-9]+)$ ]]; then
-        boot_disk="${BASH_REMATCH[1]}"
-        boot_part="${BASH_REMATCH[2]}"
-      fi
-
-      if [ -n "$boot_disk" ] && [ -n "$boot_part" ]; then
-        echo -e "${CWR} ${BONSAI_YELLOW}EFI entry not detected. Registering ${entry_label} via efibootmgr...${BONSAI_RESET}"
-        if ! arch-chroot /mnt efibootmgr --create --disk "$boot_disk" --part "$boot_part" --label "$entry_label" --loader "$loader_path"; then
-          echo -e "${CER} ${BONSAI_RED}Failed to create EFI boot entry automatically.${BONSAI_RESET}"
-          return 1
-        else
-          echo -e "${COK} ${BONSAI_TEXT}${entry_label} EFI entry registered successfully${BONSAI_RESET}"
-        fi
-      else
-        echo -e "${CER} ${BONSAI_RED}Unable to parse boot partition ${BONSAI_YELLOW}$PARTITION1${BONSAI_RED} for EFI entry creation.${BONSAI_RESET}"
+      echo -e "${CWR} ${BONSAI_YELLOW}EFI entry not detected. Registering ${entry_label} via efibootmgr...${BONSAI_RESET}"
+      if ! arch-chroot /mnt efibootmgr --create --disk "$ESP_DISK" --part "$ESP_PARTNUM" --label "$entry_label" --loader "$loader_path"; then
+        echo -e "${CER} ${BONSAI_RED}Failed to create EFI boot entry automatically.${BONSAI_RESET}"
         return 1
+      else
+        echo -e "${COK} ${BONSAI_TEXT}${entry_label} EFI entry registered successfully${BONSAI_RESET}"
       fi
     fi
 
@@ -1035,17 +876,9 @@ EOF
     echo -e "${COK} ${BONSAI_TEXT}EFI system detected${BONSAI_RESET}"
   else
     echo -e "${CER} ${BONSAI_RED}WARNING: EFI system not detected!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}This installer requires UEFI mode.${BONSAI_RESET}"
-    echo -e "${CNT} ${BONSAI_TEXT}Please boot the installer in UEFI mode.${BONSAI_RESET}"
     exit 1
   fi
 
-  if [ -z "$PARTITION1" ]; then
-    echo -e "${CER} ${BONSAI_RED}Boot partition information is missing. Cannot continue.${BONSAI_RESET}"
-    exit 1
-  fi
-
-  # Verify boot partition is mounted
   if ! mountpoint -q /mnt/boot; then
     echo -e "${CER} ${BONSAI_RED}Boot partition not mounted!${BONSAI_RESET}"
     echo -e "${CNT} ${BONSAI_TEXT}Attempting to mount boot partition...${BONSAI_RESET}"
@@ -1066,26 +899,20 @@ EOF
     fi
   fi
 
-  # Verify EFI boot entry was created
   echo -e "${CNT} ${BONSAI_TEXT}Verifying EFI boot entries...${BONSAI_RESET}"
-  if ! arch-chroot /mnt efibootmgr -v; then
-    echo -e "${CWR} ${BONSAI_YELLOW}efibootmgr could not enumerate entries. Please verify UEFI settings manually.${BONSAI_RESET}"
-  fi
+  arch-chroot /mnt efibootmgr -v || echo -e "${CWR} ${BONSAI_YELLOW}efibootmgr could not enumerate entries. Verify UEFI settings manually.${BONSAI_RESET}"
 
-  # Check if boot entry exists based on bootloader type
   if [ "$BOOTLOADER_TYPE" = "systemd-boot" ]; then
     if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|BONSAI Linux \(systemd-boot\)" >/dev/null; then
       echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
-      echo -e "${CAT} ${BONSAI_YELLOW}You may need to add a boot entry manually in your UEFI settings${BONSAI_RESET}"
     fi
   else
-    if arch-chroot /mnt efibootmgr | grep -E "BONSAI|Arch|arch" >/dev/null; then
+    if arch-chroot /mnt efibootmgr | grep -E "GRUB|Arch|arch" >/dev/null; then
       echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
-      echo -e "${CAT} ${BONSAI_YELLOW}You may need to add a boot entry manually in your UEFI settings${BONSAI_RESET}"
     fi
   fi
 
@@ -1192,7 +1019,6 @@ function install_hyprland() {
       install_software $SOFTWR
     done
 
-    # Configure mkinitcpio for Nvidia
     if grep -qE '^MODULES=.*nvidia. *nvidia_modeset.*nvidia_uvm.*nvidia_drm' /etc/mkinitcpio.conf; then
       echo -e "${COK} ${BONSAI_TEXT}Nvidia modules already configured${BONSAI_RESET}"
     else
@@ -1202,13 +1028,12 @@ function install_hyprland() {
 
     sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
 
-    # Configure modprobe
     NVEA="/etc/modprobe.d/nvidia.conf"
     if [ -f "$NVEA" ]; then
       echo -e "${COK} ${BONSAI_TEXT}Nvidia modeset already configured${BONSAI_RESET}"
     else
       echo -e "${CNT} ${BONSAI_TEXT}Adding Nvidia modeset configuration...${BONSAI_RESET}"
-      sudo echo -e "options nvidia_drm modeset=1 fbdev=1" | sudo tee -a /etc/modprobe.d/nvidia.conf 2>&1 | tee -a "$INSTLOG"
+      sudo bash -c 'echo "options nvidia_drm modeset=1 fbdev=1" > /etc/modprobe.d/nvidia.conf'
     fi
   fi
 
@@ -1262,7 +1087,6 @@ function restore_dotfiles() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Restoring configuration files...${BONSAI_RESET}\n"
 
-  # Check for secrets
   if ls -la ~/ | grep -iqE git-crypt-key; then
     echo -e "${CNT} ${BONSAI_TEXT}Unlocking secrets with git-crypt...${BONSAI_RESET}"
     pushd ~/archinstall/
@@ -1276,27 +1100,21 @@ function restore_dotfiles() {
     echo -e "${CNT} ${BONSAI_MUTED}No git-crypt-key found, skipping secrets${BONSAI_RESET}"
   fi
 
-  # VS Code
   echo -e "${CNT} ${BONSAI_TEXT}Configuring VS Code...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config code
 
-  # Bottom
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Bottom system monitor...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config bottom
 
-  # Zathura
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Zathura...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config zathura
 
-  # Hyfetch
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Hyfetch...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config hyfetch
 
-  # LazyGit
   echo -e "${CNT} ${BONSAI_TEXT}Configuring LazyGit...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazygit
 
-  # Hyprland
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring Hyprland...${BONSAI_RESET}"
   rm -rf ~/.config/hypr
 
@@ -1323,42 +1141,34 @@ function restore_dotfiles() {
     ;;
   esac
 
-  # Continue with other dotfiles...
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring remaining applications...${BONSAI_RESET}"
 
-  # Waybar
   rm -rf ~/.config/waybar
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config waybar
 
-  # Rofi
   rm -rf ~/.config/rofi
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config rofi
 
-  # Oh My Zsh plugins
   echo -e "${CNT} ${BONSAI_TEXT}Installing ZSH plugins...${BONSAI_RESET}"
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
   git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
   git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
   git clone https://github.com/catppuccin/zsh-syntax-highlighting.git ~/archinstall/catppuccin-zsh-syntax-highlighting
   git clone --depth=1 https://github.com/jeffreytse/zsh-vi-mode ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-vi-mode
 
-  # FZF-Git
   echo -e "${CNT} ${BONSAI_TEXT}Installing FZF-Git...${BONSAI_RESET}"
   git clone https://github.com/junegunn/fzf-git.sh.git ~/archinstall/fzf-git
 
-  # TMUX
   echo -e "${CNT} ${BONSAI_TEXT}Configuring TMUX...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home tmux
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
-  # Shell configuration
   echo -e "${CNT} ${BONSAI_TEXT}Configuring shell...${BONSAI_RESET}"
   rm -rf ~/.zshrc
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home zshrc
   rm -rf ~/.p10k.zsh
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home p10k
 
-  # Themes and icons
   echo -e "${CNT} ${BONSAI_TEXT}Installing themes and icons...${BONSAI_RESET}"
   rm -rf ~/.themes
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home themes
@@ -1366,31 +1176,25 @@ function restore_dotfiles() {
   cp -r ~/archinstall/dotfiles/home/icons/.icons ~/
   unzip ~/.icons/WhiteSur.zip -d ~/.icons/
 
-  # Kitty
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Kitty terminal...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/ kitty
 
-  # Mutt email client
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Mutt email client...${BONSAI_RESET}"
   mkdir -p ~/.cache/mutt/{headers,messages}
   mkdir -p ~/.config/mutt/accounts
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config mutt
   chmod +x ~/.config/mutt/scripts/*.sh
 
-  # Calcurse calendar configuration
-  echo -e "${CNT} ${BONSAI_TEXT}Configuring Calcurse calendar...${BONSAI_RESET}"
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring Calcurse calendar...${BONSAIRESET}"
   mkdir -p ~/.local/share/calcurse
   mkdir -p ~/.config/calcurse/{hooks,caldav}
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config calcurse
   chmod +x ~/.config/calcurse/scripts/*.sh 2>/dev/null || true
-  # Enable notification service (but don't start it yet)
   systemctl --user enable calcurse-notify.service 2>/dev/null || true
 
-  # Procs process viewer
   echo -e "${CNT} ${BONSAI_TEXT}Configuring procs process viewer...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config procs
 
-  # Initialize password store if not exists
   if [ ! -d ~/.password-store ]; then
     echo -e "${CNT} ${BONSAI_TEXT}Initializing password store...${BONSAI_RESET}"
     gpg_key=$(gpg --list-secret-keys --keyid-format LONG 2>/dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
@@ -1401,13 +1205,11 @@ function restore_dotfiles() {
     fi
   fi
 
-  # Bat
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Bat...${BONSAI_RESET}"
   mkdir -p "$(bat --config-dir)/themes"
   wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
   bat cache --build
 
-  # BONSAIVIM
   echo -e "\n${CNT} ${BONSAI_TEXT}Installing BONSAIVIM...${BONSAI_RESET}"
   if [ ! -d "$HOME/BONSAIVIM" ]; then
     echo -e "${CNT} ${BONSAI_TEXT}Cloning BONSAIVIM repository...${BONSAI_RESET}"
@@ -1433,7 +1235,6 @@ function update_bootloader_sddm() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing BONSAI themes...${BONSAI_RESET}\n"
 
-  # Detect which bootloader is installed
   local DETECTED_BOOTLOADER=$(detect_bootloader)
 
   if [ "$DETECTED_BOOTLOADER" = "none" ]; then
@@ -1444,19 +1245,16 @@ function update_bootloader_sddm() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Detected bootloader: ${BONSAI_GREEN}$DETECTED_BOOTLOADER${BONSAI_RESET}\n"
 
-  # SDDM (works for both bootloaders)
   echo -e "${CNT} ${BONSAI_TEXT}Configuring SDDM with BONSAI theme...${BONSAI_RESET}"
   sudo cp -r ~/archinstall/dotfiles/etc/sddm.conf /etc/
   sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/bonsai/ /usr/share/sddm/themes/
 
-  # Bootloader-specific configuration
   if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
     echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB with BONSAI theme...${BONSAI_RESET}"
     sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/
     sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /boot/grub/themes/
   fi
 
-  # Nvidia configuration if needed (only for GRUB)
   if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
     if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
       ISNVIDIA=true
@@ -1466,13 +1264,11 @@ function update_bootloader_sddm() {
 
     if [[ $ISNVIDIA == true ]]; then
       echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB for NVIDIA...${BONSAI_RESET}"
-
       if [ -f /etc/default/grub ]; then
         if ! sudo grep -q "nvidia-drm.modeset=1" /etc/default/grub; then
           sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia-drm.modeset=1"/' /etc/default/grub
           echo -e "${COK} ${BONSAI_TEXT}nvidia-drm.modeset=1 added${BONSAI_RESET}"
         fi
-
         if ! sudo grep -q "nvidia_drm.fbdev=1" /etc/default/grub; then
           sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia_drm.fbdev=1"/' /etc/default/grub
           echo -e "${COK} ${BONSAI_TEXT}nvidia_drm.fbdev=1 added${BONSAI_RESET}"
@@ -1480,10 +1276,8 @@ function update_bootloader_sddm() {
       fi
     fi
   elif [[ $DETECTED_BOOTLOADER == "systemd-boot" ]]; then
-    # For systemd-boot with NVIDIA
     if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
       echo -e "${CNT} ${BONSAI_TEXT}Configuring systemd-boot for NVIDIA...${BONSAI_RESET}"
-      # Update boot entries with NVIDIA parameters
       for entry in /boot/loader/entries/*.conf; do
         if [ -f "$entry" ]; then
           if ! grep -q "nvidia-drm.modeset=1" "$entry"; then
@@ -1495,7 +1289,6 @@ function update_bootloader_sddm() {
     fi
   fi
 
-  # Handle bootloader-specific configuration
   if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
     show_section "GRUB Encryption Configuration"
   else
@@ -1512,12 +1305,10 @@ function update_bootloader_sddm() {
   if [[ $enc_status == "1" ]]; then
     echo -e "\n${CNT} ${BONSAI_TEXT}Detecting encrypted partition...${BONSAI_RESET}"
 
-    # Show available partitions
     echo -e "${BONSAI_MUTED}"
     sudo lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT
     echo -e "${BONSAI_RESET}"
 
-    # Auto-detect LUKS partitions
     luks_parts=$(lsblk -rno NAME,FSTYPE | grep crypto_LUKS | awk '{print $1}')
 
     if [ ! -z "$luks_parts" ]; then
@@ -1526,21 +1317,14 @@ function update_bootloader_sddm() {
     else
       echo -e "${CWR} ${BONSAI_YELLOW}Could not auto-detect encrypted partition${BONSAI_RESET}"
 
-      # Manual selection
       disks=($(lsblk -dno NAME,TYPE | grep disk | awk '{print $1}'))
 
       echo -e "\n${CNT} ${BONSAI_TEXT}Select disk containing encrypted partition:${BONSAI_RESET}\n"
-
       for i in "${!disks[@]}"; do
         local disk="${disks[$i]}"
         local size=$(lsblk -dno SIZE /dev/$disk 2>/dev/null)
-
-        # Get filesystem information for the disk's partitions
         local filesystems=$(lsblk -no FSTYPE /dev/$disk 2>/dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
-        if [ -z "$filesystems" ]; then
-          filesystems="none"
-        fi
-
+        [[ -z "$filesystems" ]] && filesystems="none"
         echo -e "  ${BONSAI_GREEN}[$((i + 1))]${BONSAI_RESET} ${BONSAI_TEXT}/dev/$disk${BONSAI_RESET} - ${BONSAI_MUTED}$size${BONSAI_RESET} ${BONSAI_PURPLE}[fs: $filesystems]${BONSAI_RESET}"
       done
 
@@ -1549,9 +1333,7 @@ function update_bootloader_sddm() {
 
       if [[ $disk_choice =~ ^[0-9]+$ ]] && [ "$disk_choice" -ge 1 ] && [ "$disk_choice" -le "${#disks[@]}" ]; then
         selected_disk="${disks[$((disk_choice - 1))]}"
-
-        # Determine partition number
-        if [[ $selected_disk == nvme* ]]; then
+        if [[ $selected_disk == nvme* || $selected_disk == mmcblk* ]]; then
           SELECTED_PART="/dev/${selected_disk}p2"
         else
           SELECTED_PART="/dev/${selected_disk}2"
@@ -1561,42 +1343,35 @@ function update_bootloader_sddm() {
 
     if [ ! -z "$SELECTED_PART" ]; then
       deviceUUID=$(sudo blkid -s UUID -o value $SELECTED_PART)
-
       if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
-        variable="GRUB_CMDLINE_LINUX="""
-        variable_changed="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\""
-        sudo sed -i "/^$variable/ c$variable_changed" /etc/default/grub
-        echo -e "${COK} ${BONSAI_TEXT}GRUB configured for encrypted partition${BONSAI_RESET}"
+        variable="GRUB_CMDLINE_LINUX"
+        # Preserve existing, append crypt + mapper root
+        if grep -q '^GRUB_CMDLINE_LINUX=' /etc/default/grub; then
+          sudo sed -i "s|^GRUB_CMDLINE_LINUX=.*|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\"|" /etc/default/grub
+        else
+          echo "GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\"" | sudo tee -a /etc/default/grub >/dev/null
+        fi
       fi
-      # systemd-boot encryption handling is done in the Apply configuration section below
     fi
   fi
 
-  # Apply configuration based on bootloader type
   if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
     echo -e "\n${CNT} ${BONSAI_TEXT}Regenerating GRUB configuration...${BONSAI_RESET}"
     sudo grub-mkconfig -o /boot/grub/grub.cfg
     echo -e "\n${COK} ${BONSAI_GREEN}GRUB and SDDM themes updated successfully!${BONSAI_RESET}"
   else
     echo -e "\n${CNT} ${BONSAI_TEXT}Updating systemd-boot entries...${BONSAI_RESET}"
-
-    # Check if we need to update systemd-boot entries for encryption
     if [[ $enc_status == "1" ]] && [ ! -z "$SELECTED_PART" ]; then
       deviceUUID=$(sudo blkid -s UUID -o value $SELECTED_PART)
-
-      # Update existing boot entries
       for entry in /boot/loader/entries/*.conf; do
         if [ -f "$entry" ]; then
-          # Check if entry already has cryptdevice
           if ! grep -q "cryptdevice=" "$entry"; then
-            # Add encryption parameters
             sudo sed -i "/^options/ s/$/ cryptdevice=UUID=${deviceUUID}:root root=\/dev\/mapper\/root/" "$entry"
             echo -e "${COK} ${BONSAI_TEXT}Updated $(basename $entry) with encryption parameters${BONSAI_RESET}"
           fi
         fi
       done
     fi
-
     echo -e "${CNT} ${BONSAI_TEXT}Note: systemd-boot uses text-based menu (no graphical themes)${BONSAI_RESET}"
     echo -e "\n${COK} ${BONSAI_GREEN}systemd-boot and SDDM configuration updated successfully!${BONSAI_RESET}"
   fi
