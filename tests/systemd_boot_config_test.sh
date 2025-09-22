@@ -19,7 +19,10 @@ contains 'bootctl_args=\(install --esp-path=/boot --boot-path=/boot --make-entry
 contains 'bootctl_no_vars_args=\(install --esp-path=/boot --boot-path=/boot --no-variables\)' "bootctl fallback without firmware variables"
 contains 'bootctl "\$\{bootctl_args\[@\]\}"' "primary bootctl invocation uses argument array"
 contains 'bootctl "\$\{bootctl_no_vars_args\[@\]\}"' "fallback bootctl invocation without NVRAM writes"
-contains 'efibootmgr --create --disk' "manual efibootmgr fallback logic"
+contains 'register_efi_entry\(\)' "EFI entry registration helper present"
+contains 'register_efi_entry "\$entry_label"' "systemd-boot uses registration helper"
+contains 'resolve_esp_context "/mnt/boot"' "systemd-boot resolves ESP context"
+contains 'verify_efi_entry_targets_esp "systemd-boot"' "systemd-boot verification checks ESP PARTUUID"
 contains 'cryptsetup luksOpen "\$PARTITION2" cryptroot' "consistent cryptroot mapper naming"
 contains 'root=/dev/mapper/cryptroot' "kernel option references cryptroot mapper"
 

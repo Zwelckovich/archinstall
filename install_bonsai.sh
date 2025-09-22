@@ -31,6 +31,13 @@ CPU_TYPE=""
 BOOTLOADER_TYPE=""
 PARTITION1=""
 PARTITION2=""
+# Cached EFI system partition metadata
+ESP_SRC=""
+ESP_DEV=""
+ESP_DISK=""
+ESP_PARTNUM=""
+ESP_PARTUUID=""
+ESP_LABEL=""
 
 # Track efivarfs mounts so we can clean them up after bootloader installation
 EFIVARFS_HOST_MOUNTED=false
@@ -803,6 +810,129 @@ EOF
     fi
   }
 
+  resolve_esp_context() {
+    local mount_point="${1:-/mnt/boot}"
+    ESP_SRC=$(findmnt -no SOURCE "$mount_point" 2>/dev/null)
+    if [[ -z "$ESP_SRC" ]]; then
+      echo -e "${CER} ${BONSAI_RED}Unable to determine the source device for ${BONSAI_YELLOW}$mount_point${BONSAI_RED}.${BONSAI_RESET}"
+      return 1
+    fi
+
+    local esp_fstype
+    esp_fstype=$(findmnt -no FSTYPE "$mount_point" 2>/dev/null)
+    if [[ -n "$esp_fstype" && "$esp_fstype" != "vfat" && "$esp_fstype" != "fat" && "$esp_fstype" != "msdos" ]]; then
+      echo -e "${CWR} ${BONSAI_YELLOW}EFI system partition at ${BONSAI_YELLOW}$mount_point${BONSAI_YELLOW} is ${esp_fstype}; expected FAT32.${BONSAI_RESET}"
+    fi
+
+    case "$ESP_SRC" in
+      UUID=*)
+        ESP_DEV=$(blkid -U "${ESP_SRC#UUID=}" 2>/dev/null)
+        ;;
+      PARTUUID=*)
+        ESP_DEV=$(blkid -t PARTUUID="${ESP_SRC#PARTUUID=}" -o device 2>/dev/null | head -n1)
+        ;;
+      LABEL=*)
+        ESP_DEV=$(blkid -L "${ESP_SRC#LABEL=}" 2>/dev/null)
+        ;;
+      /dev/*)
+        ESP_DEV=$(readlink -f "$ESP_SRC" 2>/dev/null)
+        if [[ -z "$ESP_DEV" ]]; then
+          ESP_DEV="$ESP_SRC"
+        fi
+        ;;
+      *)
+        ESP_DEV=$(readlink -f "$ESP_SRC" 2>/dev/null)
+        ;;
+    esac
+
+    if [[ -z "$ESP_DEV" || ! -b "$ESP_DEV" ]]; then
+      echo -e "${CER} ${BONSAI_RED}Unable to resolve ${BONSAI_YELLOW}$ESP_SRC${BONSAI_RED} to a block device.${BONSAI_RESET}"
+      return 1
+    fi
+
+    local pkname
+    pkname=$(lsblk -no PKNAME "$ESP_DEV" 2>/dev/null | head -n1)
+    if [[ -z "$pkname" ]]; then
+      pkname=$(lsblk -no NAME -s "$ESP_DEV" 2>/dev/null | tail -n1)
+    fi
+    if [[ -z "$pkname" ]]; then
+      echo -e "${CER} ${BONSAI_RED}Unable to determine parent disk for ${BONSAI_YELLOW}$ESP_DEV${BONSAI_RED}.${BONSAI_RESET}"
+      return 1
+    fi
+    ESP_DISK="/dev/$pkname"
+
+    ESP_PARTNUM=$(lsblk -no PARTNUM "$ESP_DEV" 2>/dev/null | head -n1)
+    if [[ -z "$ESP_PARTNUM" ]]; then
+      local sysfs_part="/sys/class/block/$(basename "$ESP_DEV")/partition"
+      if [[ -r "$sysfs_part" ]]; then
+        ESP_PARTNUM=$(cat "$sysfs_part")
+      fi
+    fi
+    if [[ -z "$ESP_PARTNUM" ]]; then
+      ESP_PARTNUM=$(basename "$ESP_DEV" | sed -E 's/.*[^0-9]([0-9]+)$/\1/')
+    fi
+    if [[ -z "$ESP_PARTNUM" ]]; then
+      echo -e "${CER} ${BONSAI_RED}Unable to determine EFI System Partition number for ${BONSAI_YELLOW}$ESP_DEV${BONSAI_RED}.${BONSAI_RESET}"
+      return 1
+    fi
+
+    ESP_PARTUUID=$(blkid -s PARTUUID -o value "$ESP_DEV" 2>/dev/null || true)
+    ESP_LABEL=$(blkid -s LABEL -o value "$ESP_DEV" 2>/dev/null || true)
+    return 0
+  }
+
+  register_efi_entry() {
+    local label="$1"
+    local loader="$2"
+    local create_args=(--create --disk "$ESP_DISK" --part "$ESP_PARTNUM" --label "$label" --loader "$loader")
+
+    local chroot_output
+    if command -v arch-chroot >/dev/null 2>&1; then
+      if chroot_output=$(arch-chroot /mnt efibootmgr "${create_args[@]}" 2>&1); then
+        echo -e "${COK} ${BONSAI_TEXT}${label} EFI entry registered successfully via target environment.${BONSAI_RESET}"
+        return 0
+      fi
+      echo -e "${CWR} ${BONSAI_YELLOW}Target system could not register ${label} automatically. Fallback to live environment...${BONSAI_RESET}"
+      if [[ -n "$chroot_output" ]]; then
+        echo "$chroot_output" | sed 's/^/    /'
+      fi
+    fi
+
+    if command -v efibootmgr >/dev/null 2>&1; then
+      local host_output
+      if host_output=$(efibootmgr "${create_args[@]}" 2>&1); then
+        echo -e "${COK} ${BONSAI_TEXT}${label} EFI entry registered via live environment fallback.${BONSAI_RESET}"
+        return 0
+      fi
+      echo -e "${CER} ${BONSAI_RED}Live environment failed to register ${label}.${BONSAI_RESET}"
+      if [[ -n "$host_output" ]]; then
+        echo "$host_output" | sed 's/^/    /'
+      fi
+    else
+      echo -e "${CER} ${BONSAI_RED}efibootmgr is not available in the live environment for manual EFI entry registration.${BONSAI_RESET}"
+    fi
+
+    if [[ -n "$ESP_PARTUUID" ]]; then
+      echo -e "${CAT} ${BONSAI_YELLOW}Manual fallback: efibootmgr --create --disk ${ESP_DISK} --part ${ESP_PARTNUM} --label "${label}" --loader "${loader}"${BONSAI_RESET}"
+    fi
+    return 1
+  }
+
+  verify_efi_entry_targets_esp() {
+    local description="$1"
+    local output="$2"
+    if [[ -z "$ESP_PARTUUID" || -z "$output" ]]; then
+      return 0
+    fi
+    local uppercase_partuuid
+    uppercase_partuuid="${ESP_PARTUUID^^}"
+    if grep -qi "GPT,${uppercase_partuuid}" <<<"$output"; then
+      echo -e "${COK} ${BONSAI_TEXT}${description} entry targets ESP PARTUUID ${BONSAI_YELLOW}${ESP_PARTUUID}${BONSAI_TEXT}.${BONSAI_RESET}"
+    else
+      echo -e "${CWR} ${BONSAI_YELLOW}${description} entry does not reference ESP PARTUUID ${BONSAI_YELLOW}${ESP_PARTUUID}${BONSAI_YELLOW}. Verify firmware configuration manually.${BONSAI_RESET}"
+    fi
+  }
+
   ensure_efivarfs_accessible() {
     local host_efivars="/sys/firmware/efi/efivars"
     local chroot_efivars="/mnt/sys/firmware/efi/efivars"
@@ -871,6 +1001,31 @@ EOF
       return 1
     fi
 
+    if ! resolve_esp_context "/mnt/boot"; then
+      return 1
+    fi
+
+    arch-chroot /mnt mkdir -p /boot/EFI/BOOT
+    if [ -f /mnt/boot/EFI/GRUB/grubx64.efi ]; then
+      arch-chroot /mnt cp -f /boot/EFI/GRUB/grubx64.efi /boot/EFI/BOOT/BOOTX64.EFI || true
+    fi
+
+    local grub_entry_label="BONSAI Linux (GRUB)"
+    local grub_loader='\\EFI\\GRUB\\grubx64.efi'
+    if arch-chroot /mnt efibootmgr | grep -E "GRUB|${grub_entry_label}|Arch" >/dev/null 2>&1; then
+      echo -e "${COK} ${BONSAI_TEXT}Detected existing EFI entry for GRUB${BONSAI_RESET}"
+    else
+      echo -e "${CWR} ${BONSAI_YELLOW}EFI entry for GRUB not detected. Attempting registration...${BONSAI_RESET}"
+      if ! register_efi_entry "$grub_entry_label" "$grub_loader"; then
+        echo -e "${CER} ${BONSAI_RED}Failed to ensure EFI entry for GRUB.${BONSAI_RESET}"
+        return 1
+      fi
+    fi
+
+    if ! arch-chroot /mnt efibootmgr | grep -E "GRUB|${grub_entry_label}" >/dev/null 2>&1; then
+      echo -e "${CWR} ${BONSAI_YELLOW}WARNING: GRUB entry is still absent. Verify firmware configuration manually.${BONSAI_RESET}"
+    fi
+
     echo -e "${COK} ${BONSAI_TEXT}GRUB installed successfully${BONSAI_RESET}"
     return 0
   }
@@ -936,74 +1091,31 @@ EOF
       sed -i '/^initrd  \/initramfs-linux-fallback/img initrd  /amd-ucode.img' "$fallback_entry_path"
     fi
 
-    # ---------- FIXED: Create NVRAM entry against the ESP that's actually mounted ----------
-    local ESP_SRC ESP_DEV ESP_DISK_NODE ESP_DISK ESP_PARTNUM entry_label loader_path esp_partuuid
-    ESP_SRC=$(findmnt -no SOURCE /mnt/boot)
-    if [[ -z "$ESP_SRC" ]]; then
-      echo -e "${CER} ${BONSAI_RED}Unable to determine the source device for /mnt/boot.${BONSAI_RESET}"
+    if ! resolve_esp_context "/mnt/boot"; then
       return 1
     fi
 
-    case "$ESP_SRC" in
-      UUID=*)
-        ESP_DEV=$(blkid -U "${ESP_SRC#UUID=}" 2>/dev/null)
-        ;;
-      PARTUUID=*)
-        ESP_DEV=$(blkid -t PARTUUID="${ESP_SRC#PARTUUID=}" -o device 2>/dev/null | head -n1)
-        ;;
-      LABEL=*)
-        ESP_DEV=$(blkid -L "${ESP_SRC#LABEL=}" 2>/dev/null)
-        ;;
-      *)
-        ESP_DEV=$(readlink -f "$ESP_SRC" 2>/dev/null)
-        ;;
-    esac
-
-    if [[ -z "$ESP_DEV" || ! -b "$ESP_DEV" ]]; then
-      echo -e "${CER} ${BONSAI_RED}Unable to resolve ${BONSAI_YELLOW}$ESP_SRC${BONSAI_RED} to a block device.${BONSAI_RESET}"
-      return 1
+    if [[ -n "$ESP_PARTUUID" ]]; then
+      echo -e "${CNT} ${BONSAI_TEXT}Using ESP ${BONSAI_YELLOW}$ESP_DEV${BONSAI_TEXT} (PARTUUID=${BONSAI_YELLOW}$ESP_PARTUUID${BONSAI_TEXT}).${BONSAI_RESET}"
+    else
+      echo -e "${CNT} ${BONSAI_TEXT}Using ESP ${BONSAI_YELLOW}$ESP_DEV${BONSAI_TEXT}.${BONSAI_RESET}"
     fi
 
-    ESP_DISK_NODE=$(lsblk -no NAME -s "$ESP_DEV" 2>/dev/null | tail -n1)
-    if [[ -z "$ESP_DISK_NODE" ]]; then
-      echo -e "${CER} ${BONSAI_RED}Unable to determine parent disk for ${BONSAI_YELLOW}$ESP_DEV${BONSAI_RED}.${BONSAI_RESET}"
-      return 1
-    fi
-    ESP_DISK="/dev/$ESP_DISK_NODE"
-
-    ESP_PARTNUM=$(lsblk -no PARTNUM "$ESP_DEV" 2>/dev/null | head -n1)
-    if [[ -z "$ESP_PARTNUM" ]]; then
-      local sysfs_part="/sys/class/block/$(basename "$ESP_DEV")/partition"
-      if [[ -r "$sysfs_part" ]]; then
-        ESP_PARTNUM=$(cat "$sysfs_part")
-      fi
-    fi
-    if [[ -z "$ESP_PARTNUM" ]]; then
-      ESP_PARTNUM=$(lsblk -no NAME "$ESP_DEV" 2>/dev/null | awk 'NR==1 { if (match($0, /([0-9]+)$/)) { print substr($0, RSTART, RLENGTH); exit } }')
-    fi
-    if [[ -z "$ESP_PARTNUM" ]]; then
-      echo -e "${CER} ${BONSAI_RED}Unable to determine EFI System Partition number for ${BONSAI_YELLOW}$ESP_DEV${BONSAI_RED}.${BONSAI_RESET}"
-      return 1
-    fi
-
-    esp_partuuid=$(blkid -s PARTUUID -o value "$ESP_DEV" 2>/dev/null)
-    if [[ -n "$esp_partuuid" ]]; then
-      echo -e "${CNT} ${BONSAI_TEXT}Using ESP ${BONSAI_YELLOW}$ESP_DEV${BONSAI_TEXT} (PARTUUID=${BONSAI_YELLOW}$esp_partuuid${BONSAI_TEXT}).${BONSAI_RESET}"
-    fi
-
-    entry_label="BONSAI Linux (systemd-boot)"
-    loader_path='\\EFI\\systemd\\systemd-bootx64.efi'
+    local entry_label="BONSAI Linux (systemd-boot)"
+    local loader_path='\\EFI\\systemd\\systemd-bootx64.efi'
 
     if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|${entry_label}" >/dev/null 2>&1; then
       echo -e "${COK} ${BONSAI_TEXT}Detected existing EFI entry for systemd-boot${BONSAI_RESET}"
     else
-      echo -e "${CWR} ${BONSAI_YELLOW}EFI entry not detected. Registering ${entry_label} via efibootmgr...${BONSAI_RESET}"
-      if ! arch-chroot /mnt efibootmgr --create --disk "$ESP_DISK" --part "$ESP_PARTNUM" --label "$entry_label" --loader "$loader_path"; then
-        echo -e "${CER} ${BONSAI_RED}Failed to create EFI boot entry automatically.${BONSAI_RESET}"
+      echo -e "${CWR} ${BONSAI_YELLOW}EFI entry not detected. Attempting to register ${entry_label}...${BONSAI_RESET}"
+      if ! register_efi_entry "$entry_label" "$loader_path"; then
+        echo -e "${CER} ${BONSAI_RED}Failed to ensure EFI entry for systemd-boot.${BONSAI_RESET}"
         return 1
-      else
-        echo -e "${COK} ${BONSAI_TEXT}${entry_label} EFI entry registered successfully${BONSAI_RESET}"
       fi
+    fi
+
+    if ! arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|${entry_label}" >/dev/null 2>&1; then
+      echo -e "${CWR} ${BONSAI_YELLOW}WARNING: systemd-boot entry is still absent. Verify firmware configuration manually.${BONSAI_RESET}"
     fi
 
     echo -e "${COK} ${BONSAI_TEXT}systemd-boot installed successfully${BONSAI_RESET}"
@@ -1044,21 +1156,29 @@ EOF
   fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Verifying EFI boot entries...${BONSAI_RESET}"
-  arch-chroot /mnt efibootmgr -v || echo -e "${CWR} ${BONSAI_YELLOW}efibootmgr could not enumerate entries. Verify UEFI settings manually.${BONSAI_RESET}"
+  local efiboot_output
+  if efiboot_output=$(arch-chroot /mnt efibootmgr -v 2>&1); then
+    echo "$efiboot_output"
+  else
+    echo -e "${CWR} ${BONSAI_YELLOW}efibootmgr could not enumerate entries. Verify UEFI settings manually.${BONSAI_RESET}"
+  fi
 
   if [ "$BOOTLOADER_TYPE" = "systemd-boot" ]; then
-    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|BONSAI Linux \(systemd-boot\)" >/dev/null; then
-      echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
+    if grep -E "Linux Boot Manager|systemd-boot|BONSAI Linux \\(systemd-boot\\)" <<<"$efiboot_output" >/dev/null 2>&1; then
+      echo -e "${COK} ${BONSAI_TEXT}EFI boot entry detected for systemd-boot${BONSAI_RESET}"
     else
-      echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
+      echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry for systemd-boot not visible in firmware output.${BONSAI_RESET}"
     fi
+    verify_efi_entry_targets_esp "systemd-boot" "$efiboot_output"
   else
-    if arch-chroot /mnt efibootmgr | grep -E "GRUB|Arch|arch" >/dev/null; then
-      echo -e "${COK} ${BONSAI_TEXT}EFI boot entry created successfully${BONSAI_RESET}"
+    if grep -E "GRUB|BONSAI Linux \\(GRUB\\)|Arch" <<<"$efiboot_output" >/dev/null 2>&1; then
+      echo -e "${COK} ${BONSAI_TEXT}EFI boot entry detected for GRUB${BONSAI_RESET}"
     else
-      echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry may not be properly registered${BONSAI_RESET}"
+      echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry for GRUB not visible in firmware output.${BONSAI_RESET}"
     fi
+    verify_efi_entry_targets_esp "GRUB" "$efiboot_output"
   fi
+
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Creating user account...${BONSAI_RESET}"
   if ! arch-chroot /mnt useradd -m -G wheel -- "$userstr"; then
