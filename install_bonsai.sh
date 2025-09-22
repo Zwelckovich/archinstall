@@ -32,6 +32,10 @@ BOOTLOADER_TYPE=""
 PARTITION1=""
 PARTITION2=""
 
+# Track efivarfs mounts so we can clean them up after bootloader installation
+EFIVARFS_HOST_MOUNTED=false
+EFIVARFS_BOUND_CHROOT=false
+
 # Absolute path to the installer root directory
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -799,6 +803,43 @@ EOF
     fi
   }
 
+  ensure_efivarfs_accessible() {
+    local host_efivars="/sys/firmware/efi/efivars"
+    local chroot_efivars="/mnt/sys/firmware/efi/efivars"
+
+    if [ ! -d /sys/firmware/efi ]; then
+      echo -e "${CER} ${BONSAI_RED}UEFI firmware interface not detected. Cannot configure boot entries.${BONSAI_RESET}"
+      return 1
+    fi
+
+    if [ ! -d "$host_efivars" ]; then
+      echo -e "${CER} ${BONSAI_RED}efivarfs is unavailable at ${BONSAI_YELLOW}$host_efivars${BONSAI_RED}.${BONSAI_RESET}"
+      echo -e "${CAT} ${BONSAI_YELLOW}Ensure the system was booted in UEFI mode before running the installer.${BONSAI_RESET}"
+      return 1
+    fi
+
+    if ! mountpoint -q "$host_efivars"; then
+      echo -e "${CNT} ${BONSAI_TEXT}Mounting efivarfs for firmware access...${BONSAI_RESET}"
+      if ! mount -t efivarfs efivarfs "$host_efivars"; then
+        echo -e "${CER} ${BONSAI_RED}Failed to mount efivarfs at ${BONSAI_YELLOW}$host_efivars${BONSAI_RED}.${BONSAI_RESET}"
+        return 1
+      fi
+      EFIVARFS_HOST_MOUNTED=true
+    fi
+
+    mkdir -p /mnt/sys/firmware/efi
+    if ! mountpoint -q "$chroot_efivars"; then
+      echo -e "${CNT} ${BONSAI_TEXT}Binding efivarfs into the chroot environment...${BONSAI_RESET}"
+      if ! mount --bind "$host_efivars" "$chroot_efivars"; then
+        echo -e "${CER} ${BONSAI_RED}Failed to bind-mount efivarfs for the chroot.${BONSAI_RESET}"
+        return 1
+      fi
+      EFIVARFS_BOUND_CHROOT=true
+    fi
+
+    return 0
+  }
+
   # Function to install GRUB bootloader (uses derived opts)
   install_grub() {
     echo -e "${CNT} ${BONSAI_TEXT}Installing GRUB bootloader...${BONSAI_RESET}"
@@ -977,6 +1018,10 @@ EOF
     fi
   fi
 
+  if ! ensure_efivarfs_accessible; then
+    exit 1
+  fi
+
   # Install selected bootloader
   if [ "$BOOTLOADER_TYPE" = "systemd-boot" ]; then
     if ! install_systemd_boot; then
@@ -1034,6 +1079,20 @@ EOF
   if ! arch-chroot /mnt chown -R "$userstr:$userstr" "/home/$userstr/archinstall"; then
     echo -e "${CER} ${BONSAI_RED}Failed to adjust ownership for /mnt/home/$userstr/archinstall.${BONSAI_RESET}"
     exit 1
+  fi
+
+  if [ "$EFIVARFS_BOUND_CHROOT" = true ] && [ -e /mnt/sys/firmware/efi/efivars ]; then
+    if mountpoint -q /mnt/sys/firmware/efi/efivars; then
+      umount /mnt/sys/firmware/efi/efivars 2>/dev/null || umount -l /mnt/sys/firmware/efi/efivars 2>/dev/null
+    fi
+    EFIVARFS_BOUND_CHROOT=false
+  fi
+
+  if [ "$EFIVARFS_HOST_MOUNTED" = true ] && [ -e /sys/firmware/efi/efivars ]; then
+    if mountpoint -q /sys/firmware/efi/efivars; then
+      umount /sys/firmware/efi/efivars 2>/dev/null || umount -l /sys/firmware/efi/efivars 2>/dev/null
+    fi
+    EFIVARFS_HOST_MOUNTED=false
   fi
 
   umount -l /mnt
