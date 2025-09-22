@@ -886,20 +886,60 @@ EOF
     fi
 
     # ---------- FIXED: Create NVRAM entry against the ESP that's actually mounted ----------
-    local ESP_SRC ESP_DISK ESP_PARTNUM entry_label loader_path
+    local ESP_SRC ESP_DEV ESP_DISK_NODE ESP_DISK ESP_PARTNUM entry_label loader_path esp_partuuid
     ESP_SRC=$(findmnt -no SOURCE /mnt/boot)
-    ESP_DISK="/dev/$(lsblk -no PKNAME "$ESP_SRC")"
-    ESP_PARTNUM="$(lsblk -no PARTNUM "$ESP_SRC" 2>/dev/null | head -n1)"
-    if [[ -z "$ESP_PARTNUM" ]] && command -v udevadm >/dev/null 2>&1; then
-      ESP_PARTNUM="$(udevadm info --query=property --name "$ESP_SRC" 2>/dev/null | awk -F= '/^ID_PART_ENTRY_NUMBER=/{print $2; exit}')"
-    fi
-    if [[ -z "$ESP_PARTNUM" ]]; then
-      ESP_PARTNUM="$(lsblk -no NAME "$ESP_SRC" 2>/dev/null | awk 'match($0, /([0-9]+)$/) { print substr($0, RSTART, RLENGTH); exit }')"
-    fi
-    if [[ -z "$ESP_PARTNUM" ]]; then
-      echo -e "${CER} ${BONSAI_RED}Unable to determine EFI System Partition number for ${BONSAI_YELLOW}$ESP_SRC${BONSAI_RED}.${BONSAI_RESET}"
+    if [[ -z "$ESP_SRC" ]]; then
+      echo -e "${CER} ${BONSAI_RED}Unable to determine the source device for /mnt/boot.${BONSAI_RESET}"
       return 1
     fi
+
+    case "$ESP_SRC" in
+      UUID=*)
+        ESP_DEV=$(blkid -U "${ESP_SRC#UUID=}" 2>/dev/null)
+        ;;
+      PARTUUID=*)
+        ESP_DEV=$(blkid -t PARTUUID="${ESP_SRC#PARTUUID=}" -o device 2>/dev/null | head -n1)
+        ;;
+      LABEL=*)
+        ESP_DEV=$(blkid -L "${ESP_SRC#LABEL=}" 2>/dev/null)
+        ;;
+      *)
+        ESP_DEV=$(readlink -f "$ESP_SRC" 2>/dev/null)
+        ;;
+    esac
+
+    if [[ -z "$ESP_DEV" || ! -b "$ESP_DEV" ]]; then
+      echo -e "${CER} ${BONSAI_RED}Unable to resolve ${BONSAI_YELLOW}$ESP_SRC${BONSAI_RED} to a block device.${BONSAI_RESET}"
+      return 1
+    fi
+
+    ESP_DISK_NODE=$(lsblk -no NAME -s "$ESP_DEV" 2>/dev/null | tail -n1)
+    if [[ -z "$ESP_DISK_NODE" ]]; then
+      echo -e "${CER} ${BONSAI_RED}Unable to determine parent disk for ${BONSAI_YELLOW}$ESP_DEV${BONSAI_RED}.${BONSAI_RESET}"
+      return 1
+    fi
+    ESP_DISK="/dev/$ESP_DISK_NODE"
+
+    ESP_PARTNUM=$(lsblk -no PARTNUM "$ESP_DEV" 2>/dev/null | head -n1)
+    if [[ -z "$ESP_PARTNUM" ]]; then
+      local sysfs_part="/sys/class/block/$(basename "$ESP_DEV")/partition"
+      if [[ -r "$sysfs_part" ]]; then
+        ESP_PARTNUM=$(cat "$sysfs_part")
+      fi
+    fi
+    if [[ -z "$ESP_PARTNUM" ]]; then
+      ESP_PARTNUM=$(lsblk -no NAME "$ESP_DEV" 2>/dev/null | awk 'NR==1 { if (match($0, /([0-9]+)$/)) { print substr($0, RSTART, RLENGTH); exit } }')
+    fi
+    if [[ -z "$ESP_PARTNUM" ]]; then
+      echo -e "${CER} ${BONSAI_RED}Unable to determine EFI System Partition number for ${BONSAI_YELLOW}$ESP_DEV${BONSAI_RED}.${BONSAI_RESET}"
+      return 1
+    fi
+
+    esp_partuuid=$(blkid -s PARTUUID -o value "$ESP_DEV" 2>/dev/null)
+    if [[ -n "$esp_partuuid" ]]; then
+      echo -e "${CNT} ${BONSAI_TEXT}Using ESP ${BONSAI_YELLOW}$ESP_DEV${BONSAI_TEXT} (PARTUUID=${BONSAI_YELLOW}$esp_partuuid${BONSAI_TEXT}).${BONSAI_RESET}"
+    fi
+
     entry_label="BONSAI Linux (systemd-boot)"
     loader_path='\\EFI\\systemd\\systemd-bootx64.efi'
 
