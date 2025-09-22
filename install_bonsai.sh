@@ -828,6 +828,7 @@ EOF
     fi
 
     mkdir -p /mnt/sys/firmware/efi
+    mkdir -p "$chroot_efivars"
     if ! mountpoint -q "$chroot_efivars"; then
       echo -e "${CNT} ${BONSAI_TEXT}Binding efivarfs into the chroot environment...${BONSAI_RESET}"
       if ! mount --bind "$host_efivars" "$chroot_efivars"; then
