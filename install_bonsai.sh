@@ -743,20 +743,59 @@ EOF
   # ---------- FIXED: robust GRUB/systemd-boot setup uses findmnt and cryptsetup ----------
   # Helper to derive kernel/root options from what's actually mounted under /mnt
   derive_kernel_opts() {
-    local root_src esp_src luks_part luks_uuid root_uuid
+    local root_src root_dev mapname luks_part luks_uuid root_uuid
     root_src=$(findmnt -no SOURCE /mnt)
-    if [[ "$root_src" == /dev/mapper/* ]]; then
-      local mapname="${root_src#/dev/mapper/}"
+
+    # When mounting BTRFS subvolumes, findmnt may append "[/@]". Strip any suffix so
+    # the resulting path can be passed to blkid/cryptsetup.
+    root_dev="${root_src%%\[*}"
+
+    # Normalise UUID=/LABEL= style sources back into concrete device nodes.
+    case "$root_dev" in
+      UUID=*)
+        root_dev="$(blkid -U "${root_dev#UUID=}" 2>/dev/null)"
+        ;;
+      LABEL=*)
+        root_dev="$(blkid -L "${root_dev#LABEL=}" 2>/dev/null)"
+        ;;
+    esac
+
+    if [[ -z "$root_dev" ]]; then
+      root_dev="${root_src%%\[*}"
+    fi
+
+    if [[ "$root_dev" == /dev/mapper/* ]]; then
+      mapname="${root_dev#/dev/mapper/}"
+      if [[ -z "$mapname" ]]; then
+        mapname="cryptroot"
+      fi
+      # NOTE: The mapper name must remain "cryptroot" to match hooks and tests.
+      # root=/dev/mapper/cryptroot
+      # cryptsetup status prefers the map name (without /dev/mapper/).
       luks_part=$(cryptsetup status "$mapname" 2>/dev/null | awk '/device:/ {print $2}')
       if [[ -z "$luks_part" ]]; then
-        # Fallback to lsblk if cryptsetup status is unavailable
-        luks_part="/dev/$(lsblk -no PKNAME "$root_src" | head -n1)"
+        # Fallback to lsblk if cryptsetup status is unavailable.
+        luks_part="/dev/$(lsblk -no PKNAME "$root_dev" | head -n1)"
       fi
-      luks_uuid=$(blkid -s UUID -o value "$luks_part")
-      echo "cryptdevice=UUID=$luks_uuid:cryptroot root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
+      luks_uuid=$(blkid -s UUID -o value "$luks_part" 2>/dev/null)
+      if [[ -n "$luks_uuid" ]]; then
+        echo "cryptdevice=UUID=$luks_uuid:cryptroot root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
+      else
+        echo "cryptdevice=$luks_part:cryptroot root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
+      fi
     else
-      root_uuid=$(blkid -s UUID -o value "$root_src")
-      echo "root=UUID=$root_uuid rootflags=subvol=@ rw quiet"
+      # Attempt to read the filesystem UUID from the concrete device. If that fails,
+      # fall back to findmnt's UUID field or (worst case) the raw device path.
+      root_uuid=$(blkid -s UUID -o value "$root_dev" 2>/dev/null)
+      if [[ -z "$root_uuid" ]]; then
+        root_uuid=$(findmnt -no UUID /mnt 2>/dev/null)
+      fi
+
+      if [[ -n "$root_uuid" ]]; then
+        echo "root=UUID=$root_uuid rootflags=subvol=@ rw quiet"
+      else
+        echo "root=$root_dev rootflags=subvol=@ rw quiet"
+      fi
     fi
   }
 
