@@ -879,9 +879,18 @@ EOF
   install_systemd_boot() {
     echo -e "${CNT} ${BONSAI_TEXT}Installing systemd-boot...${BONSAI_RESET}"
 
-    if ! arch-chroot /mnt bootctl install --esp-path=/boot --boot-path=/boot --make-entry=yes; then
-      echo -e "${CER} ${BONSAI_RED}Failed to install systemd-boot to /boot.${BONSAI_RESET}"
-      return 1
+    local bootctl_args=(install --esp-path=/boot --boot-path=/boot --make-entry=yes)
+    local bootctl_no_vars_args=(install --esp-path=/boot --boot-path=/boot --no-variables)
+
+    if ! arch-chroot /mnt bootctl "${bootctl_args[@]}"; then
+      echo -e "${CWR} ${BONSAI_YELLOW}bootctl could not update firmware variables automatically. Retrying without writing to NVRAM...${BONSAI_RESET}"
+
+      if ! arch-chroot /mnt bootctl "${bootctl_no_vars_args[@]}"; then
+        echo -e "${CER} ${BONSAI_RED}Failed to install systemd-boot to /boot.${BONSAI_RESET}"
+        return 1
+      fi
+
+      echo -e "${CWR} ${BONSAI_YELLOW}Installed systemd-boot files without touching firmware variables; NVRAM entries will be created separately.${BONSAI_RESET}"
     fi
 
     # Ensure fallback path exists (important for firmware that wipes NVRAM)
