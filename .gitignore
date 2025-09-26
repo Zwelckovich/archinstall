@@ -10,3 +10,4 @@ CLAUDE.md
 CLEANUP.md
 BONSAI.md
 dotfiles/config/mutt/.config/mutt/accounts
+dotfiles/config/calcurse/.config/systemd/user/default.target.wants/calcurse-notify.service
