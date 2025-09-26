@@ -705,8 +705,15 @@ function base_config() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring locale...${BONSAI_RESET}"
   variable="en_US.UTF-8 UTF-8"
-  arch-chroot /mnt sed -i "s/^#\?$variable$/$variable/" /etc/locale.gen
-  arch-chroot /mnt locale-gen
+  arch-chroot /mnt sed -i "s/^[#[:space:]]*${variable}/${variable}/" /etc/locale.gen
+  if ! arch-chroot /mnt locale-gen; then
+    echo -e "${CER} ${BONSAI_RED}Failed to generate locales!${BONSAI_RESET}"
+    exit 1
+  fi
+  if ! arch-chroot /mnt locale -a | grep -qi '^en_US\.utf8$'; then
+    echo -e "${CER} ${BONSAI_RED}Locale en_US.UTF-8 not generated correctly!${BONSAI_RESET}"
+    exit 1
+  fi
   arch-chroot /mnt tee /etc/locale.conf >/dev/null <<<'LANG=en_US.UTF-8'
   arch-chroot /mnt tee /etc/vconsole.conf >/dev/null <<<'KEYMAP=de-latin1-nodeadkeys'
 
