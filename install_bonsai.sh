@@ -5,13 +5,13 @@
 #
 
 ## BONSAI Color Palette
-BONSAI_GREEN="\e[38;2;124;152;133m"  # Primary accent (#7c9885)
-BONSAI_BLUE="\e[38;2;130;164;199m"   # Information (#82a4c7)
-BONSAI_YELLOW="\e[38;2;199;168;130m" # Warnings (#c7a882)
-BONSAI_RED="\e[38;2;199;130;137m"    # Errors (#c78289)
-BONSAI_PURPLE="\e[38;2;152;130;199m" # Special (#9882c7)
-BONSAI_TEXT="\e[38;2;230;232;235m"   # Primary text (#e6e8eb)
-BONSAI_MUTED="\e[38;2;139;146;165m"  # Secondary text (#8b92a5)
+BONSAI_GREEN="\e[38;2;124;152;133m"   # Primary accent (#7c9885)
+BONSAI_BLUE="\e[38;2;130;164;199m"    # Information (#82a4c7)
+BONSAI_YELLOW="\e[38;2;199;168;130m"  # Warnings (#c7a882)
+BONSAI_RED="\e[38;2;199;130;137m"     # Errors (#c78289)
+BONSAI_PURPLE="\e[38;2;152;130;199m"  # Special (#9882c7)
+BONSAI_TEXT="\e[38;2;230;232;235m"    # Primary text (#e6e8eb)
+BONSAI_MUTED="\e[38;2;139;146;165m"   # Secondary text (#8b92a5)
 BONSAI_RESET="\e[0m"
 
 # Status indicators with BONSAI colors
@@ -96,8 +96,6 @@ tools_stage=(
   vivaldi
   vivaldi-ffmpeg-codecs
   visual-studio-code-bin
-  pycharm-professional
-  webstorm
   qt5-graphicaleffects
   qt5-svg
   qt6-svg
@@ -265,7 +263,7 @@ function show_progress() {
 
   echo -en "${CNT} ${BONSAI_TEXT}${message}${BONSAI_RESET} "
 
-  while ps -p $pid &>/dev/null; do
+  while ps -p $pid &> /dev/null; do
     echo -en "${BONSAI_GREEN}•${BONSAI_RESET}"
     sleep 0.5
   done
@@ -285,9 +283,9 @@ function select_disk() {
 
   for i in "${!disks[@]}"; do
     local disk="${disks[$i]}"
-    local size=$(lsblk -dno SIZE /dev/$disk 2>/dev/null)
-    local model=$(lsblk -dno MODEL /dev/$disk 2>/dev/null | sed 's/ *$//')
-    local filesystems=$(lsblk -no FSTYPE /dev/$disk 2>/dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+    local size=$(lsblk -dno SIZE /dev/$disk 2> /dev/null)
+    local model=$(lsblk -dno MODEL /dev/$disk 2> /dev/null | sed 's/ *$//')
+    local filesystems=$(lsblk -no FSTYPE /dev/$disk 2> /dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
     [[ -z "$model" ]] && model="Unknown"
     [[ -z "$filesystems" ]] && filesystems="none"
 
@@ -333,9 +331,18 @@ function select_encryption() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-2]: ${BONSAI_RESET})" enc_choice
 
   case $enc_choice in
-  1) USE_ENCRYPTION=true;  echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_GREEN}ENABLED${BONSAI_RESET}";;
-  2) USE_ENCRYPTION=false; echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_YELLOW}DISABLED${BONSAI_RESET}";;
-  *) USE_ENCRYPTION=true;  echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to encrypted${BONSAI_RESET}";;
+    1)
+      USE_ENCRYPTION=true
+                           echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_GREEN}ENABLED${BONSAI_RESET}"
+                                                                                                            ;;
+    2)
+      USE_ENCRYPTION=false
+                           echo -e "\n${COK} ${BONSAI_TEXT}Encryption ${BONSAI_YELLOW}DISABLED${BONSAI_RESET}"
+                                                                                                              ;;
+    *)
+      USE_ENCRYPTION=true
+                           echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to encrypted${BONSAI_RESET}"
+                                                                                                                     ;;
   esac
 }
 
@@ -352,10 +359,13 @@ function select_cpu() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select CPU [1-3]: ${BONSAI_RESET})" cpu_choice
 
   case $cpu_choice in
-  1) CPU_TYPE="intel" ;;
-  2) CPU_TYPE="amd" ;;
-  3) CPU_TYPE="vm" ;;
-  *) echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"; exit 1 ;;
+    1) CPU_TYPE="intel" ;;
+    2) CPU_TYPE="amd" ;;
+    3) CPU_TYPE="vm" ;;
+    *)
+      echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
+                                                                     exit 1
+                                                                            ;;
   esac
 
   echo -e "\n${COK} ${BONSAI_TEXT}CPU Type: ${BONSAI_GREEN}$CPU_TYPE${BONSAI_RESET}"
@@ -373,9 +383,18 @@ function select_bootloader() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select bootloader [1-2]: ${BONSAI_RESET})" bootloader_choice
 
   case $bootloader_choice in
-  1) BOOTLOADER_TYPE="grub";          echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}GRUB${BONSAI_RESET}";;
-  2) BOOTLOADER_TYPE="systemd-boot";  echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}systemd-boot${BONSAI_RESET}";;
-  *) BOOTLOADER_TYPE="grub";          echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to GRUB${BONSAI_RESET}";;
+    1)
+      BOOTLOADER_TYPE="grub"
+                                      echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}GRUB${BONSAI_RESET}"
+                                                                                                                     ;;
+    2)
+      BOOTLOADER_TYPE="systemd-boot"
+                                      echo -e "\n${COK} ${BONSAI_TEXT}Bootloader: ${BONSAI_GREEN}systemd-boot${BONSAI_RESET}"
+                                                                                                                             ;;
+    *)
+      BOOTLOADER_TYPE="grub"
+                                      echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to GRUB${BONSAI_RESET}"
+                                                                                                                           ;;
   esac
 }
 
@@ -383,7 +402,7 @@ function select_bootloader() {
 function detect_bootloader() {
   if [ -f /boot/grub/grub.cfg ] || [ -d /boot/grub ]; then
     echo "grub"
-  elif [ -f /boot/loader/loader.conf ] || command -v bootctl &>/dev/null; then
+  elif [ -f /boot/loader/loader.conf ] || command -v bootctl &> /dev/null; then
     echo "systemd-boot"
   else
     echo "none"
@@ -392,11 +411,11 @@ function detect_bootloader() {
 
 function refresh_partition_table() {
   local disk_path="$1"
-  if command -v udevadm >/dev/null 2>&1; then
+  if command -v udevadm > /dev/null 2>&1; then
     udevadm settle
   fi
-  partprobe "$disk_path" 2>/dev/null || true
-  blockdev --rereadpt "$disk_path" 2>/dev/null || true
+  partprobe "$disk_path" 2> /dev/null || true
+  blockdev --rereadpt "$disk_path" 2> /dev/null || true
 }
 
 function wait_for_partitions() {
@@ -458,18 +477,18 @@ function optimize_mirrors() {
   cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 
   echo -e "${CNT} ${BONSAI_TEXT}Testing network connectivity...${BONSAI_RESET}"
-  if ! ping -c 1 archlinux.org &>/dev/null; then
+  if ! ping -c 1 archlinux.org &> /dev/null; then
     echo -e "${CER} ${BONSAI_RED}No internet connection detected!${BONSAI_RESET}"
     echo -e "${CAT} ${BONSAI_YELLOW}Please check your network connection and try again.${BONSAI_RESET}"
     exit 1
   fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Finding fastest mirrors (this may take a minute)...${BONSAI_RESET}"
-  if command -v reflector &>/dev/null; then
-    reflector --verbose --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist 2>/dev/null || true
+  if command -v reflector &> /dev/null; then
+    reflector --verbose --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist 2> /dev/null || true
     if ! grep -q '^Server' /etc/pacman.d/mirrorlist; then
       echo -e "${CWR} ${BONSAI_YELLOW}Reflector failed, using fallback method...${BONSAI_RESET}"
-      cat >/etc/pacman.d/mirrorlist <<'MIRRORS'
+      cat > /etc/pacman.d/mirrorlist << 'MIRRORS'
 ## Arch Linux repository mirrorlist
 ## Generated by BONSAI installer fallback
 Server = https://mirror.rackspace.com/archlinux/$repo/os/$arch
@@ -487,12 +506,12 @@ MIRRORS
   else
     echo -e "${CWR} ${BONSAI_YELLOW}Reflector not found, installing it...${BONSAI_RESET}"
     pacman -Sy --noconfirm reflector || true
-    if command -v reflector &>/dev/null; then
-      reflector --verbose --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist 2>/dev/null || true
+    if command -v reflector &> /dev/null; then
+      reflector --verbose --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist 2> /dev/null || true
     fi
     if ! grep -q '^Server' /etc/pacman.d/mirrorlist; then
       echo -e "${CWR} ${BONSAI_YELLOW}Using fallback mirror list...${BONSAI_RESET}"
-      cat >/etc/pacman.d/mirrorlist <<'MIRRORS'
+      cat > /etc/pacman.d/mirrorlist << 'MIRRORS'
 ## Arch Linux repository mirrorlist
 ## Generated by BONSAI installer fallback
 Server = https://mirror.rackspace.com/archlinux/$repo/os/$arch
@@ -530,8 +549,8 @@ function btrfs_format() {
   echo -e "\n${CNT} ${BONSAI_TEXT}Preparing disk...${BONSAI_RESET}"
 
   # Unmount any mounted partitions
-  umount /dev/${SELECTED_DISK}?* 2>/dev/null
-  umount -l /mnt 2>/dev/null
+  umount /dev/${SELECTED_DISK}?* 2> /dev/null
+  umount -l /mnt 2> /dev/null
 
   echo -e "${CNT} ${BONSAI_TEXT}Wiping all existing signatures from disk...${BONSAI_RESET}"
   wipefs -af /dev/$SELECTED_DISK
@@ -653,7 +672,7 @@ function btrfs_format() {
   fi
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Generating fstab...${BONSAI_RESET}"
-  genfstab -U /mnt >>/mnt/etc/fstab
+  genfstab -U /mnt >> /mnt/etc/fstab
 
   echo -e "${COK} ${BONSAI_TEXT}Base system installed successfully${BONSAI_RESET}"
 }
@@ -714,12 +733,12 @@ function base_config() {
     echo -e "${CER} ${BONSAI_RED}Locale en_US.UTF-8 not generated correctly!${BONSAI_RESET}"
     exit 1
   fi
-  arch-chroot /mnt tee /etc/locale.conf >/dev/null <<<'LANG=en_US.UTF-8'
-  arch-chroot /mnt tee /etc/vconsole.conf >/dev/null <<<'KEYMAP=de-latin1-nodeadkeys'
+  arch-chroot /mnt tee /etc/locale.conf > /dev/null <<< 'LANG=en_US.UTF-8'
+  arch-chroot /mnt tee /etc/vconsole.conf > /dev/null <<< 'KEYMAP=de-latin1-nodeadkeys'
 
   echo -e "${CNT} ${BONSAI_TEXT}Setting hostname...${BONSAI_RESET}"
-  arch-chroot /mnt tee /etc/hostname >/dev/null <<<"$hoststr"
-  arch-chroot /mnt tee /etc/hosts >/dev/null <<EOF
+  arch-chroot /mnt tee /etc/hostname > /dev/null <<< "$hoststr"
+  arch-chroot /mnt tee /etc/hosts > /dev/null << EOF
 127.0.0.1 localhost
 ::1 localhost
 127.0.1.1 ${hoststr}.localdomain ${hoststr}
@@ -771,10 +790,10 @@ EOF
     # Normalise UUID=/LABEL= style sources back into concrete device nodes.
     case "$root_dev" in
       UUID=*)
-        root_dev="$(blkid -U "${root_dev#UUID=}" 2>/dev/null)"
+        root_dev="$(blkid -U "${root_dev#UUID=}" 2> /dev/null)"
         ;;
       LABEL=*)
-        root_dev="$(blkid -L "${root_dev#LABEL=}" 2>/dev/null)"
+        root_dev="$(blkid -L "${root_dev#LABEL=}" 2> /dev/null)"
         ;;
     esac
 
@@ -790,12 +809,12 @@ EOF
       # NOTE: The mapper name must remain "cryptroot" to match hooks and tests.
       # root=/dev/mapper/cryptroot
       # cryptsetup status prefers the map name (without /dev/mapper/).
-      luks_part=$(cryptsetup status "$mapname" 2>/dev/null | awk '/device:/ {print $2}')
+      luks_part=$(cryptsetup status "$mapname" 2> /dev/null | awk '/device:/ {print $2}')
       if [[ -z "$luks_part" ]]; then
         # Fallback to lsblk if cryptsetup status is unavailable.
         luks_part="/dev/$(lsblk -no PKNAME "$root_dev" | head -n1)"
       fi
-      luks_uuid=$(blkid -s UUID -o value "$luks_part" 2>/dev/null)
+      luks_uuid=$(blkid -s UUID -o value "$luks_part" 2> /dev/null)
       if [[ -n "$luks_uuid" ]]; then
         echo "cryptdevice=UUID=$luks_uuid:cryptroot root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
       else
@@ -804,9 +823,9 @@ EOF
     else
       # Attempt to read the filesystem UUID from the concrete device. If that fails,
       # fall back to findmnt's UUID field or (worst case) the raw device path.
-      root_uuid=$(blkid -s UUID -o value "$root_dev" 2>/dev/null)
+      root_uuid=$(blkid -s UUID -o value "$root_dev" 2> /dev/null)
       if [[ -z "$root_uuid" ]]; then
-        root_uuid=$(findmnt -no UUID /mnt 2>/dev/null)
+        root_uuid=$(findmnt -no UUID /mnt 2> /dev/null)
       fi
 
       if [[ -n "$root_uuid" ]]; then
@@ -819,36 +838,36 @@ EOF
 
   resolve_esp_context() {
     local mount_point="${1:-/mnt/boot}"
-    ESP_SRC=$(findmnt -no SOURCE "$mount_point" 2>/dev/null)
+    ESP_SRC=$(findmnt -no SOURCE "$mount_point" 2> /dev/null)
     if [[ -z "$ESP_SRC" ]]; then
       echo -e "${CER} ${BONSAI_RED}Unable to determine the source device for ${BONSAI_YELLOW}$mount_point${BONSAI_RED}.${BONSAI_RESET}"
       return 1
     fi
 
     local esp_fstype
-    esp_fstype=$(findmnt -no FSTYPE "$mount_point" 2>/dev/null)
+    esp_fstype=$(findmnt -no FSTYPE "$mount_point" 2> /dev/null)
     if [[ -n "$esp_fstype" && "$esp_fstype" != "vfat" && "$esp_fstype" != "fat" && "$esp_fstype" != "msdos" ]]; then
       echo -e "${CWR} ${BONSAI_YELLOW}EFI system partition at ${BONSAI_YELLOW}$mount_point${BONSAI_YELLOW} is ${esp_fstype}; expected FAT32.${BONSAI_RESET}"
     fi
 
     case "$ESP_SRC" in
       UUID=*)
-        ESP_DEV=$(blkid -U "${ESP_SRC#UUID=}" 2>/dev/null)
+        ESP_DEV=$(blkid -U "${ESP_SRC#UUID=}" 2> /dev/null)
         ;;
       PARTUUID=*)
-        ESP_DEV=$(blkid -t PARTUUID="${ESP_SRC#PARTUUID=}" -o device 2>/dev/null | head -n1)
+        ESP_DEV=$(blkid -t PARTUUID="${ESP_SRC#PARTUUID=}" -o device 2> /dev/null | head -n1)
         ;;
       LABEL=*)
-        ESP_DEV=$(blkid -L "${ESP_SRC#LABEL=}" 2>/dev/null)
+        ESP_DEV=$(blkid -L "${ESP_SRC#LABEL=}" 2> /dev/null)
         ;;
       /dev/*)
-        ESP_DEV=$(readlink -f "$ESP_SRC" 2>/dev/null)
+        ESP_DEV=$(readlink -f "$ESP_SRC" 2> /dev/null)
         if [[ -z "$ESP_DEV" ]]; then
           ESP_DEV="$ESP_SRC"
         fi
         ;;
       *)
-        ESP_DEV=$(readlink -f "$ESP_SRC" 2>/dev/null)
+        ESP_DEV=$(readlink -f "$ESP_SRC" 2> /dev/null)
         ;;
     esac
 
@@ -858,9 +877,9 @@ EOF
     fi
 
     local pkname
-    pkname=$(lsblk -no PKNAME "$ESP_DEV" 2>/dev/null | head -n1)
+    pkname=$(lsblk -no PKNAME "$ESP_DEV" 2> /dev/null | head -n1)
     if [[ -z "$pkname" ]]; then
-      pkname=$(lsblk -no NAME -s "$ESP_DEV" 2>/dev/null | tail -n1)
+      pkname=$(lsblk -no NAME -s "$ESP_DEV" 2> /dev/null | tail -n1)
     fi
     if [[ -z "$pkname" ]]; then
       echo -e "${CER} ${BONSAI_RED}Unable to determine parent disk for ${BONSAI_YELLOW}$ESP_DEV${BONSAI_RED}.${BONSAI_RESET}"
@@ -868,7 +887,7 @@ EOF
     fi
     ESP_DISK="/dev/$pkname"
 
-    ESP_PARTNUM=$(lsblk -no PARTNUM "$ESP_DEV" 2>/dev/null | head -n1)
+    ESP_PARTNUM=$(lsblk -no PARTNUM "$ESP_DEV" 2> /dev/null | head -n1)
     if [[ -z "$ESP_PARTNUM" ]]; then
       local sysfs_part="/sys/class/block/$(basename "$ESP_DEV")/partition"
       if [[ -r "$sysfs_part" ]]; then
@@ -883,8 +902,8 @@ EOF
       return 1
     fi
 
-    ESP_PARTUUID=$(blkid -s PARTUUID -o value "$ESP_DEV" 2>/dev/null || true)
-    ESP_LABEL=$(blkid -s LABEL -o value "$ESP_DEV" 2>/dev/null || true)
+    ESP_PARTUUID=$(blkid -s PARTUUID -o value "$ESP_DEV" 2> /dev/null || true)
+    ESP_LABEL=$(blkid -s LABEL -o value "$ESP_DEV" 2> /dev/null || true)
     return 0
   }
 
@@ -894,7 +913,7 @@ EOF
     local create_args=(--create --disk "$ESP_DISK" --part "$ESP_PARTNUM" --label "$label" --loader "$loader")
 
     local chroot_output
-    if command -v arch-chroot >/dev/null 2>&1; then
+    if command -v arch-chroot > /dev/null 2>&1; then
       if chroot_output=$(arch-chroot /mnt efibootmgr "${create_args[@]}" 2>&1); then
         echo -e "${COK} ${BONSAI_TEXT}${label} EFI entry registered successfully via target environment.${BONSAI_RESET}"
         return 0
@@ -905,7 +924,7 @@ EOF
       fi
     fi
 
-    if command -v efibootmgr >/dev/null 2>&1; then
+    if command -v efibootmgr > /dev/null 2>&1; then
       local host_output
       if host_output=$(efibootmgr "${create_args[@]}" 2>&1); then
         echo -e "${COK} ${BONSAI_TEXT}${label} EFI entry registered via live environment fallback.${BONSAI_RESET}"
@@ -933,7 +952,7 @@ EOF
     fi
     local uppercase_partuuid
     uppercase_partuuid="${ESP_PARTUUID^^}"
-    if grep -qi "GPT,${uppercase_partuuid}" <<<"$output"; then
+    if grep -qi "GPT,${uppercase_partuuid}" <<< "$output"; then
       echo -e "${COK} ${BONSAI_TEXT}${description} entry targets ESP PARTUUID ${BONSAI_YELLOW}${ESP_PARTUUID}${BONSAI_TEXT}.${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}${description} entry does not reference ESP PARTUUID ${BONSAI_YELLOW}${ESP_PARTUUID}${BONSAI_YELLOW}. Verify firmware configuration manually.${BONSAI_RESET}"
@@ -1019,7 +1038,7 @@ EOF
 
     local grub_entry_label="BONSAI Linux (GRUB)"
     local grub_loader='\\EFI\\GRUB\\grubx64.efi'
-    if arch-chroot /mnt efibootmgr | grep -E "GRUB|${grub_entry_label}|Arch" >/dev/null 2>&1; then
+    if arch-chroot /mnt efibootmgr | grep -E "GRUB|${grub_entry_label}|Arch" > /dev/null 2>&1; then
       echo -e "${COK} ${BONSAI_TEXT}Detected existing EFI entry for GRUB${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}EFI entry for GRUB not detected. Attempting registration...${BONSAI_RESET}"
@@ -1029,7 +1048,7 @@ EOF
       fi
     fi
 
-    if ! arch-chroot /mnt efibootmgr | grep -E "GRUB|${grub_entry_label}" >/dev/null 2>&1; then
+    if ! arch-chroot /mnt efibootmgr | grep -E "GRUB|${grub_entry_label}" > /dev/null 2>&1; then
       echo -e "${CWR} ${BONSAI_YELLOW}WARNING: GRUB entry is still absent. Verify firmware configuration manually.${BONSAI_RESET}"
     fi
 
@@ -1061,7 +1080,7 @@ EOF
 
     mkdir -p /mnt/boot/loader/entries
 
-    cat <<'EOF' >/mnt/boot/loader/loader.conf
+    cat << 'EOF' > /mnt/boot/loader/loader.conf
 default  arch
 timeout  5
 console-mode max
@@ -1075,14 +1094,14 @@ EOF
     local kernel_opts
     kernel_opts="$(derive_kernel_opts)"
 
-    cat <<EOF >"$entry_path"
+    cat << EOF > "$entry_path"
 title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /initramfs-linux.img
 options $kernel_opts
 EOF
 
-    cat <<EOF >"$fallback_entry_path"
+    cat << EOF > "$fallback_entry_path"
 title   Arch Linux (Fallback)
 linux   /vmlinuz-linux
 initrd  /initramfs-linux-fallback.img
@@ -1111,7 +1130,7 @@ EOF
     local entry_label="BONSAI Linux (systemd-boot)"
     local loader_path='\\EFI\\systemd\\systemd-bootx64.efi'
 
-    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|${entry_label}" >/dev/null 2>&1; then
+    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|${entry_label}" > /dev/null 2>&1; then
       echo -e "${COK} ${BONSAI_TEXT}Detected existing EFI entry for systemd-boot${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}EFI entry not detected. Attempting to register ${entry_label}...${BONSAI_RESET}"
@@ -1121,7 +1140,7 @@ EOF
       fi
     fi
 
-    if ! arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|${entry_label}" >/dev/null 2>&1; then
+    if ! arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|${entry_label}" > /dev/null 2>&1; then
       echo -e "${CWR} ${BONSAI_YELLOW}WARNING: systemd-boot entry is still absent. Verify firmware configuration manually.${BONSAI_RESET}"
     fi
 
@@ -1171,21 +1190,20 @@ EOF
   fi
 
   if [ "$BOOTLOADER_TYPE" = "systemd-boot" ]; then
-    if grep -E "Linux Boot Manager|systemd-boot|BONSAI Linux \\(systemd-boot\\)" <<<"$efiboot_output" >/dev/null 2>&1; then
+    if grep -E "Linux Boot Manager|systemd-boot|BONSAI Linux \\(systemd-boot\\)" <<< "$efiboot_output" > /dev/null 2>&1; then
       echo -e "${COK} ${BONSAI_TEXT}EFI boot entry detected for systemd-boot${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry for systemd-boot not visible in firmware output.${BONSAI_RESET}"
     fi
     verify_efi_entry_targets_esp "systemd-boot" "$efiboot_output"
   else
-    if grep -E "GRUB|BONSAI Linux \\(GRUB\\)|Arch" <<<"$efiboot_output" >/dev/null 2>&1; then
+    if grep -E "GRUB|BONSAI Linux \\(GRUB\\)|Arch" <<< "$efiboot_output" > /dev/null 2>&1; then
       echo -e "${COK} ${BONSAI_TEXT}EFI boot entry detected for GRUB${BONSAI_RESET}"
     else
       echo -e "${CWR} ${BONSAI_YELLOW}WARNING: EFI boot entry for GRUB not visible in firmware output.${BONSAI_RESET}"
     fi
     verify_efi_entry_targets_esp "GRUB" "$efiboot_output"
   fi
-
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Creating user account...${BONSAI_RESET}"
   if ! arch-chroot /mnt useradd -m -G wheel -- "$userstr"; then
@@ -1220,14 +1238,14 @@ EOF
 
   if [ "$EFIVARFS_BOUND_CHROOT" = true ] && [ -e /mnt/sys/firmware/efi/efivars ]; then
     if mountpoint -q /mnt/sys/firmware/efi/efivars; then
-      umount /mnt/sys/firmware/efi/efivars 2>/dev/null || umount -l /mnt/sys/firmware/efi/efivars 2>/dev/null
+      umount /mnt/sys/firmware/efi/efivars 2> /dev/null || umount -l /mnt/sys/firmware/efi/efivars 2> /dev/null
     fi
     EFIVARFS_BOUND_CHROOT=false
   fi
 
   if [ "$EFIVARFS_HOST_MOUNTED" = true ] && [ -e /sys/firmware/efi/efivars ]; then
     if mountpoint -q /sys/firmware/efi/efivars; then
-      umount /sys/firmware/efi/efivars 2>/dev/null || umount -l /sys/firmware/efi/efivars 2>/dev/null
+      umount /sys/firmware/efi/efivars 2> /dev/null || umount -l /sys/firmware/efi/efivars 2> /dev/null
     fi
     EFIVARFS_HOST_MOUNTED=false
   fi
@@ -1245,9 +1263,9 @@ EOF
   read -p "$(echo -e ${BONSAI_YELLOW}Select action [1-2]: ${BONSAI_RESET})" action_choice
 
   case $action_choice in
-  1) shutdown now ;;
-  2) reboot ;;
-  *) echo -e "${CWR} ${BONSAI_YELLOW}No action taken${BONSAI_RESET}" ;;
+    1) shutdown now ;;
+    2) reboot ;;
+    *) echo -e "${CWR} ${BONSAI_YELLOW}No action taken${BONSAI_RESET}" ;;
   esac
 }
 
@@ -1257,7 +1275,7 @@ function install_hyprland() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Preparing to install Hyprland and tools...${BONSAI_RESET}\n"
 
-  if ! command -v yay &>/dev/null; then
+  if ! command -v yay &> /dev/null; then
     echo -e "${CNT} ${BONSAI_TEXT}Installing yay AUR helper...${BONSAI_RESET}"
     git clone https://aur.archlinux.org/yay.git
     pushd yay
@@ -1350,16 +1368,16 @@ function install_hyprland() {
 
 function install_software() {
   echo -en "${CNT} ${BONSAI_TEXT}Installing ${BONSAI_GREEN}$1${BONSAI_RESET} "
-  yay -S --noconfirm $1 &>>$INSTLOG &
+  yay -S --noconfirm $1 &>> $INSTLOG &
   show_progress $!
   echo -e "\e[1A\e[K${COK} ${BONSAI_GREEN}$1${BONSAI_TEXT} installed${BONSAI_RESET}"
 }
 
 function uninstall_software() {
   local pkg="$1"
-  if yay -Qi "$pkg" &>>/dev/null; then
+  if yay -Qi "$pkg" &>> /dev/null; then
     echo -en "${CNT} ${BONSAI_TEXT}Removing ${BONSAI_YELLOW}$pkg${BONSAI_RESET} "
-    yay -R --noconfirm $pkg &>>$INSTLOG &
+    yay -R --noconfirm $pkg &>> $INSTLOG &
     show_progress $!
   else
     echo -e "${CNT} ${BONSAI_MUTED}$pkg not installed, skipping${BONSAI_RESET}"
@@ -1411,19 +1429,19 @@ function restore_dotfiles() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select device [1-2]: ${BONSAI_RESET})" device_choice
 
   case "$device_choice" in
-  1)
-    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr desktop
-    chmod u+x ~/archinstall/dotfiles/config/hypr/desktop/.config/hypr/wallpaper.sh
-    echo -e "${COK} ${BONSAI_TEXT}Desktop configuration applied${BONSAI_RESET}"
-    ;;
-  2)
-    stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr laptop
-    chmod u+x ~/archinstall/dotfiles/config/hypr/laptop/.config/hypr/wallpaper.sh
-    echo -e "${COK} ${BONSAI_TEXT}Laptop configuration applied${BONSAI_RESET}"
-    ;;
-  *)
-    echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
-    ;;
+    1)
+      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr desktop
+      chmod u+x ~/archinstall/dotfiles/config/hypr/desktop/.config/hypr/wallpaper.sh
+      echo -e "${COK} ${BONSAI_TEXT}Desktop configuration applied${BONSAI_RESET}"
+      ;;
+    2)
+      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr laptop
+      chmod u+x ~/archinstall/dotfiles/config/hypr/laptop/.config/hypr/wallpaper.sh
+      echo -e "${COK} ${BONSAI_TEXT}Laptop configuration applied${BONSAI_RESET}"
+      ;;
+    *)
+      echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
+      ;;
   esac
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring remaining applications...${BONSAI_RESET}"
@@ -1474,15 +1492,15 @@ function restore_dotfiles() {
   mkdir -p ~/.local/share/calcurse
   mkdir -p ~/.config/calcurse/{hooks,caldav}
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config calcurse
-  chmod +x ~/.config/calcurse/scripts/*.sh 2>/dev/null || true
-  systemctl --user enable calcurse-notify.service 2>/dev/null || true
+  chmod +x ~/.config/calcurse/scripts/*.sh 2> /dev/null || true
+  systemctl --user enable calcurse-notify.service 2> /dev/null || true
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring procs process viewer...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config procs
 
   if [ ! -d ~/.password-store ]; then
     echo -e "${CNT} ${BONSAI_TEXT}Initializing password store...${BONSAI_RESET}"
-    gpg_key=$(gpg --list-secret-keys --keyid-format LONG 2>/dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
+    gpg_key=$(gpg --list-secret-keys --keyid-format LONG 2> /dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
     if [ -n "$gpg_key" ]; then
       pass init "$gpg_key"
     else
@@ -1607,8 +1625,8 @@ function update_bootloader_sddm() {
       echo -e "\n${CNT} ${BONSAI_TEXT}Select disk containing encrypted partition:${BONSAI_RESET}\n"
       for i in "${!disks[@]}"; do
         local disk="${disks[$i]}"
-        local size=$(lsblk -dno SIZE /dev/$disk 2>/dev/null)
-        local filesystems=$(lsblk -no FSTYPE /dev/$disk 2>/dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+        local size=$(lsblk -dno SIZE /dev/$disk 2> /dev/null)
+        local filesystems=$(lsblk -no FSTYPE /dev/$disk 2> /dev/null | grep -v "^$" | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
         [[ -z "$filesystems" ]] && filesystems="none"
         echo -e "  ${BONSAI_GREEN}[$((i + 1))]${BONSAI_RESET} ${BONSAI_TEXT}/dev/$disk${BONSAI_RESET} - ${BONSAI_MUTED}$size${BONSAI_RESET} ${BONSAI_PURPLE}[fs: $filesystems]${BONSAI_RESET}"
       done
@@ -1634,7 +1652,7 @@ function update_bootloader_sddm() {
         if grep -q '^GRUB_CMDLINE_LINUX=' /etc/default/grub; then
           sudo sed -i "s|^GRUB_CMDLINE_LINUX=.*|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\"|" /etc/default/grub
         else
-          echo "GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\"" | sudo tee -a /etc/default/grub >/dev/null
+          echo "GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=${deviceUUID}:root:allow-discards\"" | sudo tee -a /etc/default/grub > /dev/null
         fi
       fi
     fi
@@ -1680,30 +1698,30 @@ function main_menu() {
   read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-5]: ${BONSAI_RESET})" menu_choice
 
   case $menu_choice in
-  1)
-    pacman_init
-    btrfs_format
-    base_config
-    ;;
-  2)
-    install_hyprland
-    ;;
-  3)
-    restore_dotfiles
-    ;;
-  4)
-    update_bootloader_sddm
-    ;;
-  5)
-    echo -e "\n${COK} ${BONSAI_GREEN}Thank you for using BONSAI installer!${BONSAI_RESET}"
-    echo -e "${BONSAI_MUTED}May your system grow with purpose 🌱${BONSAI_RESET}\n"
-    exit 0
-    ;;
-  *)
-    echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
-    sleep 2
-    main_menu
-    ;;
+    1)
+      pacman_init
+      btrfs_format
+      base_config
+      ;;
+    2)
+      install_hyprland
+      ;;
+    3)
+      restore_dotfiles
+      ;;
+    4)
+      update_bootloader_sddm
+      ;;
+    5)
+      echo -e "\n${COK} ${BONSAI_GREEN}Thank you for using BONSAI installer!${BONSAI_RESET}"
+      echo -e "${BONSAI_MUTED}May your system grow with purpose 🌱${BONSAI_RESET}\n"
+      exit 0
+      ;;
+    *)
+      echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
+      sleep 2
+      main_menu
+      ;;
   esac
 }
 
