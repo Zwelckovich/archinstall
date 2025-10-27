@@ -48,178 +48,179 @@ SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ## Package arrays (preserved from original)
 hypr_base_stage=(
-  kitty
-  pamixer
-  pavucontrol
-  pipewire-alsa
-  playerctl
-  rofi-wayland
-  waybar
-  sddm
-  hyprcursor
-  hyprutils
-  hypridle
-  hyprlock
-  hyprland
-  pyprland
-  swww
-  swaync
-  wl-clipboard
-  clipse
-  adobe-source-code-pro-fonts
-  noto-fonts-emoji
-  otf-font-awesome
-  ttf-droid
-  ttf-fira-code
-  ttf-jetbrains-mono
-  ttf-jetbrains-mono-nerd
-  qt5ct
-  qt6ct
-  catppuccin-cursors-mocha
-  nwg-look
+  kitty                           # GPU-accelerated terminal emulator
+  pamixer                         # PulseAudio command-line mixer
+  pavucontrol                     # PulseAudio volume control GUI
+  pipewire-alsa                   # ALSA compatibility for PipeWire
+  playerctl                       # Media player controller
+  rofi-wayland                    # Application launcher for Wayland
+  waybar                          # Status bar for Wayland compositors
+  sddm                            # Display manager
+  hyprcursor                      # Hyprland cursor theme manager
+  hyprutils                       # Hyprland utilities library
+  hypridle                        # Hyprland idle daemon
+  hyprlock                        # Hyprland screen locker
+  hyprland                        # Dynamic tiling Wayland compositor
+  pyprland                        # Python plugin system for Hyprland
+  swww                            # Animated wallpaper daemon for Wayland
+  swaync                          # Notification center for Sway/Wayland
+  wl-clipboard                    # Wayland clipboard utilities
+  clipse                          # Clipboard manager
+  adobe-source-code-pro-fonts     # Monospaced font family
+  noto-fonts-emoji                # Google's emoji font
+  otf-font-awesome                # Icon font
+  ttf-droid                       # Android's default font family
+  ttf-fira-code                   # Monospaced font with programming ligatures
+  ttf-jetbrains-mono              # JetBrains monospaced font
+  ttf-jetbrains-mono-nerd         # JetBrains font with extra glyphs
+  qt5ct                           # Qt5 configuration tool
+  qt6ct                           # Qt6 configuration tool
+  catppuccin-cursors-mocha        # Catppuccin cursor theme
+  nwg-look                        # GTK theme switcher for Wayland
 )
 
 piperwire_stage=(
-  pipewire
-  wireplumber
-  pipewire-audio
-  pipewire-alsa
-  pipewire-pulse
-  sof-firmware
+  pipewire              # Modern multimedia framework
+  wireplumber           # Session/policy manager for PipeWire
+  pipewire-audio        # Audio support for PipeWire
+  pipewire-alsa         # ALSA compatibility layer
+  pipewire-pulse        # PulseAudio replacement compatibility
+  sof-firmware          # Sound Open Firmware for Intel audio
 )
 
 tools_stage=(
-  feh
-  pacman-contrib
-  npm
-  xfsprogs
-  vivaldi
-  vivaldi-ffmpeg-codecs
-  visual-studio-code-bin
-  qt5-graphicaleffects
-  qt5-svg
-  qt6-svg
-  qt5-quickcontrols2
-  eza
-  hyfetch
-  bfg
-  git-crypt
-  git-lfs
-  github-cli
-  python
-  python-pip
-  pyenv
-  uv
-  python-pynvim
-  tk
-  rust
-  docker
-  yarn
-  claude-code
-  shfmt
-  stylua
-  luacheck
-  prettier
-  tokei
-  quarto-cli-bin
-  step
-  texlive
-  texlive-langgerman
-  zathura
-  zathura-pdf-mupdf
-  meld
-  baobab
-  neomutt
-  w3m
-  lynx
-  urlscan
-  isync
-  msmtp
-  pass
-  abook
-  calcurse
-  d2
-  ffmpeg
-  audacity
-  yt-dlp
-  mpv
-  ncspot
-  inkscape
-  typst
-  tinymist
-  grim
-  slurp
-  tesseract
-  tesseract-data-eng
-  tesseract-data-deu
-  chromium-widevine
-  blender
-  bottom
-  lazygit
-  stow
-  zsh
-  fzf
-  fd
-  bat
-  git-delta
-  tlrc
-  thefuck
-  zoxide
-  reflector
-  ripgrep
-  procs
-  tre-command
-  unzip
-  ni-visa
-  expac
-  scc
-  duf
-  ncdu
-  rsync
-  dua-cli
-  sox
-  testdisk
-  cifs-utils
-  smbclient
-  openssh
-  file
-  ueberzugpp
-  chafa
-  jq
-  yazi
-  steam
-  lutris
-  discord
-  qucs-s
-  paraview
-  bluez
-  bluez-utils
-  blueman
+  feh                             # Lightweight image viewer
+  pacman-contrib                  # Contributed scripts for pacman
+  npm                             # Node.js package manager
+  xfsprogs                        # XFS filesystem utilities
+  vivaldi                         # Feature-rich web browser
+  vivaldi-ffmpeg-codecs           # FFmpeg codecs for Vivaldi
+  visual-studio-code-bin          # Microsoft's code editor
+  qt5-graphicaleffects            # Qt5 graphical effects
+  qt5-svg                         # Qt5 SVG support
+  qt6-svg                         # Qt6 SVG support
+  qt5-quickcontrols2              # Qt5 quick controls
+  eza                             # Modern ls replacement (better colors/icons)
+  hyfetch                         # System info with pride flags
+  bfg                             # Git repository cleaner
+  git-crypt                       # Transparent file encryption in git
+  git-lfs                         # Git Large File Storage
+  github-cli                      # GitHub command-line interface
+  python                          # Python programming language
+  python-pip                      # Python package installer
+  uv                              # Fast Python package installer (BONSAI preferred)
+  python-pynvim                   # Python client for Neovim
+  tk                              # Tcl/Tk GUI toolkit
+  rust                            # Rust programming language
+  pycharm                         # Python IDE by JetBrains
+  webstorm                        # JavaScript/TypeScript IDE by JetBrains
+  docker                          # Container platform
+  yarn                            # Fast JavaScript package manager (BONSAI preferred)
+  claude-code                     # Claude AI code assistant
+  shfmt                           # Shell script formatter
+  stylua                          # Lua code formatter
+  luacheck                        # Lua linter
+  prettier                        # Code formatter for web languages
+  tokei                           # Code statistics tool
+  quarto-cli-bin                  # Scientific publishing system
+  step                            # Certificate/key management CLI
+  texlive                         # LaTeX document preparation system
+  texlive-langgerman              # German language support for LaTeX
+  zathura                         # Lightweight document viewer
+  zathura-pdf-mupdf               # PDF support for Zathura
+  meld                            # Visual diff and merge tool
+  baobab                          # Disk usage analyzer
+  neomutt                         # Terminal email client
+  w3m                             # Text-based web browser
+  lynx                            # Text-based web browser
+  urlscan                         # URL extractor/launcher
+  isync                           # IMAP/MailDir synchronization
+  msmtp                           # SMTP client
+  pass                            # Password manager
+  abook                           # Address book for mutt
+  calcurse                        # Calendar and scheduling app
+  d2                              # Modern diagram scripting language
+  ffmpeg                          # Multimedia framework
+  audacity                        # Audio editor
+  yt-dlp                          # YouTube downloader
+  mpv                             # Media player
+  ncspot                          # Spotify TUI client
+  inkscape                        # Vector graphics editor
+  typst                           # Modern markup-based typesetting
+  tinymist                        # Typst language server
+  grim                            # Wayland screenshot tool
+  slurp                           # Wayland region selector
+  tesseract                       # OCR engine
+  tesseract-data-eng              # English language data for Tesseract
+  tesseract-data-deu              # German language data for Tesseract
+  chromium-widevine               # DRM support for Chromium
+  blender                         # 3D creation suite
+  bottom                          # System monitor (btm)
+  lazygit                         # Terminal UI for git
+  stow                            # Symlink farm manager (dotfiles)
+  zsh                             # Z shell
+  fzf                             # Fuzzy finder
+  fd                              # Fast find alternative
+  bat                             # Cat clone with syntax highlighting
+  git-delta                       # Syntax-highlighting pager for git
+  tlrc                            # Rust tldr client
+  thefuck                         # Command correction tool
+  zoxide                          # Smarter cd command
+  reflector                       # Pacman mirror list updater
+  ripgrep                         # Fast grep alternative
+  procs                           # Modern ps replacement
+  tre-command                     # Tree with git awareness
+  unzip                           # ZIP archive extractor
+  ni-visa                         # National Instruments VISA library
+  expac                           # Pacman database extraction utility
+  scc                             # Code counter with complexity analysis
+  duf                             # Disk usage utility
+  ncdu                            # NCurses disk usage analyzer
+  rsync                           # Fast file transfer and sync
+  dua-cli                         # Disk usage analyzer
+  sox                             # Sound processing tool
+  testdisk                        # Data recovery tool
+  cifs-utils                      # CIFS/SMB filesystem utilities
+  smbclient                       # Samba client
+  openssh                         # SSH client and server
+  file                            # File type identification
+  ueberzugpp                      # Terminal image display
+  chafa                           # Image to text converter
+  jq                              # JSON processor
+  yazi                            # Terminal file manager
+  steam                           # Gaming platform
+  lutris                          # Game launcher
+  discord                         # Voice/chat platform
+  qucs-s                          # Circuit simulator
+  paraview                        # Scientific data visualization
+  bluez                           # Bluetooth protocol stack
+  bluez-utils                     # Bluetooth utilities
+  blueman                         # Bluetooth manager
 )
 
 #software for nvidia GPU only
 nvidia_stage=(
-  linux-headers
-  nvidia
-  nvidia-settings
-  nvidia-utils
-  libva
-  libva-nvidia-driver-git
-  cuda
+  linux-headers                   # Kernel headers for building modules
+  nvidia                          # NVIDIA proprietary driver
+  nvidia-settings                 # NVIDIA driver configuration tool
+  nvidia-utils                    # NVIDIA driver utilities
+  libva                           # Video Acceleration API
+  libva-nvidia-driver-git         # VA-API driver for NVIDIA
+  cuda                            # NVIDIA CUDA toolkit
 )
 
 uninstall_stage=(
-  dunst
-  mako
-  rofi
-  allust-git
+  dunst                           # Lightweight notification daemon (conflicts with swaync)
+  mako                            # Wayland notification daemon (conflicts with swaync)
+  rofi                            # X11 version (using rofi-wayland instead)
+  allust-git                      # Outdated package to remove
 )
 
 uninstall_nvidia_stage=(
-  hyprland-git
-  hyprland-nvidia
-  hyprland-nvidia-git
-  hyprland-nvidia-hidpi-git
+  hyprland-git                    # Git version (using stable instead)
+  hyprland-nvidia                 # Old NVIDIA-patched version
+  hyprland-nvidia-git             # Git version of NVIDIA patch
+  hyprland-nvidia-hidpi-git       # HiDPI NVIDIA variant (outdated)
 )
 
 # BONSAI styled header
