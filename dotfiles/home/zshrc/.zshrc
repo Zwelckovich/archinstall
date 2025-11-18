@@ -127,7 +127,7 @@ alias yaclr="yay -Scc --noconfirm"
 alias yain="yay -S --noconfirm"
 alias yamir="yay -Syy --noconfirm"
 alias yarem="yay -Rns --noconfirm"
-alias yasu="yay -Syu --noconfirm"
+alias yasu='yay -Syu --noconfirm --mflags "--nocheck"' 
 alias yareps="yay -Ss --noconfirm"
 alias yalst="yay -Qe --noconfirm"
 alias yabig="expac -H M '%m\t%n' | sort -h | nl"
@@ -149,13 +149,6 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
-
-
-# --- PYENV ----
-
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
 
 # --- Python Aliases ---
 
@@ -185,9 +178,6 @@ export PATH=~/.npm-global/bin:$PATH
 
 # --- MPV Aliases ---
 alias mpv_anime="mpv --include=~/archinstall/tools/mpv/anime-quality.conf"
-
-# --- openEMS ---
-export PATH=”$HOME/opt/openEMS/bin:$PATH”
 
 # --- XDG-OPEN Aliases ---
 alias -s jpg=feh
