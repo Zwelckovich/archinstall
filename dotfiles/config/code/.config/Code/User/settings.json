@@ -108,4 +108,8 @@
   "latex-workshop.synctex.afterBuild.enabled": true,
   "python.analysis.typeCheckingMode": "standard",
   "python.analysis.diagnosticSeverityOverrides": {},
+  "gitlens.ai.model": "gitkraken",
+  "gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
+  "typescript.suggest.paths": false,
+  "javascript.suggest.paths": false,
 }

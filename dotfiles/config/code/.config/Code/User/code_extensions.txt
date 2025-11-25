@@ -1,10 +1,8 @@
-anthropic.claude-code
 catppuccin.catppuccin-vsc
 catppuccin.catppuccin-vsc-icons
 chaitanyashahare.lazygit
 charliermarsh.ruff
 grapecity.gc-excelviewer
-ionutvmi.path-autocomplete
 james-yu.latex-workshop
 mechatroner.rainbow-csv
 ms-azuretools.vscode-containers
@@ -22,3 +20,11 @@ ms-vscode.cpptools
 platformio.platformio-ide
 redhat.java
 yzhang.markdown-all-in-one
+myriad-dreamin.tinymist
+h5web.vscode-h5web
+usernamehw.errorlens
+eamodio.gitlens
+christian-kohler.path-intellisense
+kevinrose.vsc-python-indent
+njpwerner.autodocstring
+
