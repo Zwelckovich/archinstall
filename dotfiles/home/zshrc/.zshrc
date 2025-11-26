@@ -188,3 +188,4 @@ alias -s pdf=zathura
 # --- Pycharm/Webstorm Aliases ---
 alias pych="nohup pycharm > /dev/null 2>&1 &"
 alias webst="nohup /opt/webstorm/bin/webstorm.sh > /dev/null 2>&1 &"
+export PATH="$HOME/.local/bin:$PATH"
