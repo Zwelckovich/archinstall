@@ -24,7 +24,7 @@ myriad-dreamin.tinymist
 h5web.vscode-h5web
 usernamehw.errorlens
 eamodio.gitlens
-christian-kohler.path-intellisense
+ionutvmi.path-autocomplete
 kevinrose.vsc-python-indent
 njpwerner.autodocstring
 
