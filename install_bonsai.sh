@@ -1553,6 +1553,13 @@ function update_bootloader_sddm() {
   sudo cp -r ~/archinstall/dotfiles/etc/sddm.conf /etc/
   sudo cp -r ~/archinstall/dotfiles/usr/share/sddm/themes/bonsai/ /usr/share/sddm/themes/
 
+  # Verify SDDM theme installation
+  if [ -f /usr/share/sddm/themes/bonsai/Main.qml ]; then
+    echo -e "${COK} ${BONSAI_TEXT}SDDM BONSAI theme installed successfully${BONSAI_RESET}"
+  else
+    echo -e "${CER} ${BONSAI_RED}SDDM theme installation failed!${BONSAI_RESET}"
+  fi
+
   if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
     echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB with BONSAI theme...${BONSAI_RESET}"
     sudo cp -r ~/archinstall/dotfiles/etc/default/grub /etc/default/
