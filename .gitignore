@@ -30,3 +30,19 @@ dotfiles/config/code/.config/Code/CachedExtensionVSIXs
 dotfiles/config/code/.config/Code/CachedProfilesData/__default__profile__
 dotfiles/config/code/.config/Code/Session Storage
 dotfiles/config/code/.config/Code/machineid
+dotfiles/config/code/.config/Code/CachedConfigurations/defaults/configurationDefaultsOverrides
+dotfiles/config/code/.config/Code/DawnGraphiteCache
+dotfiles/config/code/.config/Code/DawnWebGPUCache
+dotfiles/config/code/.config/Code/Dictionaries
+dotfiles/config/code/.config/Code/GPUCache
+dotfiles/config/code/.config/Code/Service Worker
+dotfiles/config/code/.config/Code/User
+dotfiles/config/code/.config/Code/WebStorage
+dotfiles/config/code/.config/Code/Cookies
+dotfiles/config/code/.config/Code/Cookies-journal
+dotfiles/config/code/.config/Code/DIPS
+dotfiles/config/code/.config/Code/DIPS-wal
+dotfiles/config/code/.config/Code/SharedStorage
+dotfiles/config/code/.config/Code/SharedStorage-wal
+dotfiles/config/code/.config/Code/code.lock
+dotfiles/config/code/.config/Code/languagepacks.json
