@@ -27,4 +27,7 @@ eamodio.gitlens
 ionutvmi.path-autocomplete
 kevinrose.vsc-python-indent
 njpwerner.autodocstring
+tamasfe.even-better-toml
+humao.rest-client
+biomejs.biome
 
