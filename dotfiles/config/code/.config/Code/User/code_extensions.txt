@@ -30,4 +30,5 @@ njpwerner.autodocstring
 tamasfe.even-better-toml
 humao.rest-client
 biomejs.biome
-
+markwhen.markwhen
+terrastruct.d2
