@@ -112,4 +112,5 @@
   "gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
   "typescript.suggest.paths": false,
   "javascript.suggest.paths": false,
+  "claudeCode.preferredLocation": "panel",
 }
