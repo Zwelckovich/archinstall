@@ -46,3 +46,5 @@ dotfiles/config/code/.config/Code/SharedStorage
 dotfiles/config/code/.config/Code/SharedStorage-wal
 dotfiles/config/code/.config/Code/code.lock
 dotfiles/config/code/.config/Code/languagepacks.json
+dotfiles/config/code/.config/Code/VideoDecodeStats
+dotfiles/config/code/.config/Code/shared_proto_db
