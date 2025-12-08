@@ -116,6 +116,7 @@ tools_stage=(
   webstorm                        # JavaScript/TypeScript IDE by JetBrains
   docker                          # Container platform
   yarn                            # Fast JavaScript package manager (BONSAI preferred)
+  biome                           # Fast formatter/linter for JS/TS (BONSAI preferred)
   claude-code                     # Claude AI code assistant
   shfmt                           # Shell script formatter
   stylua                          # Lua code formatter
