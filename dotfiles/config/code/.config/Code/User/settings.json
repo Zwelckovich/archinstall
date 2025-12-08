@@ -42,6 +42,7 @@
       "source.organizeImports": "explicit"
     }
   },
+  "ruff.lineLength": 100,
 
   // ═══════════════════════════════════════════════════════════════════════════
   // JAVASCRIPT / TYPESCRIPT / REACT (Biome)
