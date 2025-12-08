@@ -26,12 +26,23 @@ fi
 
 echo -e "${CYAN}Starting installation from $EXTENSION_FILE...${NC}"
 
-# 3. The Main Loop
+# 3. Get list of already installed extensions (prevents V8 crash on re-install)
+echo -e "${CYAN}Checking installed extensions...${NC}"
+INSTALLED_EXTENSIONS=$(code --list-extensions 2>/dev/null | tr '[:upper:]' '[:lower:]')
+
+# 4. The Main Loop
 while IFS= read -r ext || [[ -n "$ext" ]]; do
     # Clean whitespace and ignore empty lines
     ext=$(echo "$ext" | xargs)
 
     if [[ -n "$ext" ]]; then
+        # Check if extension is already installed (case-insensitive)
+        ext_lower=$(echo "$ext" | tr '[:upper:]' '[:lower:]')
+        if echo "$INSTALLED_EXTENSIONS" | grep -q "^${ext_lower}$"; then
+            echo -e "${CYAN}Skipping (already installed): $ext${NC}"
+            continue
+        fi
+
         echo -e "${GREEN}Installing extension: $ext${NC}"
         code --install-extension "$ext"
     fi
