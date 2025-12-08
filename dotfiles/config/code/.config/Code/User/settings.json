@@ -204,5 +204,10 @@
     "code --no-sandbox -r -g %{input}:%{line}",
     "%PDF%"
   ],
-  "latex-workshop.synctex.afterBuild.enabled": true
+  "latex-workshop.synctex.afterBuild.enabled": true,
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // MARKDOWN PREVIEW ENHANCED
+  // ═══════════════════════════════════════════════════════════════════════════
+  "markdown-preview-enhanced.previewTheme": "github-dark.css"
 }
