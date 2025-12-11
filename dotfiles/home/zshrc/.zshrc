@@ -33,7 +33,7 @@ alias edit-zsh="nvim ~/.zshrc"
 HISTFILE=$HOME/.zhistory
 SAVEHIST=1000
 HISTSIZE=999
-setopt share_history 
+setopt share_history
 setopt hist_expire_dups_first
 setopt hist_ignore_dups
 setopt hist_verify
@@ -127,7 +127,7 @@ alias yaclr="yay -Scc --noconfirm"
 alias yain="yay -S --noconfirm"
 alias yamir="yay -Syy --noconfirm"
 alias yarem="yay -Rns --noconfirm"
-alias yasu='yay -Syu --noconfirm --mflags "--nocheck"' 
+alias yasu='yay -Syu --noconfirm --mflags "--nocheck"'
 alias yareps="yay -Ss --noconfirm"
 alias yalst="yay -Qe --noconfirm"
 alias yabig="expac -H M '%m\t%n' | sort -h | nl"
@@ -185,7 +185,5 @@ alias -s jpeg=feh
 alias -s png=feh
 alias -s pdf=zathura
 
-# --- Pycharm/Webstorm Aliases ---
-alias pych="nohup pycharm > /dev/null 2>&1 &"
-alias webst="nohup /opt/webstorm/bin/webstorm.sh > /dev/null 2>&1 &"
-export PATH="$HOME/.local/bin:$PATH"
+# --- Programming Environment Update ---
+alias codeup="yamir && yain uv yarn biome visual-studio-code-bin && claude update"
