@@ -159,6 +159,7 @@ alias py="python"
 alias pyact="source .venv/bin/activate && which python"
 alias pydeact="deactivate && which python"
 alias pyvenv="python -m venv .venv && cp ~/archinstall/tools/requirements.txt ./"
+alias pycheck="uv run ruff check --fix && uv run ruff format && uv run pyright"
 
 # --- Tree Aliases ---
 
@@ -185,7 +186,7 @@ alias -s png=feh
 alias -s pdf=zathura
 
 # --- Programming Environment Update ---
-alias codeup="yamir && yain uv yarn biome visual-studio-code-bin && claude update"
+alias codeup="yamir && yain uv yarn biome visual-studio-code-bin && claude update && code --update-extensions && npm install -g @google/gemini-cli"
 
 # --- LibreVNA GUI ---
 alias librevna="/usr/bin/LibreVNA-GUI > /dev/null 2>&1 &"
