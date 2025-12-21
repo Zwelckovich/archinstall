@@ -92,6 +92,7 @@ tools_stage=(
   feh                             # Lightweight image viewer
   pacman-contrib                  # Contributed scripts for pacman
   npm                             # Node.js package manager
+  nvm                             # Node Version Manager
   xfsprogs                        # XFS filesystem utilities
   vivaldi                         # Feature-rich web browser
   vivaldi-ffmpeg-codecs           # FFmpeg codecs for Vivaldi
