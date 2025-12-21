@@ -95,6 +95,23 @@ _fzf_comprun() {
   esac
 }
 
+# --- NPM ---
+# 1. Initialize NVM (Specific to Arch Linux package)
+if [ -s "/usr/share/nvm/init-nvm.sh" ]; then
+    source /usr/share/nvm/init-nvm.sh
+fi
+
+# 2. Set the working directory for NVM (usually ~/.nvm)
+export NVM_DIR="$HOME/.nvm"
+
+# 3. Auto-install Node if none is present
+if [ "$(nvm current)" = "none" ]; then
+    echo "NVM: No Node.js version detected. Installing latest LTS..."
+    nvm install --lts
+    nvm alias default 'lts/*'
+    nvm use default
+fi
+
 # ----- NeoVim -----
 export EDITOR="nvim"
 
