@@ -152,7 +152,7 @@ alias yainfo="yay -Qi"                 # Package info
 
 # System maintenance
 alias yamir="yay -Syy"                 # Refresh mirrors
-alias yaclr="yay -Scc"                 # Clear cache
+alias yaclr="sudo rm -rf /var/cache/pacman/pkg/download-* 2>/dev/null; yay -Scc"  # Clear cache (including stray downloads)
 alias yakey="sudo pacman -S archlinux-keyring"
 alias yaref="sudo reflector --verbose --country Germany --age 12 --protocol https,http --sort rate --save /etc/pacman.d/mirrorlist"
 
