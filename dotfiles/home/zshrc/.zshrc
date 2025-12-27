@@ -209,10 +209,6 @@ alias pycheck="uv run ruff check --fix && uv run ruff format && uv run pyright"
 alias tree="tre"
 
 
-# --- Citrix Aliases ---
-alias citrix="/opt/Citrix/ICAClient/wfica"
-
-
 # --- NCDU Aliases ---
 alias ds="ncdu --color dark"
 
