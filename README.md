@@ -637,6 +637,99 @@ case "$chosen" in
 esac
 ```
 
+## Timeshift System Recovery
+
+Timeshift creates system snapshots before updates. If an update breaks your system (e.g., NVIDIA driver incompatibility with new kernel), you can restore to a working state.
+
+### Scenario 1: System Still Boots
+
+If you can still boot (even with graphics issues):
+
+```sh
+# GUI method
+sudo timeshift-gtk
+
+# CLI method - list available snapshots
+sudo timeshift --list
+
+# CLI method - restore most recent snapshot
+sudo timeshift --restore
+
+# CLI method - restore specific snapshot
+sudo timeshift --restore --snapshot '2024-01-15_10-30-45'
+```
+
+After restore → reboot.
+
+### Scenario 2: System Won't Boot
+
+If kernel/driver update completely breaks boot:
+
+**Step 1:** Boot from Arch Live USB
+
+**Step 2:** Mount your system
+
+```sh
+# Find your partitions
+lsblk
+
+# Mount root partition (replace sdXn with your actual partition)
+sudo mount /dev/sdXn /mnt
+
+# If you have a separate home partition
+sudo mount /dev/sdYn /mnt/home
+```
+
+**Step 3:** Install and run Timeshift
+
+```sh
+# Install timeshift in live environment
+sudo pacman -Sy timeshift
+
+# Restore to mounted system
+sudo timeshift --restore --target /mnt
+```
+
+**Step 4:** Reboot into restored system
+
+```sh
+sudo umount -R /mnt
+sudo reboot
+```
+
+### Emergency Reference Card
+
+Save this somewhere accessible (phone, notes app):
+
+```
+═══════════════════════════════════════════
+TIMESHIFT EMERGENCY RESTORE
+═══════════════════════════════════════════
+1. Boot Arch Live USB
+2. lsblk                              # find partitions
+3. sudo mount /dev/sdXn /mnt          # mount root
+4. sudo pacman -Sy timeshift
+5. sudo timeshift --restore --target /mnt
+6. sudo reboot
+═══════════════════════════════════════════
+```
+
+### Useful Commands
+
+```sh
+# Create manual snapshot before risky operations
+yasnap
+
+# Safe update (auto-creates snapshot first)
+yasu
+
+# View recent package changes (after problems)
+yahist
+
+# Downgrade specific packages
+yadown linux nvidia
+```
+
 ## Python
 
 ```sh

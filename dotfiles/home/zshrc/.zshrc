@@ -143,20 +143,46 @@ alias lg="lazygit"
 
 # ---- YAY ----
 
-alias yaclr="yay -Scc --noconfirm"
-alias yain="yay -S --noconfirm"
-alias yamir="yay -Syy --noconfirm"
-alias yarem="yay -Rns --noconfirm"
-alias yasu='yay -Syu --noconfirm --mflags "--nocheck"'
-alias yareps="yay -Ss --noconfirm"
-alias yalst="yay -Qe --noconfirm"
-alias yabig="expac -H M '%m\t%n' | sort -h | nl"
-alias yaref="sudo reflector --verbose --country Germany --age 12 --protocol https,http --sort rate --save /etc/pacman.d/mirrorlist"
+# Basic operations
+alias yain="yay -S --noconfirm"        # Install package
+alias yarem="yay -Rns --noconfirm"     # Remove with deps
+alias yareps="yay -Ss"                 # Search repos
+alias yalst="yay -Qe"                  # List explicitly installed
+alias yainfo="yay -Qi"                 # Package info
+
+# System maintenance
+alias yamir="yay -Syy"                 # Refresh mirrors
+alias yaclr="yay -Scc"                 # Clear cache
 alias yakey="sudo pacman -S archlinux-keyring"
-alias yareinstall="sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkig -si"
+alias yaref="sudo reflector --verbose --country Germany --age 12 --protocol https,http --sort rate --save /etc/pacman.d/mirrorlist"
+
+# Disk usage
+alias yabig="expac -H M '%m\t%n' | sort -h | tail -20"
+
+# Reinstall yay (fixed typo)
+alias yareinstall="sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git /tmp/yay && cd /tmp/yay && makepkg -si"
+
+# Clean orphans (interactive)
 yaclean() {
-  yay -Rcs $(yay -Qtdq)
+  local orphans=$(yay -Qtdq 2>/dev/null)
+  if [[ -n "$orphans" ]]; then
+    echo "Orphaned packages:"
+    echo "$orphans"
+    echo ""
+    read -q "?Remove these packages? [y/N] " && echo && yay -Rns $(echo $orphans)
+  else
+    echo "No orphaned packages found."
+  fi
 }
+
+# ---- TIMESHIFT (System Snapshots) ----
+
+alias yasnap="sudo timeshift --create --comments 'Pre-update $(date +%Y-%m-%d_%H-%M)'"
+alias yasu='yasnap && yay -Syu --noconfirm --mflags "--nocheck"'
+
+# Recovery helpers
+alias yadown="sudo downgrade"          # Downgrade packages
+alias yahist="tail -50 /var/log/pacman.log | grep -E 'upgraded|installed|removed'"
 
 # ---- TLDR ----
 

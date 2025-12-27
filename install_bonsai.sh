@@ -182,6 +182,8 @@ tools_stage=(
   dua-cli                         # Disk usage analyzer
   sox                             # Sound processing tool
   testdisk                        # Data recovery tool
+  timeshift                       # System restore/snapshot utility
+  downgrade                       # Downgrade packages from cache/ALA
   cifs-utils                      # CIFS/SMB filesystem utilities
   smbclient                       # Samba client
   openssh                         # SSH client and server
