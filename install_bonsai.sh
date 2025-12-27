@@ -29,6 +29,11 @@ SELECTED_DISK_NAME=""
 USE_ENCRYPTION=true
 CPU_TYPE=""
 BOOTLOADER_TYPE=""
+
+# Distribution and kernel selection (CachyOS support)
+DISTRO_TYPE="arch"              # arch or cachyos
+KERNEL_TYPE="linux"             # linux, linux-cachyos, linux-cachyos-bore, etc.
+KERNEL_HEADERS="linux-headers"  # Computed based on kernel selection
 PARTITION1=""
 PARTITION2=""
 # Cached EFI system partition metadata
@@ -202,8 +207,8 @@ tools_stage=(
   blueman                         # Bluetooth manager
 )
 
-#software for nvidia GPU only
-nvidia_stage=(
+# NVIDIA GPU packages - Arch Linux (kernel-specific driver)
+nvidia_stage_arch=(
   linux-headers                   # Kernel headers for building modules
   nvidia                          # NVIDIA proprietary driver
   nvidia-settings                 # NVIDIA driver configuration tool
@@ -211,6 +216,27 @@ nvidia_stage=(
   libva                           # Video Acceleration API
   libva-nvidia-driver-git         # VA-API driver for NVIDIA
   cuda                            # NVIDIA CUDA toolkit
+)
+
+# NVIDIA GPU packages - CachyOS (DKMS driver for any kernel)
+nvidia_stage_cachyos=(
+  nvidia-dkms                     # NVIDIA DKMS driver (works with any kernel)
+  nvidia-settings                 # NVIDIA driver configuration tool
+  nvidia-utils                    # NVIDIA driver utilities
+  libva                           # Video Acceleration API
+  libva-nvidia-driver-git         # VA-API driver for NVIDIA
+  cuda                            # NVIDIA CUDA toolkit
+)
+
+# CachyOS optimized packages (x86-64-v3 builds)
+cachyos_optimized_packages=(
+  mesa                            # Graphics stack (significant gaming improvement)
+  mesa-utils                      # Mesa utilities
+  zstd                            # Compression (faster package operations)
+  zlib-ng                         # Compression library
+  sqlite                          # Database (faster package queries)
+  pipewire                        # Audio (lower latency)
+  wireplumber                     # PipeWire session manager
 )
 
 uninstall_stage=(
@@ -401,6 +427,175 @@ function select_bootloader() {
                                       echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to GRUB${BONSAI_RESET}"
                                                                                                                            ;;
   esac
+}
+
+# Distribution selection with BONSAI styling (Arch Linux vs CachyOS)
+function select_distro() {
+  show_section "Distribution Selection"
+
+  echo -e "${CNT} ${BONSAI_TEXT}Choose your distribution:${BONSAI_RESET}\n"
+  echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}Arch Linux${BONSAI_RESET} ${BONSAI_MUTED}(Standard, vanilla kernel)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[2]${BONSAI_RESET} ${BONSAI_TEXT}CachyOS${BONSAI_RESET} ${BONSAI_MUTED}(Performance-optimized, gaming kernels)${BONSAI_RESET}"
+
+  echo ""
+  read -p "$(echo -e ${BONSAI_YELLOW}Select distribution [1-2]: ${BONSAI_RESET})" distro_choice
+
+  case $distro_choice in
+    1)
+      DISTRO_TYPE="arch"
+      KERNEL_TYPE="linux"
+      KERNEL_HEADERS="linux-headers"
+      echo -e "\n${COK} ${BONSAI_TEXT}Distribution: ${BONSAI_GREEN}Arch Linux${BONSAI_RESET}"
+      ;;
+    2)
+      DISTRO_TYPE="cachyos"
+      echo -e "\n${COK} ${BONSAI_TEXT}Distribution: ${BONSAI_GREEN}CachyOS${BONSAI_RESET}"
+      select_cachyos_kernel
+      ;;
+    *)
+      DISTRO_TYPE="arch"
+      KERNEL_TYPE="linux"
+      KERNEL_HEADERS="linux-headers"
+      echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to Arch Linux${BONSAI_RESET}"
+      ;;
+  esac
+}
+
+# CachyOS kernel variant selection with BONSAI styling
+function select_cachyos_kernel() {
+  show_section "CachyOS Kernel Selection"
+
+  echo -e "${CNT} ${BONSAI_TEXT}Choose your CachyOS kernel variant:${BONSAI_RESET}\n"
+  echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}linux-cachyos${BONSAI_RESET} ${BONSAI_MUTED}(Default, BORE scheduler - recommended)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[2]${BONSAI_RESET} ${BONSAI_TEXT}linux-cachyos-bore${BONSAI_RESET} ${BONSAI_MUTED}(BORE scheduler, explicit)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[3]${BONSAI_RESET} ${BONSAI_TEXT}linux-cachyos-lts${BONSAI_RESET} ${BONSAI_MUTED}(Long-term support, stable)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[4]${BONSAI_RESET} ${BONSAI_TEXT}linux-cachyos-hardened${BONSAI_RESET} ${BONSAI_MUTED}(Security-focused)${BONSAI_RESET}"
+
+  echo ""
+  read -p "$(echo -e ${BONSAI_YELLOW}Select kernel [1-4]: ${BONSAI_RESET})" kernel_choice
+
+  case $kernel_choice in
+    1)
+      KERNEL_TYPE="linux-cachyos"
+      KERNEL_HEADERS="linux-cachyos-headers"
+      ;;
+    2)
+      KERNEL_TYPE="linux-cachyos-bore"
+      KERNEL_HEADERS="linux-cachyos-bore-headers"
+      ;;
+    3)
+      KERNEL_TYPE="linux-cachyos-lts"
+      KERNEL_HEADERS="linux-cachyos-lts-headers"
+      ;;
+    4)
+      KERNEL_TYPE="linux-cachyos-hardened"
+      KERNEL_HEADERS="linux-cachyos-hardened-headers"
+      ;;
+    *)
+      KERNEL_TYPE="linux-cachyos"
+      KERNEL_HEADERS="linux-cachyos-headers"
+      echo -e "${CWR} ${BONSAI_YELLOW}Invalid selection, defaulting to linux-cachyos${BONSAI_RESET}"
+      ;;
+  esac
+
+  echo -e "\n${COK} ${BONSAI_TEXT}Kernel: ${BONSAI_GREEN}$KERNEL_TYPE${BONSAI_RESET}"
+}
+
+# Configure CachyOS repositories (for chroot during fresh install)
+function configure_cachyos_repos_chroot() {
+  if [ "$DISTRO_TYPE" != "cachyos" ]; then
+    return 0
+  fi
+
+  show_section "CachyOS Repository Configuration"
+
+  echo -e "${CNT} ${BONSAI_TEXT}Adding CachyOS repositories...${BONSAI_RESET}"
+
+  # Import CachyOS signing keys
+  arch-chroot /mnt pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com 2>&1 | tee -a "$INSTLOG"
+  arch-chroot /mnt pacman-key --lsign-key F3B607488DB35A47 2>&1 | tee -a "$INSTLOG"
+
+  # Install cachyos-keyring and cachyos-mirrorlist from CachyOS repo
+  echo -e "${CNT} ${BONSAI_TEXT}Installing CachyOS keyring and mirrorlists...${BONSAI_RESET}"
+  arch-chroot /mnt pacman -U --noconfirm \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-18-1-any.pkg.tar.zst' \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-18-1-any.pkg.tar.zst' \
+    2>&1 | tee -a "$INSTLOG" || true
+
+  # Add CachyOS repositories to pacman.conf (before [core] section)
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring pacman.conf with CachyOS repos...${BONSAI_RESET}"
+
+  # Check if CachyOS repos already added
+  if ! grep -q '\[cachyos\]' /mnt/etc/pacman.conf; then
+    # Insert CachyOS repos before [core]
+    sed -i '/^\[core\]/i \
+# CachyOS Repositories - Performance optimized packages\n\
+[cachyos-v3]\n\
+Include = /etc/pacman.d/cachyos-v3-mirrorlist\n\
+\n\
+[cachyos-core-v3]\n\
+Include = /etc/pacman.d/cachyos-v3-mirrorlist\n\
+\n\
+[cachyos-extra-v3]\n\
+Include = /etc/pacman.d/cachyos-v3-mirrorlist\n\
+\n\
+[cachyos]\n\
+Include = /etc/pacman.d/cachyos-mirrorlist\n\
+' /mnt/etc/pacman.conf
+  fi
+
+  # Sync package databases with new repos
+  echo -e "${CNT} ${BONSAI_TEXT}Syncing package databases...${BONSAI_RESET}"
+  arch-chroot /mnt pacman -Syy 2>&1 | tee -a "$INSTLOG"
+
+  echo -e "${COK} ${BONSAI_TEXT}CachyOS repositories configured${BONSAI_RESET}"
+}
+
+# Configure CachyOS repositories (for running system - conversion)
+function configure_cachyos_repos_running() {
+  show_section "CachyOS Repository Configuration"
+
+  echo -e "${CNT} ${BONSAI_TEXT}Adding CachyOS repositories to running system...${BONSAI_RESET}"
+
+  # Import CachyOS signing keys
+  echo -e "${CNT} ${BONSAI_TEXT}Importing CachyOS signing keys...${BONSAI_RESET}"
+  sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com 2>&1 | tee -a "$INSTLOG"
+  sudo pacman-key --lsign-key F3B607488DB35A47 2>&1 | tee -a "$INSTLOG"
+
+  # Install cachyos-keyring and cachyos-mirrorlist
+  echo -e "${CNT} ${BONSAI_TEXT}Installing CachyOS keyring and mirrorlists...${BONSAI_RESET}"
+  sudo pacman -U --noconfirm \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-18-1-any.pkg.tar.zst' \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-18-1-any.pkg.tar.zst' \
+    2>&1 | tee -a "$INSTLOG" || true
+
+  # Add CachyOS repositories to pacman.conf
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring pacman.conf with CachyOS repos...${BONSAI_RESET}"
+
+  if ! grep -q '\[cachyos\]' /etc/pacman.conf; then
+    sudo sed -i '/^\[core\]/i \
+# CachyOS Repositories - Performance optimized packages\n\
+[cachyos-v3]\n\
+Include = /etc/pacman.d/cachyos-v3-mirrorlist\n\
+\n\
+[cachyos-core-v3]\n\
+Include = /etc/pacman.d/cachyos-v3-mirrorlist\n\
+\n\
+[cachyos-extra-v3]\n\
+Include = /etc/pacman.d/cachyos-v3-mirrorlist\n\
+\n\
+[cachyos]\n\
+Include = /etc/pacman.d/cachyos-mirrorlist\n\
+' /etc/pacman.conf
+  fi
+
+  # Sync package databases
+  echo -e "${CNT} ${BONSAI_TEXT}Syncing package databases...${BONSAI_RESET}"
+  sudo pacman -Syy 2>&1 | tee -a "$INSTLOG"
+
+  echo -e "${COK} ${BONSAI_TEXT}CachyOS repositories configured${BONSAI_RESET}"
 }
 
 # Helper function to detect installed bootloader
@@ -626,6 +821,9 @@ function btrfs_format() {
 
   echo -e "${COK} ${BONSAI_TEXT}Disk preparation complete${BONSAI_RESET}"
 
+  # Select distribution (Arch Linux or CachyOS)
+  select_distro
+
   # Select CPU type
   select_cpu
 
@@ -650,12 +848,14 @@ function btrfs_format() {
     fi
 
     case $CPU_TYPE in
-      intel) pacstrap /mnt base base-devel linux linux-firmware nano intel-ucode btrfs-progs ;;
-      amd)   pacstrap /mnt base base-devel linux linux-firmware nano amd-ucode   btrfs-progs ;;
-      vm)    pacstrap /mnt base base-devel linux linux-firmware nano             btrfs-progs ;;
+      intel) pacstrap /mnt base base-devel $KERNEL_TYPE linux-firmware nano intel-ucode btrfs-progs ;;
+      amd)   pacstrap /mnt base base-devel $KERNEL_TYPE linux-firmware nano amd-ucode   btrfs-progs ;;
+      vm)    pacstrap /mnt base base-devel $KERNEL_TYPE linux-firmware nano             btrfs-progs ;;
     esac
 
     if [ $? -eq 0 ]; then
+      # Configure CachyOS repositories if selected
+      configure_cachyos_repos_chroot
       break
     else
       RETRY_COUNT=$((RETRY_COUNT + 1))
@@ -764,7 +964,7 @@ EOF
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing essential packages...${BONSAI_RESET}"
   arch-chroot /mnt pacman -Syy
-  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring bash-completion
+  arch-chroot /mnt pacman --noconfirm -S grub grub-btrfs efibootmgr base-devel $KERNEL_HEADERS networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git ntfs-3g xdg-utils xdg-user-dirs neovim vim vi wget iwd ntp archlinux-keyring bash-completion
   arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms || true
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring initramfs...${BONSAI_RESET}"
@@ -778,7 +978,7 @@ EOF
     arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
   fi
 
-  arch-chroot /mnt mkinitcpio -p linux
+  arch-chroot /mnt mkinitcpio -p $KERNEL_TYPE
 
   show_section "Bootloader Configuration"
 
@@ -1099,27 +1299,30 @@ EOF
     local kernel_opts
     kernel_opts="$(derive_kernel_opts)"
 
+    # Determine entry title based on distro (keeping Arch Linux name as per user preference)
+    local entry_title="Arch Linux"
+
     cat << EOF > "$entry_path"
-title   Arch Linux
-linux   /vmlinuz-linux
-initrd  /initramfs-linux.img
+title   $entry_title
+linux   /vmlinuz-$KERNEL_TYPE
+initrd  /initramfs-$KERNEL_TYPE.img
 options $kernel_opts
 EOF
 
     cat << EOF > "$fallback_entry_path"
-title   Arch Linux (Fallback)
-linux   /vmlinuz-linux
-initrd  /initramfs-linux-fallback.img
+title   $entry_title (Fallback)
+linux   /vmlinuz-$KERNEL_TYPE
+initrd  /initramfs-$KERNEL_TYPE-fallback.img
 options $kernel_opts
 EOF
 
-    # Microcode if present
+    # Microcode if present - insert before kernel initramfs
     if [ -f /mnt/boot/intel-ucode.img ]; then
-      sed -i '/^initrd  \/initramfs-linux/img initrd  /intel-ucode.img' "$entry_path"
-      sed -i '/^initrd  \/initramfs-linux-fallback/img initrd  /intel-ucode.img' "$fallback_entry_path"
+      sed -i "/^initrd  \/initramfs-$KERNEL_TYPE\\.img/i initrd  /intel-ucode.img" "$entry_path"
+      sed -i "/^initrd  \/initramfs-$KERNEL_TYPE-fallback/i initrd  /intel-ucode.img" "$fallback_entry_path"
     elif [ -f /mnt/boot/amd-ucode.img ]; then
-      sed -i '/^initrd  \/initramfs-linux/img initrd  /amd-ucode.img' "$entry_path"
-      sed -i '/^initrd  \/initramfs-linux-fallback/img initrd  /amd-ucode.img' "$fallback_entry_path"
+      sed -i "/^initrd  \/initramfs-$KERNEL_TYPE\\.img/i initrd  /amd-ucode.img" "$entry_path"
+      sed -i "/^initrd  \/initramfs-$KERNEL_TYPE-fallback/i initrd  /amd-ucode.img" "$fallback_entry_path"
     fi
 
     if ! resolve_esp_context "/mnt/boot"; then
@@ -1323,9 +1526,20 @@ function install_hyprland() {
       uninstall_software $SOFTWR
     done
 
-    for SOFTWR in ${nvidia_stage[@]}; do
-      install_software $SOFTWR
-    done
+    # Select appropriate NVIDIA package set based on distro
+    if [ "$DISTRO_TYPE" = "cachyos" ]; then
+      # For CachyOS: install kernel headers first, then DKMS driver
+      echo -e "${CNT} ${BONSAI_TEXT}Installing CachyOS kernel headers...${BONSAI_RESET}"
+      install_software $KERNEL_HEADERS
+      for SOFTWR in ${nvidia_stage_cachyos[@]}; do
+        install_software $SOFTWR
+      done
+    else
+      # For Arch Linux: use standard nvidia package
+      for SOFTWR in ${nvidia_stage_arch[@]}; do
+        install_software $SOFTWR
+      done
+    fi
 
     if grep -qE '^MODULES=.*nvidia. *nvidia_modeset.*nvidia_uvm.*nvidia_drm' /etc/mkinitcpio.conf; then
       echo -e "${COK} ${BONSAI_TEXT}Nvidia modules already configured${BONSAI_RESET}"
@@ -1692,6 +1906,145 @@ function update_bootloader_sddm() {
   fi
 }
 
+# Convert existing Arch Linux to CachyOS
+function convert_to_cachyos() {
+  show_bonsai_header
+  show_section "Convert Arch Linux to CachyOS"
+
+  echo -e "${CWR} ${BONSAI_YELLOW}This will convert your Arch Linux to CachyOS:${BONSAI_RESET}\n"
+  echo -e "  ${BONSAI_TEXT}• Add CachyOS repositories (x86-64-v3 optimized)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_TEXT}• Install a CachyOS optimized kernel${BONSAI_RESET}"
+  echo -e "  ${BONSAI_TEXT}• Upgrade key packages to CachyOS builds${BONSAI_RESET}"
+  echo -e "  ${BONSAI_TEXT}• Update NVIDIA drivers to DKMS (if applicable)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_TEXT}• Update bootloader configuration${BONSAI_RESET}"
+
+  echo -e "\n${CAT} ${BONSAI_YELLOW}Recommended: Create a Timeshift snapshot first!${BONSAI_RESET}\n"
+
+  read -p "$(echo -e ${BONSAI_YELLOW}Continue with conversion? [y/N]: ${BONSAI_RESET})" confirm
+  if [[ ! $confirm =~ ^[Yy]$ ]]; then
+    echo -e "${CNT} ${BONSAI_TEXT}Conversion cancelled${BONSAI_RESET}"
+    return
+  fi
+
+  # Step 1: Add CachyOS repositories
+  echo -e "\n${CNT} ${BONSAI_TEXT}Step 1/6: Adding CachyOS repositories...${BONSAI_RESET}"
+  configure_cachyos_repos_running
+
+  # Step 2: Select kernel variant
+  echo -e "\n${CNT} ${BONSAI_TEXT}Step 2/6: Selecting CachyOS kernel...${BONSAI_RESET}"
+  select_cachyos_kernel
+
+  # Step 3: Install new kernel + headers
+  echo -e "\n${CNT} ${BONSAI_TEXT}Step 3/6: Installing ${KERNEL_TYPE} kernel...${BONSAI_RESET}"
+  sudo pacman -S --noconfirm $KERNEL_TYPE $KERNEL_HEADERS
+
+  # Step 4: Install CachyOS optimized packages
+  echo -e "\n${CNT} ${BONSAI_TEXT}Step 4/6: Upgrading to CachyOS-optimized packages...${BONSAI_RESET}"
+  for pkg in ${cachyos_optimized_packages[@]}; do
+    echo -e "${CNT} ${BONSAI_MUTED}Installing $pkg...${BONSAI_RESET}"
+    sudo pacman -S --noconfirm --needed $pkg 2>/dev/null || true
+  done
+
+  # Step 5: Handle NVIDIA (switch to DKMS if present)
+  if pacman -Q nvidia &>/dev/null; then
+    echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: Converting NVIDIA to DKMS driver...${BONSAI_RESET}"
+    echo -e "${CWR} ${BONSAI_YELLOW}Removing kernel-specific nvidia package...${BONSAI_RESET}"
+    sudo pacman -Rdd --noconfirm nvidia 2>/dev/null || true
+    echo -e "${CNT} ${BONSAI_TEXT}Installing nvidia-dkms...${BONSAI_RESET}"
+    sudo pacman -S --noconfirm nvidia-dkms
+  else
+    echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: No NVIDIA driver detected, skipping...${BONSAI_RESET}"
+  fi
+
+  # Step 6: Update bootloader
+  echo -e "\n${CNT} ${BONSAI_TEXT}Step 6/6: Updating bootloader configuration...${BONSAI_RESET}"
+  local DETECTED_BOOTLOADER=$(detect_bootloader)
+
+  if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
+    echo -e "${CNT} ${BONSAI_TEXT}Regenerating GRUB configuration...${BONSAI_RESET}"
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+  elif [[ $DETECTED_BOOTLOADER == "systemd-boot" ]]; then
+    echo -e "${CNT} ${BONSAI_TEXT}Creating systemd-boot entry for ${KERNEL_TYPE}...${BONSAI_RESET}"
+
+    # Detect current root partition
+    local root_part=$(findmnt -n -o SOURCE /)
+    local root_uuid=$(sudo blkid -s UUID -o value $root_part)
+
+    # Detect if system is encrypted
+    local crypt_opts=""
+    if [ -d /dev/mapper ] && ls /dev/mapper/root &>/dev/null; then
+      local luks_part=$(lsblk -rno NAME,FSTYPE | grep crypto_LUKS | head -1 | awk '{print $1}')
+      if [ -n "$luks_part" ]; then
+        local luks_uuid=$(sudo blkid -s UUID -o value /dev/$luks_part)
+        crypt_opts="cryptdevice=UUID=${luks_uuid}:root root=/dev/mapper/root"
+      fi
+    fi
+
+    # Build kernel options
+    local kernel_opts="rw"
+    if [ -n "$crypt_opts" ]; then
+      kernel_opts="$crypt_opts $kernel_opts"
+    else
+      kernel_opts="root=UUID=${root_uuid} $kernel_opts"
+    fi
+
+    # Add NVIDIA options if needed
+    if pacman -Q nvidia-dkms &>/dev/null || pacman -Q nvidia &>/dev/null; then
+      kernel_opts="$kernel_opts nvidia-drm.modeset=1 nvidia_drm.fbdev=1"
+    fi
+
+    # Create new boot entry
+    local entry_name="${KERNEL_TYPE}.conf"
+    local entry_path="/boot/loader/entries/${entry_name}"
+    local entry_title="Arch Linux (CachyOS ${KERNEL_TYPE})"
+
+    # Detect microcode
+    local microcode_line=""
+    if [ -f /boot/intel-ucode.img ]; then
+      microcode_line="initrd  /intel-ucode.img"
+    elif [ -f /boot/amd-ucode.img ]; then
+      microcode_line="initrd  /amd-ucode.img"
+    fi
+
+    sudo tee "$entry_path" > /dev/null << EOF
+title   $entry_title
+linux   /vmlinuz-$KERNEL_TYPE
+${microcode_line}
+initrd  /initramfs-$KERNEL_TYPE.img
+options $kernel_opts
+EOF
+
+    echo -e "${COK} ${BONSAI_TEXT}Created boot entry: ${entry_name}${BONSAI_RESET}"
+
+    # Set as default
+    sudo sed -i "s/^default .*/default ${entry_name}/" /boot/loader/loader.conf
+    echo -e "${COK} ${BONSAI_TEXT}Set ${entry_name} as default boot entry${BONSAI_RESET}"
+  else
+    echo -e "${CWR} ${BONSAI_YELLOW}No supported bootloader detected. Manual configuration required.${BONSAI_RESET}"
+  fi
+
+  echo -e "\n${COK} ${BONSAI_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${BONSAI_RESET}"
+  echo -e "${COK} ${BONSAI_GREEN}CachyOS conversion complete!${BONSAI_RESET}"
+  echo -e "${COK} ${BONSAI_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${BONSAI_RESET}"
+  echo -e "\n${CNT} ${BONSAI_TEXT}Changes made:${BONSAI_RESET}"
+  echo -e "  ${BONSAI_TEXT}• CachyOS repositories added${BONSAI_RESET}"
+  echo -e "  ${BONSAI_TEXT}• Kernel: ${BONSAI_GREEN}${KERNEL_TYPE}${BONSAI_RESET}"
+  echo -e "  ${BONSAI_TEXT}• Optimized packages installed${BONSAI_RESET}"
+  if pacman -Q nvidia-dkms &>/dev/null; then
+    echo -e "  ${BONSAI_TEXT}• NVIDIA: ${BONSAI_GREEN}nvidia-dkms${BONSAI_RESET}"
+  fi
+  echo -e "  ${BONSAI_TEXT}• Bootloader: ${BONSAI_GREEN}${DETECTED_BOOTLOADER}${BONSAI_RESET}"
+
+  echo -e "\n${CAT} ${BONSAI_YELLOW}Reboot required to use the new CachyOS kernel!${BONSAI_RESET}\n"
+
+  read -p "$(echo -e ${BONSAI_YELLOW}Reboot now? [y/N]: ${BONSAI_RESET})" reboot_choice
+  if [[ $reboot_choice =~ ^[Yy]$ ]]; then
+    echo -e "${CNT} ${BONSAI_TEXT}Rebooting in 3 seconds...${BONSAI_RESET}"
+    sleep 3
+    sudo reboot
+  fi
+}
+
 # Main menu with BONSAI styling
 function main_menu() {
   show_bonsai_header
@@ -1700,14 +2053,15 @@ function main_menu() {
   echo -e "${BONSAI_MUTED}Enhanced installation experience with zen aesthetics${BONSAI_RESET}\n"
 
   echo -e "${CNT} ${BONSAI_TEXT}Select an action:${BONSAI_RESET}\n"
-  echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}Install Arch Linux${BONSAI_RESET} ${BONSAI_MUTED}(Base system)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}Install Arch Linux${BONSAI_RESET} ${BONSAI_MUTED}(or CachyOS base system)${BONSAI_RESET}"
   echo -e "  ${BONSAI_GREEN}[2]${BONSAI_RESET} ${BONSAI_TEXT}Install Hyprland${BONSAI_RESET} ${BONSAI_MUTED}(Desktop environment)${BONSAI_RESET}"
   echo -e "  ${BONSAI_GREEN}[3]${BONSAI_RESET} ${BONSAI_TEXT}Restore Dotfiles${BONSAI_RESET} ${BONSAI_MUTED}(Configuration files)${BONSAI_RESET}"
   echo -e "  ${BONSAI_GREEN}[4]${BONSAI_RESET} ${BONSAI_TEXT}Update Bootloader/SDDM${BONSAI_RESET} ${BONSAI_MUTED}(Themes)${BONSAI_RESET}"
-  echo -e "  ${BONSAI_GREEN}[5]${BONSAI_RESET} ${BONSAI_TEXT}Exit${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[5]${BONSAI_RESET} ${BONSAI_TEXT}Convert to CachyOS${BONSAI_RESET} ${BONSAI_MUTED}(Existing Arch)${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[6]${BONSAI_RESET} ${BONSAI_TEXT}Exit${BONSAI_RESET}"
 
   echo ""
-  read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-5]: ${BONSAI_RESET})" menu_choice
+  read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-6]: ${BONSAI_RESET})" menu_choice
 
   case $menu_choice in
     1)
@@ -1725,6 +2079,9 @@ function main_menu() {
       update_bootloader_sddm
       ;;
     5)
+      convert_to_cachyos
+      ;;
+    6)
       echo -e "\n${COK} ${BONSAI_GREEN}Thank you for using BONSAI installer!${BONSAI_RESET}"
       echo -e "${BONSAI_MUTED}May your system grow with purpose 🌱${BONSAI_RESET}\n"
       exit 0
