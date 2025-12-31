@@ -1636,6 +1636,9 @@ function restore_dotfiles() {
   echo -e "${CNT} ${BONSAI_TEXT}Configuring LazyGit...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazygit
 
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring Google Chrome GPU flags...${BONSAI_RESET}"
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config google-chrome
+
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring Hyprland...${BONSAI_RESET}"
   rm -rf ~/.config/hypr
 
