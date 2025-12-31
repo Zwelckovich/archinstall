@@ -1944,15 +1944,25 @@ function convert_to_cachyos() {
     sudo pacman -S --noconfirm --needed $pkg 2>/dev/null || true
   done
 
-  # Step 5: Handle NVIDIA (switch to DKMS if present)
-  if pacman -Q nvidia &>/dev/null; then
-    echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: Converting NVIDIA to DKMS driver...${BONSAI_RESET}"
-    echo -e "${CWR} ${BONSAI_YELLOW}Removing kernel-specific nvidia package...${BONSAI_RESET}"
-    sudo pacman -Rdd --noconfirm nvidia 2>/dev/null || true
-    echo -e "${CNT} ${BONSAI_TEXT}Installing nvidia-dkms...${BONSAI_RESET}"
-    sudo pacman -S --noconfirm nvidia-dkms
+  # Step 5: Handle NVIDIA (detect GPU hardware, install/convert to DKMS)
+  if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
+    echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: NVIDIA GPU detected, configuring DKMS driver...${BONSAI_RESET}"
+
+    # Remove kernel-specific nvidia package if present
+    if pacman -Q nvidia &>/dev/null; then
+      echo -e "${CWR} ${BONSAI_YELLOW}Removing kernel-specific nvidia package...${BONSAI_RESET}"
+      sudo pacman -Rdd --noconfirm nvidia 2>/dev/null || true
+    fi
+
+    # Install nvidia-dkms if not already present
+    if ! pacman -Q nvidia-dkms &>/dev/null; then
+      echo -e "${CNT} ${BONSAI_TEXT}Installing nvidia-dkms...${BONSAI_RESET}"
+      sudo pacman -S --noconfirm nvidia-dkms nvidia-utils nvidia-settings
+    else
+      echo -e "${COK} ${BONSAI_TEXT}nvidia-dkms already installed${BONSAI_RESET}"
+    fi
   else
-    echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: No NVIDIA driver detected, skipping...${BONSAI_RESET}"
+    echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: No NVIDIA GPU detected, skipping...${BONSAI_RESET}"
   fi
 
   # Step 6: Update bootloader
