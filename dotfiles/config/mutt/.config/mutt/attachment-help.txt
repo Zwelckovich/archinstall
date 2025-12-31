@@ -1,7 +1,7 @@
 ╭─────────────────────────────────────────────────────────────────────╮
 │                    ATTACHMENT VIEW KEYS                             │
 ├─────────────────────────────────────────────────────────────────────┤
-│  V       - Open attachment in browser (Vivaldi)                     │
+│  V       - Open attachment in browser (Chrome)                       │
 │  I       - Extract all images from email                            │
 │  Enter   - View attachment in mutt                                  │
 │  s       - Save attachment to disk                                  │

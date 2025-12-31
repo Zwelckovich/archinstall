@@ -206,7 +206,7 @@ This wizard will:
 ##### HTML & Attachments
 - `v` - View attachments list
 - **In attachment view:**
-  - `V` - Open HTML/attachment in browser (Vivaldi)
+  - `V` - Open HTML/attachment in browser (Chrome)
   - `I` - Extract all images from email
   - `C` - Import calendar invite (.ics) to calcurse
   - `Enter` - View attachment in mutt

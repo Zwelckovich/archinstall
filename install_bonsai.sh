@@ -99,8 +99,7 @@ tools_stage=(
   npm                             # Node.js package manager
   nvm                             # Node Version Manager
   xfsprogs                        # XFS filesystem utilities
-  vivaldi                         # Feature-rich web browser
-  vivaldi-ffmpeg-codecs           # FFmpeg codecs for Vivaldi
+  google-chrome                   # Google Chrome browser (AUR)
   visual-studio-code-bin          # Microsoft's code editor
   qt5-graphicaleffects            # Qt5 graphical effects
   qt5-svg                         # Qt5 SVG support

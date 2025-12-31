@@ -78,11 +78,9 @@ if ! grep -q '</head>' "$tmpfile"; then
     echo '</body></html>' >> "$tmpfile"
 fi
 
-# Open in browser (check for Vivaldi first, then fallback)
-if command -v vivaldi &> /dev/null; then
-    vivaldi "$tmpfile" &
-elif command -v vivaldi-stable &> /dev/null; then
-    vivaldi-stable "$tmpfile" &
+# Open in browser (check for Chrome first, then fallback)
+if command -v google-chrome-stable &> /dev/null; then
+    google-chrome-stable "$tmpfile" &
 elif [ -n "$BROWSER" ]; then
     $BROWSER "$tmpfile" &
 else

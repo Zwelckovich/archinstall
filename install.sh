@@ -54,8 +54,7 @@ tools_stage=(
   pacman-contrib          # Additional tools and scripts for Pacman, enhancing package management capabilities.
   npm                     # Node Package Manager for installing, sharing, and managing JavaScript packages.
                           # Web Tools
-  vivaldi                 # An advanced browser made with the power user in mind.
-  vivaldi-ffmpeg-codecs   # additional support for proprietary codecs for vivaldi
+  google-chrome           # Google Chrome browser with native DRM support (AUR)
                           # Programming Tools
   visual-studio-code-bin  # The Visual Studio Code editor, providing a robust development environment.
   pycharm-professional    # Pycharm Community edition IDE
