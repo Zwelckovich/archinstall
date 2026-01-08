@@ -42,3 +42,5 @@ antfu.vite
 streetsidesoftware.code-spell-checker
 mohamed-nouri.websocket-client
 shd101wyy.markdown-preview-enhanced
+antfu.slidev
+vue.volar
