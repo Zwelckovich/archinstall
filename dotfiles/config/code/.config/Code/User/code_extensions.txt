@@ -44,3 +44,5 @@ mohamed-nouri.websocket-client
 shd101wyy.markdown-preview-enhanced
 antfu.slidev
 vue.volar
+gsejas.mermaid-export-pro
+bierner.markdown-mermaid
