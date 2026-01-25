@@ -225,7 +225,7 @@ alias -s png=feh
 alias -s pdf=zathura
 
 # --- Programming Environment Update ---
-alias codeup="yamir && yain uv yarn biome visual-studio-code-bin && claude update && code --update-extensions && sudo npm install -g @google/gemini-cli"
+alias codeup="yamir && yain biome visual-studio-code-bin && uv self update && yarn set version stable && yarn install && claude update && code --update-extensions && sudo npm install -g @google/gemini-cli"
 
 # --- LibreVNA GUI ---
 alias librevna="/usr/bin/LibreVNA-GUI > /dev/null 2>&1 &"
