@@ -113,14 +113,12 @@ tools_stage=(
   github-cli                      # GitHub command-line interface
   python                          # Python programming language
   python-pip                      # Python package installer
-  uv                              # Fast Python package installer (BONSAI preferred)
   python-pynvim                   # Python client for Neovim
   tk                              # Tcl/Tk GUI toolkit
   rust                            # Rust programming language
   pycharm                         # Python IDE by JetBrains
   webstorm                        # JavaScript/TypeScript IDE by JetBrains
   docker                          # Container platform
-  yarn                            # Fast JavaScript package manager (BONSAI preferred)
   biome                           # Fast formatter/linter for JS/TS (BONSAI preferred)
   claude-code                     # Claude AI code assistant
   shfmt                           # Shell script formatter
@@ -1564,6 +1562,12 @@ function install_hyprland() {
   for SOFTWR in ${tools_stage[@]}; do
     install_software $SOFTWR
   done
+
+  echo -e "\n${CNT} ${BONSAI_TEXT}Installing uv (Python package manager)...${BONSAI_RESET}"
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+
+  echo -e "\n${CNT} ${BONSAI_TEXT}Installing corepack (enables yarn)...${BONSAI_RESET}"
+  sudo npm install -g corepack
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Enabling services...${BONSAI_RESET}"
   sudo systemctl enable sddm
