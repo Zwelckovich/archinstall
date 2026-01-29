@@ -202,7 +202,7 @@ alias py="python"
 alias pyact="source .venv/bin/activate && which python"
 alias pydeact="deactivate && which python"
 alias pyvenv="python -m venv .venv && cp ~/archinstall/tools/requirements.txt ./"
-alias pycheck="uv run ruff check --fix && uv run ruff format && uv run pyright"
+alias pycheck="uv run ruff check --fix && uv run ruff format && uv run ty check"
 
 # --- Tree Aliases ---
 
