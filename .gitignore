@@ -17,9 +17,11 @@ dotfiles/config/code/.config/Code/Code Cache
 dotfiles/config/code/.config/Code/Crashpad
 dotfiles/config/code/.config/Code/Local Storage/leveldb
 dotfiles/config/code/.config/Code/Shared Dictionary
-dotfiles/config/code/.config/Code/User/History
-dotfiles/config/code/.config/Code/User/globalStorage
-dotfiles/config/code/.config/Code/User/workspaceStorage
+dotfiles/config/code/.config/Code/User/*
+!dotfiles/config/code/.config/Code/User/*.ps1
+!dotfiles/config/code/.config/Code/User/*.sh
+!dotfiles/config/code/.config/Code/User/*.txt
+!dotfiles/config/code/.config/Code/User/*.json
 dotfiles/config/code/.config/Code/logs
 dotfiles/config/code/.config/Code/Network Persistent State
 dotfiles/config/code/.config/Code/Preferences
@@ -36,7 +38,6 @@ dotfiles/config/code/.config/Code/DawnWebGPUCache
 dotfiles/config/code/.config/Code/Dictionaries
 dotfiles/config/code/.config/Code/GPUCache
 dotfiles/config/code/.config/Code/Service Worker
-dotfiles/config/code/.config/Code/User
 dotfiles/config/code/.config/Code/WebStorage
 dotfiles/config/code/.config/Code/Cookies
 dotfiles/config/code/.config/Code/Cookies-journal
