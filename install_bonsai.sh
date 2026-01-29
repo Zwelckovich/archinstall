@@ -1566,8 +1566,11 @@ function install_hyprland() {
   echo -e "\n${CNT} ${BONSAI_TEXT}Installing uv (Python package manager)...${BONSAI_RESET}"
   curl -LsSf https://astral.sh/uv/install.sh | sh
 
-  echo -e "\n${CNT} ${BONSAI_TEXT}Installing corepack (enables yarn)...${BONSAI_RESET}"
+  echo -e "\n${CNT} ${BONSAI_TEXT}Installing yarn (via corepack)...${BONSAI_RESET}"
   sudo npm install -g corepack
+
+  echo -e "\n${CNT} ${BONSAI_TEXT}Installing bun (JavaScript runtime)...${BONSAI_RESET}"
+  curl -fsSL https://bun.sh/install | bash
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Enabling services...${BONSAI_RESET}"
   sudo systemctl enable sddm
