@@ -1,5 +1,5 @@
 # Title: Batch Install Cursor Extensions
-# Description: Reads extension IDs from cursor_extensions.txt and installs them using the Cursor CLI.
+# Description: Reads extension IDs from code_extensions.txt and installs them using the Cursor CLI.
 # Usage: .\install_extensions_cursor.ps1 [-Clean]
 #   -Clean: Uninstall all existing extensions before installing new ones
 
@@ -7,9 +7,9 @@ param(
     [switch]$Clean
 )
 
-$extensionFile = "cursor_extensions.txt"
+$extensionFile = "code_extensions.txt"
 
-# 1. Check if cursor_extensions.txt exists in the current folder
+# 1. Check if code_extensions.txt exists in the current folder
 if (-not (Test-Path $extensionFile)) {
     Write-Host "Error: Could not find '$extensionFile' in the current directory." -ForegroundColor Red
     Write-Host "Please create the file or move this script to the correct folder."
