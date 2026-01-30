@@ -1,5 +1,11 @@
 # Title: Batch Install VS Code Extensions
 # Description: Reads extension IDs from code_extensions.txt and installs them using the VS Code CLI.
+# Usage: .\install_extensions.ps1 [-Clean]
+#   -Clean: Uninstall all existing extensions before installing new ones
+
+param(
+    [switch]$Clean
+)
 
 $extensionFile = "code_extensions.txt"
 
@@ -17,13 +23,37 @@ if (-not (Get-Command code -ErrorAction SilentlyContinue)) {
     exit
 }
 
+# 3. If -Clean flag is set, uninstall all existing extensions first
+if ($Clean) {
+    Write-Host "Clean install requested - removing all existing extensions..." -ForegroundColor Yellow
+    $existingExtensions = code --list-extensions 2>$null
+
+    if ($existingExtensions) {
+        $totalToRemove = ($existingExtensions | Measure-Object).Count
+        Write-Host "Found $totalToRemove extensions to remove." -ForegroundColor Yellow
+
+        $existingExtensions | ForEach-Object {
+            $ext = $_.Trim()
+            if (-not [string]::IsNullOrWhiteSpace($ext)) {
+                Write-Host "Uninstalling: $ext" -ForegroundColor Red
+                code --uninstall-extension $ext
+            }
+        }
+
+        Write-Host "All existing extensions removed." -ForegroundColor Yellow
+        Write-Host "--------------------------------" -ForegroundColor Cyan
+    } else {
+        Write-Host "No existing extensions found." -ForegroundColor Yellow
+    }
+}
+
 Write-Host "Starting installation from $extensionFile..." -ForegroundColor Cyan
 
-# 3. Get list of already installed extensions (prevents V8 crash on re-install)
+# 4. Get list of already installed extensions (prevents V8 crash on re-install)
 Write-Host "Checking installed extensions..." -ForegroundColor Cyan
 $installedExtensions = (code --list-extensions 2>$null) | ForEach-Object { $_.ToLower() }
 
-# 4. The Main Loop
+# 5. The Main Loop
 Get-Content $extensionFile | ForEach-Object {
     # Clean whitespace and ignore empty lines
     $ext = $_.Trim()
