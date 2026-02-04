@@ -214,5 +214,8 @@
   // MARKDOWN PREVIEW ENHANCED
   // ═══════════════════════════════════════════════════════════════════════════
   "markdown-preview-enhanced.previewTheme": "github-dark.css",
-  "slidev.preview-sync": true
+  "slidev.preview-sync": true,
+  "cSpell.userWords": [
+    "skrf"
+  ]
 }
