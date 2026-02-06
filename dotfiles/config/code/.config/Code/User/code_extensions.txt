@@ -47,4 +47,5 @@ gsejas.mermaid-export-pro
 bierner.markdown-mermaid
 astral-sh.ty
 ms-vscode-remote.remote-wsl
+quarto.quarto
 
