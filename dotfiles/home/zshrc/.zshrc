@@ -237,3 +237,7 @@ alias librevna="/usr/bin/LibreVNA-GUI > /dev/null 2>&1 &"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# ComfyUI
+alias comfy="sh ~/ComfyUI-Easy-Install/ComfyUI-Easy-Install/run_nvidia_gpu.sh"
+alias comfyup="sh ~/ComfyUI-Easy-Install/ComfyUI-Easy-Install/Update_All_and_RUN.sh"
+
