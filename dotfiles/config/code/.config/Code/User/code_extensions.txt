@@ -49,4 +49,5 @@ astral-sh.ty
 hoovercj.vscode-settings-cycler
 ms-vscode-remote.remote-wsl
 quarto.quarto
+csstools.postcss
 
