@@ -8,7 +8,6 @@ mechatroner.rainbow-csv
 ms-azuretools.vscode-containers
 ms-python.debugpy
 ms-python.python
-ms-python.pylance
 ms-toolsai.datawrangler
 ms-toolsai.jupyter
 ms-toolsai.jupyter-keymap
