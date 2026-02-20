@@ -33,7 +33,9 @@
 	// ═══════════════════════════════════════════════════════════════════════════
 	// PYTHON (Ruff + isort)
 	// ═══════════════════════════════════════════════════════════════════════════
-    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+	"ms-python.vscode-python-envs": true,
+	"python-envs.alwaysUseUv": true,
+	"python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
 	// "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
 	"python.analysis.typeCheckingMode": "off",
 	"python.analysis.diagnosticSeverityOverrides": {},
@@ -205,7 +207,8 @@
 		"https://www.schemastore.org/": true,
 		"https://json.schemastore.org/": true,
 		"https://json-schema.org/": true,
-		"https://biomejs.dev": true
+		"https://biomejs.dev": true,
+		"https://esm.sh/": true
 	},
 	"ty.inlayHints.callArgumentNames": false,
 	"ty.inlayHints.variableTypes": false,
