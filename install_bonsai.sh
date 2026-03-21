@@ -99,7 +99,9 @@ tools_stage=(
   npm                             # Node.js package manager
   nvm                             # Node Version Manager
   xfsprogs                        # XFS filesystem utilities
-  google-chrome                   # Google Chrome browser (AUR)
+  librewolf-bin                   # Privacy-focused Firefox fork (AUR)
+  firefox-hwaccel                 # VA-API hardware video decode for Firefox/LibreWolf (AUR)
+  vaapi-autoconfig                # Auto-configure VA-API based on GPU (AUR)
   visual-studio-code-bin          # Microsoft's code editor
   qt5-graphicaleffects            # Qt5 graphical effects
   qt5-svg                         # Qt5 SVG support
@@ -157,7 +159,6 @@ tools_stage=(
   tesseract                       # OCR engine
   tesseract-data-eng              # English language data for Tesseract
   tesseract-data-deu              # German language data for Tesseract
-  chromium-widevine               # DRM support for Chromium
   blender                         # 3D creation suite
   bottom                          # System monitor (btm)
   lazygit                         # Terminal UI for git
@@ -211,6 +212,7 @@ nvidia_stage_arch=(
   nvidia-settings                 # NVIDIA driver configuration tool
   nvidia-utils                    # NVIDIA driver utilities
   libva                           # Video Acceleration API
+  libva-utils                     # VA-API diagnostics (vainfo)
   libva-nvidia-driver-git         # VA-API driver for NVIDIA
   cuda                            # NVIDIA CUDA toolkit
 )
@@ -221,6 +223,7 @@ nvidia_stage_cachyos=(
   nvidia-settings                 # NVIDIA driver configuration tool
   nvidia-utils                    # NVIDIA driver utilities
   libva                           # Video Acceleration API
+  libva-utils                     # VA-API diagnostics (vainfo)
   libva-nvidia-driver-git         # VA-API driver for NVIDIA
   cuda                            # NVIDIA CUDA toolkit
 )
@@ -1642,9 +1645,6 @@ function restore_dotfiles() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring LazyGit...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazygit
-
-  echo -e "${CNT} ${BONSAI_TEXT}Configuring Google Chrome GPU flags...${BONSAI_RESET}"
-  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config google-chrome
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring Hyprland...${BONSAI_RESET}"
   rm -rf ~/.config/hypr

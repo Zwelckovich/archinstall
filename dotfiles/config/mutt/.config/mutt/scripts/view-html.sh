@@ -78,9 +78,9 @@ if ! grep -q '</head>' "$tmpfile"; then
     echo '</body></html>' >> "$tmpfile"
 fi
 
-# Open in browser (check for Chrome first, then fallback)
-if command -v google-chrome-stable &> /dev/null; then
-    google-chrome-stable "$tmpfile" &
+# Open in browser (check for LibreWolf first, then fallback)
+if command -v librewolf &> /dev/null; then
+    librewolf "$tmpfile" &
 elif [ -n "$BROWSER" ]; then
     $BROWSER "$tmpfile" &
 else
