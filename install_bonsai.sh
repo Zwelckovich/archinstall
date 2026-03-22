@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 #
 # 🌱 BONSAI Arch Linux Installer
 # Enhanced installation experience with BONSAI aesthetics
@@ -56,7 +57,6 @@ hypr_base_stage=(
   kitty                           # GPU-accelerated terminal emulator
   pamixer                         # PulseAudio command-line mixer
   pavucontrol                     # PulseAudio volume control GUI
-  pipewire-alsa                   # ALSA compatibility for PipeWire
   playerctl                       # Media player controller
   rofi-wayland                    # Application launcher for Wayland
   waybar                          # Status bar for Wayland compositors
@@ -84,7 +84,7 @@ hypr_base_stage=(
   nwg-look                        # GTK theme switcher for Wayland
 )
 
-piperwire_stage=(
+pipewire_stage=(
   pipewire              # Modern multimedia framework
   wireplumber           # Session/policy manager for PipeWire
   pipewire-audio        # Audio support for PipeWire
@@ -243,7 +243,7 @@ uninstall_stage=(
   dunst                           # Lightweight notification daemon (conflicts with swaync)
   mako                            # Wayland notification daemon (conflicts with swaync)
   rofi                            # X11 version (using rofi-wayland instead)
-  allust-git                      # Outdated package to remove
+  wallust-git                     # Outdated package to remove
 )
 
 uninstall_nvidia_stage=(
@@ -501,6 +501,22 @@ function select_cachyos_kernel() {
   echo -e "\n${COK} ${BONSAI_TEXT}Kernel: ${BONSAI_GREEN}$KERNEL_TYPE${BONSAI_RESET}"
 }
 
+# Helper: resolve latest CachyOS package URL dynamically
+get_cachyos_pkg_url() {
+  local pkg_name="$1"
+  local base_url="https://mirror.cachyos.org/repo/x86_64/cachyos"
+  local filename
+  filename=$(curl -sL "${base_url}/" | \
+    grep -oP "${pkg_name}-[0-9][^\"]*\.pkg\.tar\.zst" | \
+    sort -V | tail -1)
+  if [[ -n "$filename" ]]; then
+    echo "${base_url}/${filename}"
+  else
+    echo "ERROR: Could not find latest ${pkg_name}" >&2
+    return 1
+  fi
+}
+
 # Configure CachyOS repositories (for chroot during fresh install)
 function configure_cachyos_repos_chroot() {
   if [ "$DISTRO_TYPE" != "cachyos" ]; then
@@ -517,11 +533,19 @@ function configure_cachyos_repos_chroot() {
 
   # Install cachyos-keyring and cachyos-mirrorlist from CachyOS repo
   echo -e "${CNT} ${BONSAI_TEXT}Installing CachyOS keyring and mirrorlists...${BONSAI_RESET}"
-  arch-chroot /mnt pacman -U --noconfirm \
-    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
-    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-18-1-any.pkg.tar.zst' \
-    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-18-1-any.pkg.tar.zst' \
-    2>&1 | tee -a "$INSTLOG" || true
+  local keyring_url mirrorlist_url v3_mirrorlist_url
+  keyring_url=$(get_cachyos_pkg_url "cachyos-keyring") || true
+  mirrorlist_url=$(get_cachyos_pkg_url "cachyos-mirrorlist") || true
+  v3_mirrorlist_url=$(get_cachyos_pkg_url "cachyos-v3-mirrorlist") || true
+
+  if [[ -n "$keyring_url" && -n "$mirrorlist_url" && -n "$v3_mirrorlist_url" ]]; then
+    arch-chroot /mnt pacman -U --noconfirm \
+      "$keyring_url" "$mirrorlist_url" "$v3_mirrorlist_url" \
+      2>&1 | tee -a "$INSTLOG" || true
+  else
+    echo -e "${CER} ${BONSAI_RED}Failed to resolve CachyOS package URLs${BONSAI_RESET}"
+    return 1
+  fi
 
   # Add CachyOS repositories to pacman.conf (before [core] section)
   echo -e "${CNT} ${BONSAI_TEXT}Configuring pacman.conf with CachyOS repos...${BONSAI_RESET}"
@@ -565,11 +589,19 @@ function configure_cachyos_repos_running() {
 
   # Install cachyos-keyring and cachyos-mirrorlist
   echo -e "${CNT} ${BONSAI_TEXT}Installing CachyOS keyring and mirrorlists...${BONSAI_RESET}"
-  sudo pacman -U --noconfirm \
-    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
-    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-18-1-any.pkg.tar.zst' \
-    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-18-1-any.pkg.tar.zst' \
-    2>&1 | tee -a "$INSTLOG" || true
+  local keyring_url mirrorlist_url v3_mirrorlist_url
+  keyring_url=$(get_cachyos_pkg_url "cachyos-keyring") || true
+  mirrorlist_url=$(get_cachyos_pkg_url "cachyos-mirrorlist") || true
+  v3_mirrorlist_url=$(get_cachyos_pkg_url "cachyos-v3-mirrorlist") || true
+
+  if [[ -n "$keyring_url" && -n "$mirrorlist_url" && -n "$v3_mirrorlist_url" ]]; then
+    sudo pacman -U --noconfirm \
+      "$keyring_url" "$mirrorlist_url" "$v3_mirrorlist_url" \
+      2>&1 | tee -a "$INSTLOG" || true
+  else
+    echo -e "${CER} ${BONSAI_RED}Failed to resolve CachyOS package URLs${BONSAI_RESET}"
+    return 1
+  fi
 
   # Add CachyOS repositories to pacman.conf
   echo -e "${CNT} ${BONSAI_TEXT}Configuring pacman.conf with CachyOS repos...${BONSAI_RESET}"
@@ -651,7 +683,7 @@ function pacman_init() {
   sed -i "/^#$variable/ c$variable" /etc/pacman.conf
   variable="ParallelDownloads = 5"
   sed -i "/^#$variable/ c$variable" /etc/pacman.conf
-  sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
+  grep -q '^ILoveCandy' /etc/pacman.conf || sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
 
   echo -e "${COK} ${BONSAI_TEXT}Pacman configured successfully${BONSAI_RESET}"
 }
@@ -705,7 +737,7 @@ MIRRORS
     fi
   else
     echo -e "${CWR} ${BONSAI_YELLOW}Reflector not found, installing it...${BONSAI_RESET}"
-    pacman -Sy --noconfirm reflector || true
+    pacman -Sy --noconfirm --needed reflector || true
     if command -v reflector &> /dev/null; then
       reflector --verbose --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist 2> /dev/null || true
     fi
@@ -749,16 +781,16 @@ function btrfs_format() {
   echo -e "\n${CNT} ${BONSAI_TEXT}Preparing disk...${BONSAI_RESET}"
 
   # Unmount any mounted partitions
-  umount /dev/${SELECTED_DISK}?* 2> /dev/null
+  umount "/dev/${SELECTED_DISK}"?* 2> /dev/null || true
   umount -l /mnt 2> /dev/null
 
   echo -e "${CNT} ${BONSAI_TEXT}Wiping all existing signatures from disk...${BONSAI_RESET}"
-  wipefs -af /dev/$SELECTED_DISK
+  wipefs -af "/dev/$SELECTED_DISK"
   refresh_partition_table "/dev/$SELECTED_DISK"
 
   echo -e "${CNT} ${BONSAI_TEXT}Creating partition layout...${BONSAI_RESET}"
-  sgdisk --zap-all /dev/$SELECTED_DISK
-  sgdisk -n 1:0:+2G -n 2:0:0 -t 1:ef00 -t 2:8300 /dev/$SELECTED_DISK -p
+  sgdisk --zap-all "/dev/$SELECTED_DISK"
+  sgdisk -n 1:0:+2G -n 2:0:0 -t 1:ef00 -t 2:8300 "/dev/$SELECTED_DISK" -p
   refresh_partition_table "/dev/$SELECTED_DISK"
 
   # Set partition names based on disk type
@@ -958,7 +990,7 @@ EOF
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
   variable="ParallelDownloads = 5"
   arch-chroot /mnt sed -i "/^#$variable/ c$variable" /etc/pacman.conf
-  arch-chroot /mnt sed -i '/^Color/a ILoveCandy' /etc/pacman.conf
+  arch-chroot /mnt bash -c "grep -q '^ILoveCandy' /etc/pacman.conf || sed -i '/^Color/a ILoveCandy' /etc/pacman.conf"
   arch-chroot /mnt pacman-key --init
   arch-chroot /mnt pacman-key --populate archlinux
 
@@ -1496,17 +1528,17 @@ function install_hyprland() {
   yay --noconfirm -Syu
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Removing conflicting packages...${BONSAI_RESET}"
-  for SOFTWR in ${uninstall_stage[@]}; do
+  for SOFTWR in "${uninstall_stage[@]}"; do
     uninstall_software $SOFTWR
   done
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Installing Pipewire audio system...${BONSAI_RESET}"
-  for SOFTWR in ${piperwire_stage[@]}; do
+  for SOFTWR in "${pipewire_stage[@]}"; do
     install_software $SOFTWR
   done
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Installing Hyprland components...${BONSAI_RESET}"
-  for SOFTWR in ${hypr_base_stage[@]}; do
+  for SOFTWR in "${hypr_base_stage[@]}"; do
     install_software $SOFTWR
   done
 
@@ -1522,7 +1554,7 @@ function install_hyprland() {
 
     echo -e "${CNT} ${BONSAI_TEXT}NVIDIA GPU detected, installing drivers...${BONSAI_RESET}"
 
-    for SOFTWR in ${uninstall_nvidia_stage[@]}; do
+    for SOFTWR in "${uninstall_nvidia_stage[@]}"; do
       uninstall_software $SOFTWR
     done
 
@@ -1531,12 +1563,12 @@ function install_hyprland() {
       # For CachyOS: install kernel headers first, then DKMS driver
       echo -e "${CNT} ${BONSAI_TEXT}Installing CachyOS kernel headers...${BONSAI_RESET}"
       install_software $KERNEL_HEADERS
-      for SOFTWR in ${nvidia_stage_cachyos[@]}; do
+      for SOFTWR in "${nvidia_stage_cachyos[@]}"; do
         install_software $SOFTWR
       done
     else
       # For Arch Linux: use standard nvidia package
-      for SOFTWR in ${nvidia_stage_arch[@]}; do
+      for SOFTWR in "${nvidia_stage_arch[@]}"; do
         install_software $SOFTWR
       done
     fi
@@ -1562,7 +1594,7 @@ function install_hyprland() {
   echo -e "\n${CNT} ${BONSAI_TEXT}Installing development tools and applications...${BONSAI_RESET}"
   echo -e "${BONSAI_MUTED}This will take some time, please be patient...${BONSAI_RESET}\n"
 
-  for SOFTWR in ${tools_stage[@]}; do
+  for SOFTWR in "${tools_stage[@]}"; do
     install_software $SOFTWR
   done
 
@@ -1615,6 +1647,11 @@ function uninstall_software() {
 function restore_dotfiles() {
   show_bonsai_header
   show_section "Dotfiles Restoration"
+
+  if [[ ! -d ~/archinstall/dotfiles ]]; then
+    echo -e "${CER} ${BONSAI_RED}Dotfiles not found at ~/archinstall/dotfiles${BONSAI_RESET}"
+    return 1
+  fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Restoring configuration files...${BONSAI_RESET}\n"
 
@@ -1764,9 +1801,15 @@ function update_bootloader_sddm() {
   show_bonsai_header
   show_section "Bootloader & SDDM Theme Update"
 
+  if [[ ! -d ~/archinstall/dotfiles ]]; then
+    echo -e "${CER} ${BONSAI_RED}Dotfiles not found at ~/archinstall/dotfiles${BONSAI_RESET}"
+    return 1
+  fi
+
   echo -e "${CNT} ${BONSAI_TEXT}Installing BONSAI themes...${BONSAI_RESET}\n"
 
   local DETECTED_BOOTLOADER=$(detect_bootloader)
+  local SELECTED_PART=""
 
   if [ "$DETECTED_BOOTLOADER" = "none" ]; then
     echo -e "${CER} ${BONSAI_RED}No supported bootloader detected!${BONSAI_RESET}"
@@ -1849,7 +1892,7 @@ function update_bootloader_sddm() {
 
     luks_parts=$(lsblk -rno NAME,FSTYPE | grep crypto_LUKS | awk '{print $1}')
 
-    if [ ! -z "$luks_parts" ]; then
+    if [ -n "$luks_parts" ]; then
       echo -e "${COK} ${BONSAI_TEXT}Found encrypted partition: ${BONSAI_GREEN}/dev/$luks_parts${BONSAI_RESET}"
       SELECTED_PART="/dev/$luks_parts"
     else
@@ -1879,7 +1922,7 @@ function update_bootloader_sddm() {
       fi
     fi
 
-    if [ ! -z "$SELECTED_PART" ]; then
+    if [ -n "$SELECTED_PART" ]; then
       deviceUUID=$(sudo blkid -s UUID -o value $SELECTED_PART)
       if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
         variable="GRUB_CMDLINE_LINUX"
@@ -1899,7 +1942,7 @@ function update_bootloader_sddm() {
     echo -e "\n${COK} ${BONSAI_GREEN}GRUB and SDDM themes updated successfully!${BONSAI_RESET}"
   else
     echo -e "\n${CNT} ${BONSAI_TEXT}Updating systemd-boot entries...${BONSAI_RESET}"
-    if [[ $enc_status == "1" ]] && [ ! -z "$SELECTED_PART" ]; then
+    if [[ $enc_status == "1" ]] && [ -n "$SELECTED_PART" ]; then
       deviceUUID=$(sudo blkid -s UUID -o value $SELECTED_PART)
       for entry in /boot/loader/entries/*.conf; do
         if [ -f "$entry" ]; then
@@ -1949,7 +1992,7 @@ function convert_to_cachyos() {
 
   # Step 4: Install CachyOS optimized packages
   echo -e "\n${CNT} ${BONSAI_TEXT}Step 4/6: Upgrading to CachyOS-optimized packages...${BONSAI_RESET}"
-  for pkg in ${cachyos_optimized_packages[@]}; do
+  for pkg in "${cachyos_optimized_packages[@]}"; do
     echo -e "${CNT} ${BONSAI_MUTED}Installing $pkg...${BONSAI_RESET}"
     sudo pacman -S --noconfirm --needed $pkg 2>/dev/null || true
   done
@@ -2066,51 +2109,52 @@ EOF
 
 # Main menu with BONSAI styling
 function main_menu() {
-  show_bonsai_header
+  while true; do
+    show_bonsai_header
 
-  echo -e "${BONSAI_TEXT}Welcome to the BONSAI Arch Linux Installer${BONSAI_RESET}"
-  echo -e "${BONSAI_MUTED}Enhanced installation experience with zen aesthetics${BONSAI_RESET}\n"
+    echo -e "${BONSAI_TEXT}Welcome to the BONSAI Arch Linux Installer${BONSAI_RESET}"
+    echo -e "${BONSAI_MUTED}Enhanced installation experience with zen aesthetics${BONSAI_RESET}\n"
 
-  echo -e "${CNT} ${BONSAI_TEXT}Select an action:${BONSAI_RESET}\n"
-  echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}Install Arch Linux${BONSAI_RESET} ${BONSAI_MUTED}(or CachyOS base system)${BONSAI_RESET}"
-  echo -e "  ${BONSAI_GREEN}[2]${BONSAI_RESET} ${BONSAI_TEXT}Install Hyprland${BONSAI_RESET} ${BONSAI_MUTED}(Desktop environment)${BONSAI_RESET}"
-  echo -e "  ${BONSAI_GREEN}[3]${BONSAI_RESET} ${BONSAI_TEXT}Restore Dotfiles${BONSAI_RESET} ${BONSAI_MUTED}(Configuration files)${BONSAI_RESET}"
-  echo -e "  ${BONSAI_GREEN}[4]${BONSAI_RESET} ${BONSAI_TEXT}Update Bootloader/SDDM${BONSAI_RESET} ${BONSAI_MUTED}(Themes)${BONSAI_RESET}"
-  echo -e "  ${BONSAI_GREEN}[5]${BONSAI_RESET} ${BONSAI_TEXT}Convert to CachyOS${BONSAI_RESET} ${BONSAI_MUTED}(Existing Arch)${BONSAI_RESET}"
-  echo -e "  ${BONSAI_GREEN}[6]${BONSAI_RESET} ${BONSAI_TEXT}Exit${BONSAI_RESET}"
+    echo -e "${CNT} ${BONSAI_TEXT}Select an action:${BONSAI_RESET}\n"
+    echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}Install Arch Linux${BONSAI_RESET} ${BONSAI_MUTED}(or CachyOS base system)${BONSAI_RESET}"
+    echo -e "  ${BONSAI_GREEN}[2]${BONSAI_RESET} ${BONSAI_TEXT}Install Hyprland${BONSAI_RESET} ${BONSAI_MUTED}(Desktop environment)${BONSAI_RESET}"
+    echo -e "  ${BONSAI_GREEN}[3]${BONSAI_RESET} ${BONSAI_TEXT}Restore Dotfiles${BONSAI_RESET} ${BONSAI_MUTED}(Configuration files)${BONSAI_RESET}"
+    echo -e "  ${BONSAI_GREEN}[4]${BONSAI_RESET} ${BONSAI_TEXT}Update Bootloader/SDDM${BONSAI_RESET} ${BONSAI_MUTED}(Themes)${BONSAI_RESET}"
+    echo -e "  ${BONSAI_GREEN}[5]${BONSAI_RESET} ${BONSAI_TEXT}Convert to CachyOS${BONSAI_RESET} ${BONSAI_MUTED}(Existing Arch)${BONSAI_RESET}"
+    echo -e "  ${BONSAI_GREEN}[6]${BONSAI_RESET} ${BONSAI_TEXT}Exit${BONSAI_RESET}"
 
-  echo ""
-  read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-6]: ${BONSAI_RESET})" menu_choice
+    echo ""
+    read -p "$(echo -e ${BONSAI_YELLOW}Select option [1-6]: ${BONSAI_RESET})" menu_choice
 
-  case $menu_choice in
-    1)
-      pacman_init
-      btrfs_format
-      base_config
-      ;;
-    2)
-      install_hyprland
-      ;;
-    3)
-      restore_dotfiles
-      ;;
-    4)
-      update_bootloader_sddm
-      ;;
-    5)
-      convert_to_cachyos
-      ;;
-    6)
-      echo -e "\n${COK} ${BONSAI_GREEN}Thank you for using BONSAI installer!${BONSAI_RESET}"
-      echo -e "${BONSAI_MUTED}May your system grow with purpose 🌱${BONSAI_RESET}\n"
-      exit 0
-      ;;
-    *)
-      echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
-      sleep 2
-      main_menu
-      ;;
-  esac
+    case $menu_choice in
+      1)
+        pacman_init
+        btrfs_format
+        base_config
+        ;;
+      2)
+        install_hyprland
+        ;;
+      3)
+        restore_dotfiles
+        ;;
+      4)
+        update_bootloader_sddm
+        ;;
+      5)
+        convert_to_cachyos
+        ;;
+      6)
+        echo -e "\n${COK} ${BONSAI_GREEN}Thank you for using BONSAI installer!${BONSAI_RESET}"
+        echo -e "${BONSAI_MUTED}May your system grow with purpose 🌱${BONSAI_RESET}\n"
+        exit 0
+        ;;
+      *)
+        echo -e "${CER} ${BONSAI_RED}Invalid selection${BONSAI_RESET}"
+        sleep 2
+        ;;
+    esac
+  done
 }
 
 # Start the installer
