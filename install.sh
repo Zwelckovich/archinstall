@@ -1060,6 +1060,9 @@ EOF
     # the resulting path can be passed to blkid/cryptsetup.
     root_dev="${root_src%%\[*}"
 
+    # Diagnostic logging (visible in install log)
+    echo -e "${CNT} derive_kernel_opts: findmnt returned '${root_src}', stripped to '${root_dev}'" >&2
+
     # Normalise UUID=/LABEL= style sources back into concrete device nodes.
     case "$root_dev" in
       UUID=*)
@@ -1079,21 +1082,40 @@ EOF
       if [[ -z "$mapname" ]]; then
         mapname="cryptroot"
       fi
-      # NOTE: The mapper name must remain "cryptroot" to match hooks and tests.
-      # root=/dev/mapper/cryptroot
+      echo -e "${CNT} derive_kernel_opts: encrypted root detected, mapper='${mapname}'" >&2
+
       # cryptsetup status prefers the map name (without /dev/mapper/).
       luks_part=$(cryptsetup status "$mapname" 2> /dev/null | awk '/device:/ {print $2}')
       if [[ -z "$luks_part" ]]; then
         # Fallback to lsblk if cryptsetup status is unavailable.
-        luks_part="/dev/$(lsblk -no PKNAME "$root_dev" | head -n1)"
+        local pkname
+        pkname=$(lsblk -no PKNAME "$root_dev" 2>/dev/null | head -n1)
+        if [[ -n "$pkname" ]]; then
+          luks_part="/dev/$pkname"
+        fi
       fi
+
+      # Validate we actually found the LUKS partition
+      if [[ -z "$luks_part" || "$luks_part" == "/dev/" ]]; then
+        echo -e "${CER} derive_kernel_opts: FATAL — could not determine LUKS backing device for mapper '${mapname}'" >&2
+        echo -e "${CER} derive_kernel_opts: cryptsetup status and lsblk both failed" >&2
+        # Return a clearly broken string so the caller can detect failure
+        return 1
+      fi
+
+      echo -e "${CNT} derive_kernel_opts: LUKS partition='${luks_part}'" >&2
       luks_uuid=$(blkid -s UUID -o value "$luks_part" 2> /dev/null)
+
       if [[ -n "$luks_uuid" ]]; then
+        echo -e "${COK} derive_kernel_opts: LUKS UUID='${luks_uuid}'" >&2
         echo "cryptdevice=UUID=$luks_uuid:cryptroot root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
       else
+        echo -e "${CWR} derive_kernel_opts: blkid returned no UUID for '${luks_part}', using device path" >&2
         echo "cryptdevice=$luks_part:cryptroot root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
       fi
     else
+      echo -e "${CNT} derive_kernel_opts: unencrypted root, device='${root_dev}'" >&2
+
       # Attempt to read the filesystem UUID from the concrete device. If that fails,
       # fall back to findmnt's UUID field or (worst case) the raw device path.
       root_uuid=$(blkid -s UUID -o value "$root_dev" 2> /dev/null)
@@ -1104,6 +1126,7 @@ EOF
       if [[ -n "$root_uuid" ]]; then
         echo "root=UUID=$root_uuid rootflags=subvol=@ rw quiet"
       else
+        echo -e "${CWR} derive_kernel_opts: no UUID found, using raw device '${root_dev}'" >&2
         echo "root=$root_dev rootflags=subvol=@ rw quiet"
       fi
     fi
@@ -1282,6 +1305,18 @@ EOF
     local grub_args
     grub_args="$(derive_kernel_opts)"
 
+    # Validate kernel options
+    if [[ -z "$grub_args" ]]; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: derive_kernel_opts returned empty — cannot configure GRUB${BONSAI_RESET}"
+      return 1
+    fi
+    if [[ "$grub_args" == *"cryptdevice=UUID=:"* ]] || [[ "$grub_args" == *"root=UUID= "* ]]; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: kernel options contain empty UUID — aborting GRUB config${BONSAI_RESET}"
+      echo -e "${CER} ${BONSAI_RED}Generated options: ${grub_args}${BONSAI_RESET}"
+      return 1
+    fi
+    echo -e "${COK} ${BONSAI_TEXT}GRUB kernel options: ${BONSAI_MUTED}${grub_args}${BONSAI_RESET}"
+
     # Keep quiet/loglevel, append derived root/crypt opts
     if arch-chroot /mnt grep -q '^GRUB_CMDLINE_LINUX_DEFAULT=' /etc/default/grub; then
       arch-chroot /mnt sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet ${grub_args}\"|" /etc/default/grub
@@ -1366,6 +1401,27 @@ EOF
     # ---------- FIXED: build kernel options from the actual mounted root ----------
     local kernel_opts
     kernel_opts="$(derive_kernel_opts)"
+
+    # Validate kernel options — abort if derive_kernel_opts failed or returned empty
+    if [[ -z "$kernel_opts" ]]; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: derive_kernel_opts returned empty — cannot create boot entry${BONSAI_RESET}"
+      echo -e "${CER} ${BONSAI_RED}Check the diagnostic output above for details${BONSAI_RESET}"
+      return 1
+    fi
+
+    # Sanity-check: encrypted systems must have a non-empty UUID or device in cryptdevice=
+    if [[ "$kernel_opts" == *"cryptdevice=UUID=:"* ]] || [[ "$kernel_opts" == *"cryptdevice=:"* ]]; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: kernel options contain empty cryptdevice UUID${BONSAI_RESET}"
+      echo -e "${CER} ${BONSAI_RED}Generated options: ${kernel_opts}${BONSAI_RESET}"
+      return 1
+    fi
+    if [[ "$kernel_opts" == *"root=UUID= "* ]]; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: kernel options contain empty root UUID${BONSAI_RESET}"
+      echo -e "${CER} ${BONSAI_RED}Generated options: ${kernel_opts}${BONSAI_RESET}"
+      return 1
+    fi
+
+    echo -e "${COK} ${BONSAI_TEXT}Kernel options: ${BONSAI_MUTED}${kernel_opts}${BONSAI_RESET}"
 
     # Determine entry title based on distro (keeping Arch Linux name as per user preference)
     local entry_title="Arch Linux"
