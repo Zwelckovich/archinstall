@@ -550,6 +550,13 @@ function configure_cachyos_repos_chroot() {
   # Add CachyOS repositories to pacman.conf (before [core] section)
   echo -e "${CNT} ${BONSAI_TEXT}Configuring pacman.conf with CachyOS repos...${BONSAI_RESET}"
 
+  # Enable x86_64_v3 architecture for CachyOS v3 packages
+  if grep -q '^Architecture\s*=\s*auto' /mnt/etc/pacman.conf; then
+    sed -i 's/^Architecture\s*=\s*auto/Architecture = auto x86_64 x86_64_v3/' /mnt/etc/pacman.conf
+  elif grep -q '^Architecture' /mnt/etc/pacman.conf && ! grep -q 'x86_64_v3' /mnt/etc/pacman.conf; then
+    sed -i 's/^\(Architecture\s*=.*\)/\1 x86_64_v3/' /mnt/etc/pacman.conf
+  fi
+
   # Check if CachyOS repos already added
   if ! grep -q '\[cachyos\]' /mnt/etc/pacman.conf; then
     # Insert CachyOS repos before [core]
@@ -605,6 +612,13 @@ function configure_cachyos_repos_running() {
 
   # Add CachyOS repositories to pacman.conf
   echo -e "${CNT} ${BONSAI_TEXT}Configuring pacman.conf with CachyOS repos...${BONSAI_RESET}"
+
+  # Enable x86_64_v3 architecture for CachyOS v3 packages
+  if grep -q '^Architecture\s*=\s*auto' /etc/pacman.conf; then
+    sudo sed -i 's/^Architecture\s*=\s*auto/Architecture = auto x86_64 x86_64_v3/' /etc/pacman.conf
+  elif grep -q '^Architecture' /etc/pacman.conf && ! grep -q 'x86_64_v3' /etc/pacman.conf; then
+    sudo sed -i 's/^\(Architecture\s*=.*\)/\1 x86_64_v3/' /etc/pacman.conf
+  fi
 
   if ! grep -q '\[cachyos\]' /etc/pacman.conf; then
     sudo sed -i '/^\[core\]/i \
@@ -2001,18 +2015,32 @@ function convert_to_cachyos() {
   if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
     echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: NVIDIA GPU detected, configuring DKMS driver...${BONSAI_RESET}"
 
-    # Remove kernel-specific nvidia package if present
-    if pacman -Q nvidia &>/dev/null; then
-      echo -e "${CWR} ${BONSAI_YELLOW}Removing kernel-specific nvidia package...${BONSAI_RESET}"
-      sudo pacman -Rdd --noconfirm nvidia 2>/dev/null || true
+    # Remove ALL existing nvidia packages to avoid conflicts
+    # This handles nvidia, nvidia-open, nvidia-dkms, and their utils
+    local nvidia_pkgs_to_remove=()
+    for pkg in nvidia nvidia-open nvidia-open-dkms nvidia-lts nvidia-dkms \
+               nvidia-utils nvidia-settings nvidia-535xx-dkms nvidia-535xx-utils \
+               nvidia-550xx-dkms nvidia-550xx-utils; do
+      if pacman -Q "$pkg" &>/dev/null; then
+        nvidia_pkgs_to_remove+=("$pkg")
+      fi
+    done
+
+    if [[ ${#nvidia_pkgs_to_remove[@]} -gt 0 ]]; then
+      echo -e "${CWR} ${BONSAI_YELLOW}Removing existing NVIDIA packages: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
+      sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>/dev/null || true
     fi
 
-    # Install nvidia-dkms if not already present
-    if ! pacman -Q nvidia-dkms &>/dev/null; then
-      echo -e "${CNT} ${BONSAI_TEXT}Installing nvidia-dkms...${BONSAI_RESET}"
-      sudo pacman -S --noconfirm nvidia-dkms nvidia-utils nvidia-settings
-    else
-      echo -e "${COK} ${BONSAI_TEXT}nvidia-dkms already installed${BONSAI_RESET}"
+    # Install CachyOS NVIDIA DKMS driver
+    # Use nvidia-open-dkms from extra repo (latest, open-source kernel modules)
+    echo -e "${CNT} ${BONSAI_TEXT}Installing nvidia-open-dkms and utilities...${BONSAI_RESET}"
+    sudo pacman -S --noconfirm nvidia-open-dkms nvidia-utils nvidia-settings
+
+    # Ensure nvidia modules in initramfs
+    if ! grep -qE 'nvidia.*nvidia_modeset.*nvidia_uvm.*nvidia_drm' /etc/mkinitcpio.conf; then
+      sudo sed -Ei 's/^(MODULES=\([^\)]*)\)/\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
+      echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs with NVIDIA modules...${BONSAI_RESET}"
+      sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
     fi
   else
     echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: No NVIDIA GPU detected, skipping...${BONSAI_RESET}"
