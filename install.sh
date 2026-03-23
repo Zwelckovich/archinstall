@@ -1694,16 +1694,24 @@ function install_hyprland() {
       uninstall_software $SOFTWR
     done
 
-    # Select appropriate NVIDIA package set based on distro
+    # Select appropriate NVIDIA package set based on distro and GPU architecture
     if [ "$DISTRO_TYPE" = "cachyos" ]; then
-      # For CachyOS: install kernel headers first, then DKMS driver
+      # For CachyOS: determine correct driver for GPU architecture
+      # CachyOS replaced nvidia-dkms with nvidia-open-dkms (Turing+ only)
+      # Pre-Turing GPUs need the proprietary nvidia-535xx branch
+      determine_nvidia_packages
+      echo -e "${CNT} ${BONSAI_TEXT}GPU architecture: ${NVIDIA_ARCH_DESC}${BONSAI_RESET}"
       echo -e "${CNT} ${BONSAI_TEXT}Installing CachyOS kernel headers...${BONSAI_RESET}"
       install_software $KERNEL_HEADERS
-      for SOFTWR in "${nvidia_stage_cachyos[@]}"; do
-        install_software $SOFTWR
-      done
+      install_software "$NVIDIA_DRV_PKG"
+      install_software "$NVIDIA_SETTINGS_PKG"
+      install_software "$NVIDIA_UTILS_PKG"
+      install_software libva
+      install_software libva-utils
+      install_software libva-nvidia-driver-git
+      install_software cuda
     else
-      # For Arch Linux: use standard nvidia package
+      # For Arch Linux: use standard nvidia package (proprietary, supports Maxwell+)
       for SOFTWR in "${nvidia_stage_arch[@]}"; do
         install_software $SOFTWR
       done
@@ -2194,6 +2202,57 @@ function cachyos_preflight_check() {
   return 0
 }
 
+# Determine correct NVIDIA driver packages for GPU architecture and distro
+# CachyOS replaced nvidia-dkms with nvidia-open-dkms (open kernel modules, Turing+ only)
+# Pre-Turing GPUs (Maxwell/Pascal) need the proprietary nvidia-535xx legacy branch
+# Sets globals: NVIDIA_DRV_PKG, NVIDIA_UTILS_PKG, NVIDIA_SETTINGS_PKG, NVIDIA_ARCH_DESC
+function determine_nvidia_packages() {
+  local gpu_pci_id
+  gpu_pci_id=$(lspci -nn | grep -iE '(VGA|3D)' | grep -i nvidia | grep -oP '10de:\K[0-9a-f]{4}' | head -1)
+
+  if [[ -z "$gpu_pci_id" ]]; then
+    # No PCI ID found — safe default for modern GPUs
+    NVIDIA_DRV_PKG="nvidia-open-dkms"
+    NVIDIA_UTILS_PKG="nvidia-utils"
+    NVIDIA_SETTINGS_PKG="nvidia-settings"
+    NVIDIA_ARCH_DESC="unknown (defaulting to open modules)"
+    return
+  fi
+
+  local id_decimal=$((16#$gpu_pci_id))
+
+  # Turing (TU1xx) starts at PCI ID 0x1E00; open modules support Turing+
+  if (( id_decimal >= 0x1E00 )); then
+    NVIDIA_DRV_PKG="nvidia-open-dkms"
+    NVIDIA_UTILS_PKG="nvidia-utils"
+    NVIDIA_SETTINGS_PKG="nvidia-settings"
+    NVIDIA_ARCH_DESC="Turing+ (open modules)"
+  else
+    if [ "$DISTRO_TYPE" = "cachyos" ]; then
+      # CachyOS packages nvidia-open-dkms as Replaces: nvidia-dkms
+      # Open modules don't support pre-Turing — use proprietary 535xx branch
+      NVIDIA_DRV_PKG="nvidia-535xx-dkms"
+      NVIDIA_UTILS_PKG="nvidia-535xx-utils"
+      NVIDIA_SETTINGS_PKG="nvidia-535xx-settings"
+      NVIDIA_ARCH_DESC="Maxwell/Pascal (535xx proprietary — CachyOS)"
+    else
+      # Arch Linux: standard nvidia-dkms has proprietary modules, supports Maxwell+
+      NVIDIA_DRV_PKG="nvidia-dkms"
+      NVIDIA_UTILS_PKG="nvidia-utils"
+      NVIDIA_SETTINGS_PKG="nvidia-settings"
+      NVIDIA_ARCH_DESC="Maxwell+ (proprietary)"
+    fi
+  fi
+}
+
+# Check if any NVIDIA driver variant is installed (includes legacy branches)
+function is_nvidia_driver_installed() {
+  pacman -Q nvidia-open-dkms &>/dev/null || \
+  pacman -Q nvidia-dkms &>/dev/null || \
+  pacman -Q nvidia &>/dev/null || \
+  pacman -Qq 2>/dev/null | grep -qE '^nvidia-[0-9]+xx-dkms$'
+}
+
 # Ensure NVIDIA modules in mkinitcpio.conf without duplication
 # IDEMPOTENT: Safe to re-run — checks each module individually
 function ensure_nvidia_initramfs() {
@@ -2276,43 +2335,41 @@ function convert_to_cachyos() {
   echo -e "${CNT} ${BONSAI_MUTED}Upgrading PipeWire stack (atomic transaction)...${BONSAI_RESET}"
   sudo pacman -S --noconfirm --needed "${cachyos_pipewire_packages[@]}" 2>/dev/null || true
 
-  # Step 5: Handle NVIDIA (detect GPU hardware, install/convert to DKMS)
+  # Step 5: Handle NVIDIA (detect GPU hardware, install/convert to correct driver)
   if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
-    echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: NVIDIA GPU detected, configuring DKMS driver...${BONSAI_RESET}"
+    echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: NVIDIA GPU detected, configuring driver...${BONSAI_RESET}"
 
-    # Determine correct driver for this GPU
-    local nvidia_pkg="nvidia-dkms"
-    local gpu_pci_id
-    gpu_pci_id=$(lspci -nn | grep -iE '(VGA|3D)' | grep -i nvidia | grep -oP '10de:\K[0-9a-f]{4}' | head -1)
-    if [[ -n "$gpu_pci_id" ]]; then
-      local id_decimal=$((16#$gpu_pci_id))
-      # Turing (TU1xx) starts at 0x1E00; all newer architectures have higher IDs
-      if (( id_decimal >= 0x1E00 )); then
-        nvidia_pkg="nvidia-open-dkms"
-      fi
-    fi
+    # Determine correct driver for this GPU architecture and distro
+    # CachyOS replaced nvidia-dkms with nvidia-open-dkms (Turing+ only)
+    # Pre-Turing GPUs need the proprietary nvidia-535xx branch on CachyOS
+    determine_nvidia_packages
+    echo -e "${CNT} ${BONSAI_TEXT}GPU architecture: ${NVIDIA_ARCH_DESC}${BONSAI_RESET}"
+    echo -e "${CNT} ${BONSAI_TEXT}Selected driver: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
 
     # Check if the correct driver is already installed
-    if pacman -Q "$nvidia_pkg" &>/dev/null; then
-      echo -e "${COK} ${BONSAI_TEXT}Correct NVIDIA driver already installed: ${nvidia_pkg}${BONSAI_RESET}"
+    if pacman -Q "$NVIDIA_DRV_PKG" &>/dev/null; then
+      echo -e "${COK} ${BONSAI_TEXT}Correct NVIDIA driver already installed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
     else
-      # Remove ALL existing nvidia packages to avoid conflicts
+      # Remove ALL existing nvidia driver/utils packages to avoid conflicts
+      # Must cover: mainline, open, legacy 535/550/580, and Arch-standard packages
       local nvidia_pkgs_to_remove=()
       for pkg in nvidia nvidia-open nvidia-open-dkms nvidia-lts nvidia-dkms \
-                 nvidia-utils nvidia-settings nvidia-535xx-dkms nvidia-535xx-utils \
-                 nvidia-550xx-dkms nvidia-550xx-utils; do
+                 nvidia-utils nvidia-settings opencl-nvidia \
+                 nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings \
+                 nvidia-550xx-dkms nvidia-550xx-utils nvidia-550xx-settings \
+                 nvidia-580xx-dkms nvidia-580xx-utils nvidia-580xx-settings; do
         if pacman -Q "$pkg" &>/dev/null; then
           nvidia_pkgs_to_remove+=("$pkg")
         fi
       done
 
       if [[ ${#nvidia_pkgs_to_remove[@]} -gt 0 ]]; then
-        echo -e "${CWR} ${BONSAI_YELLOW}Removing existing NVIDIA packages: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
+        echo -e "${CWR} ${BONSAI_YELLOW}Removing incompatible NVIDIA packages: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
         sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>/dev/null || true
       fi
 
-      echo -e "${CNT} ${BONSAI_TEXT}Installing ${nvidia_pkg} and utilities...${BONSAI_RESET}"
-      sudo pacman -S --noconfirm "$nvidia_pkg" nvidia-utils nvidia-settings
+      echo -e "${CNT} ${BONSAI_TEXT}Installing ${NVIDIA_DRV_PKG} + ${NVIDIA_UTILS_PKG}...${BONSAI_RESET}"
+      sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG"
     fi
 
     # Ensure nvidia modules in initramfs (idempotent, no duplication)
@@ -2348,8 +2405,8 @@ function convert_to_cachyos() {
       return 1
     fi
 
-    # Add NVIDIA options if any NVIDIA driver is installed
-    if pacman -Q nvidia-open-dkms &>/dev/null || pacman -Q nvidia-dkms &>/dev/null || pacman -Q nvidia &>/dev/null; then
+    # Add NVIDIA options if any NVIDIA driver variant is installed (including legacy branches)
+    if is_nvidia_driver_installed; then
       kernel_opts="$kernel_opts nvidia-drm.modeset=1 nvidia_drm.fbdev=1"
     fi
 
@@ -2429,10 +2486,10 @@ EOF
   echo -e "  ${BONSAI_TEXT}• CachyOS repositories added${BONSAI_RESET}"
   echo -e "  ${BONSAI_TEXT}• Kernel: ${BONSAI_GREEN}${KERNEL_TYPE}${BONSAI_RESET}"
   echo -e "  ${BONSAI_TEXT}• Optimized packages installed${BONSAI_RESET}"
-  if pacman -Q nvidia-open-dkms &>/dev/null; then
-    echo -e "  ${BONSAI_TEXT}• NVIDIA: ${BONSAI_GREEN}nvidia-open-dkms (Turing+)${BONSAI_RESET}"
-  elif pacman -Q nvidia-dkms &>/dev/null; then
-    echo -e "  ${BONSAI_TEXT}• NVIDIA: ${BONSAI_GREEN}nvidia-dkms (proprietary)${BONSAI_RESET}"
+  if is_nvidia_driver_installed; then
+    local installed_drv
+    installed_drv=$(pacman -Qq 2>/dev/null | grep -E '^nvidia(-open)?(-[0-9]+xx)?-dkms$|^nvidia$' | head -1)
+    echo -e "  ${BONSAI_TEXT}• NVIDIA: ${BONSAI_GREEN}${installed_drv:-unknown} (${NVIDIA_ARCH_DESC:-detected})${BONSAI_RESET}"
   fi
   echo -e "  ${BONSAI_TEXT}• Bootloader: ${BONSAI_GREEN}${DETECTED_BOOTLOADER}${BONSAI_RESET}"
 
