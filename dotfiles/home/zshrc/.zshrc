@@ -225,7 +225,7 @@ alias -s png=feh
 alias -s pdf=zathura
 
 # --- Programming Environment Update ---
-alias codeup="yamir && yain biome visual-studio-code-bin && uv self update && bun upgrade && claude install && code --update-extensions && sudo npm install -g corepack"
+alias codeup="yamir && yain biome lazygit visual-studio-code-bin && uv self update && bun upgrade && claude install && code --update-extensions && sudo npm install -g corepack"
 
 # --- Rsync Mirror ---
 alias mirror="rsync -a --info=progress2 --no-inc-recursive --delete"
