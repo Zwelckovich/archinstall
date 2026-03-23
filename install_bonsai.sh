@@ -235,7 +235,15 @@ cachyos_optimized_packages=(
   zstd                            # Compression (faster package operations)
   zlib-ng                         # Compression library
   sqlite                          # Database (faster package queries)
-  pipewire                        # Audio (lower latency)
+)
+
+# PipeWire packages must upgrade together (version-locked dependencies)
+cachyos_pipewire_packages=(
+  pipewire                        # Audio server (lower latency)
+  libpipewire                     # PipeWire client library
+  pipewire-alsa                   # ALSA compatibility
+  pipewire-audio                  # Audio support
+  pipewire-pulse                  # PulseAudio compatibility
   wireplumber                     # PipeWire session manager
 )
 
@@ -2010,6 +2018,10 @@ function convert_to_cachyos() {
     echo -e "${CNT} ${BONSAI_MUTED}Installing $pkg...${BONSAI_RESET}"
     sudo pacman -S --noconfirm --needed $pkg 2>/dev/null || true
   done
+
+  # PipeWire packages must upgrade in a single transaction (version-locked deps)
+  echo -e "${CNT} ${BONSAI_MUTED}Upgrading PipeWire stack...${BONSAI_RESET}"
+  sudo pacman -S --noconfirm --needed "${cachyos_pipewire_packages[@]}" 2>/dev/null || true
 
   # Step 5: Handle NVIDIA (detect GPU hardware, install/convert to DKMS)
   if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
