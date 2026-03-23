@@ -558,10 +558,12 @@ function configure_cachyos_repos_chroot() {
   # Add CachyOS repositories to pacman.conf (before [core] section)
   echo -e "${CNT} ${BONSAI_TEXT}Configuring pacman.conf with CachyOS repos...${BONSAI_RESET}"
 
-  # Enable x86_64_v3 architecture for CachyOS v3 packages
-  if grep -q '^Architecture\s*=\s*auto' /mnt/etc/pacman.conf; then
-    sed -i 's/^Architecture\s*=\s*auto/Architecture = auto x86_64 x86_64_v3/' /mnt/etc/pacman.conf
-  elif grep -q '^Architecture' /mnt/etc/pacman.conf && ! grep -q 'x86_64_v3' /mnt/etc/pacman.conf; then
+  # Enable x86_64_v3 architecture — check if already present to prevent duplication
+  if grep -q 'x86_64_v3' /mnt/etc/pacman.conf; then
+    echo -e "${COK} ${BONSAI_TEXT}x86_64_v3 architecture already configured${BONSAI_RESET}"
+  elif grep -q '^Architecture\s*=\s*auto$' /mnt/etc/pacman.conf; then
+    sed -i 's/^Architecture\s*=\s*auto$/Architecture = auto x86_64 x86_64_v3/' /mnt/etc/pacman.conf
+  elif grep -q '^Architecture' /mnt/etc/pacman.conf; then
     sed -i 's/^\(Architecture\s*=.*\)/\1 x86_64_v3/' /mnt/etc/pacman.conf
   fi
 
@@ -592,39 +594,49 @@ Include = /etc/pacman.d/cachyos-mirrorlist\n\
 }
 
 # Configure CachyOS repositories (for running system - conversion)
+# IDEMPOTENT: Safe to re-run — skips steps already completed
 function configure_cachyos_repos_running() {
   show_section "CachyOS Repository Configuration"
 
   echo -e "${CNT} ${BONSAI_TEXT}Adding CachyOS repositories to running system...${BONSAI_RESET}"
 
-  # Import CachyOS signing keys
-  echo -e "${CNT} ${BONSAI_TEXT}Importing CachyOS signing keys...${BONSAI_RESET}"
-  sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com 2>&1 | tee -a "$INSTLOG"
-  sudo pacman-key --lsign-key F3B607488DB35A47 2>&1 | tee -a "$INSTLOG"
-
-  # Install cachyos-keyring and cachyos-mirrorlist
-  echo -e "${CNT} ${BONSAI_TEXT}Installing CachyOS keyring and mirrorlists...${BONSAI_RESET}"
-  local keyring_url mirrorlist_url v3_mirrorlist_url
-  keyring_url=$(get_cachyos_pkg_url "cachyos-keyring") || true
-  mirrorlist_url=$(get_cachyos_pkg_url "cachyos-mirrorlist") || true
-  v3_mirrorlist_url=$(get_cachyos_pkg_url "cachyos-v3-mirrorlist") || true
-
-  if [[ -n "$keyring_url" && -n "$mirrorlist_url" && -n "$v3_mirrorlist_url" ]]; then
-    sudo pacman -U --noconfirm \
-      "$keyring_url" "$mirrorlist_url" "$v3_mirrorlist_url" \
-      2>&1 | tee -a "$INSTLOG" || true
+  # Skip keyring/mirrorlist install if already present (idempotent re-run)
+  if pacman -Q cachyos-keyring &>/dev/null && \
+     pacman -Q cachyos-mirrorlist &>/dev/null && \
+     pacman -Q cachyos-v3-mirrorlist &>/dev/null; then
+    echo -e "${COK} ${BONSAI_TEXT}CachyOS keyring and mirrorlists already installed, skipping download${BONSAI_RESET}"
   else
-    echo -e "${CER} ${BONSAI_RED}Failed to resolve CachyOS package URLs${BONSAI_RESET}"
-    return 1
+    # Import CachyOS signing keys
+    echo -e "${CNT} ${BONSAI_TEXT}Importing CachyOS signing keys...${BONSAI_RESET}"
+    sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com 2>&1 | tee -a "$INSTLOG"
+    sudo pacman-key --lsign-key F3B607488DB35A47 2>&1 | tee -a "$INSTLOG"
+
+    # Install cachyos-keyring and cachyos-mirrorlist
+    echo -e "${CNT} ${BONSAI_TEXT}Installing CachyOS keyring and mirrorlists...${BONSAI_RESET}"
+    local keyring_url mirrorlist_url v3_mirrorlist_url
+    keyring_url=$(get_cachyos_pkg_url "cachyos-keyring") || true
+    mirrorlist_url=$(get_cachyos_pkg_url "cachyos-mirrorlist") || true
+    v3_mirrorlist_url=$(get_cachyos_pkg_url "cachyos-v3-mirrorlist") || true
+
+    if [[ -n "$keyring_url" && -n "$mirrorlist_url" && -n "$v3_mirrorlist_url" ]]; then
+      sudo pacman -U --noconfirm \
+        "$keyring_url" "$mirrorlist_url" "$v3_mirrorlist_url" \
+        2>&1 | tee -a "$INSTLOG" || true
+    else
+      echo -e "${CER} ${BONSAI_RED}Failed to resolve CachyOS package URLs${BONSAI_RESET}"
+      return 1
+    fi
   fi
 
   # Add CachyOS repositories to pacman.conf
   echo -e "${CNT} ${BONSAI_TEXT}Configuring pacman.conf with CachyOS repos...${BONSAI_RESET}"
 
-  # Enable x86_64_v3 architecture for CachyOS v3 packages
-  if grep -q '^Architecture\s*=\s*auto' /etc/pacman.conf; then
-    sudo sed -i 's/^Architecture\s*=\s*auto/Architecture = auto x86_64 x86_64_v3/' /etc/pacman.conf
-  elif grep -q '^Architecture' /etc/pacman.conf && ! grep -q 'x86_64_v3' /etc/pacman.conf; then
+  # Enable x86_64_v3 architecture — check if already present to prevent duplication
+  if grep -q 'x86_64_v3' /etc/pacman.conf; then
+    echo -e "${COK} ${BONSAI_TEXT}x86_64_v3 architecture already configured${BONSAI_RESET}"
+  elif grep -q '^Architecture\s*=\s*auto$' /etc/pacman.conf; then
+    sudo sed -i 's/^Architecture\s*=\s*auto$/Architecture = auto x86_64 x86_64_v3/' /etc/pacman.conf
+  elif grep -q '^Architecture' /etc/pacman.conf; then
     sudo sed -i 's/^\(Architecture\s*=.*\)/\1 x86_64_v3/' /etc/pacman.conf
   fi
 
@@ -643,6 +655,8 @@ Include = /etc/pacman.d/cachyos-v3-mirrorlist\n\
 [cachyos]\n\
 Include = /etc/pacman.d/cachyos-mirrorlist\n\
 ' /etc/pacman.conf
+  else
+    echo -e "${COK} ${BONSAI_TEXT}CachyOS repositories already in pacman.conf${BONSAI_RESET}"
   fi
 
   # Sync package databases
@@ -1980,7 +1994,139 @@ function update_bootloader_sddm() {
   fi
 }
 
+# Pre-flight validation for CachyOS conversion
+# Checks system state before attempting conversion to prevent failures
+function cachyos_preflight_check() {
+  local errors=0
+
+  show_section "Pre-flight System Validation"
+
+  # 1. Check CPU supports x86-64-v3 (required for CachyOS v3 packages)
+  echo -e "${CNT} ${BONSAI_TEXT}Checking CPU x86-64-v3 support...${BONSAI_RESET}"
+  if grep -q 'avx2' /proc/cpuinfo && grep -q 'bmi2' /proc/cpuinfo && \
+     grep -q 'fma' /proc/cpuinfo && grep -q 'movbe' /proc/cpuinfo; then
+    echo -e "${COK} ${BONSAI_TEXT}CPU supports x86-64-v3${BONSAI_RESET}"
+  else
+    echo -e "${CER} ${BONSAI_RED}CPU does NOT support x86-64-v3 instructions${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}CachyOS v3 packages require: AVX2, BMI2, FMA, MOVBE${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Your CPU is missing one or more of these features.${BONSAI_RESET}"
+    ((errors++))
+  fi
+
+  # 2. Check network connectivity
+  echo -e "${CNT} ${BONSAI_TEXT}Checking network connectivity...${BONSAI_RESET}"
+  if curl -s --connect-timeout 5 --max-time 10 https://mirror.cachyos.org > /dev/null 2>&1; then
+    echo -e "${COK} ${BONSAI_TEXT}CachyOS mirror reachable${BONSAI_RESET}"
+  else
+    echo -e "${CER} ${BONSAI_RED}Cannot reach CachyOS mirror (mirror.cachyos.org)${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Check your internet connection${BONSAI_RESET}"
+    ((errors++))
+  fi
+
+  # 3. Check boot partition is mounted
+  echo -e "${CNT} ${BONSAI_TEXT}Checking /boot is mounted...${BONSAI_RESET}"
+  if mountpoint -q /boot; then
+    echo -e "${COK} ${BONSAI_TEXT}/boot is mounted${BONSAI_RESET}"
+  else
+    echo -e "${CER} ${BONSAI_RED}/boot is NOT mounted${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Mount your EFI/boot partition: sudo mount /dev/sdXY /boot${BONSAI_RESET}"
+    ((errors++))
+  fi
+
+  # 4. Check pacman is not locked (another instance running or leftover lock)
+  echo -e "${CNT} ${BONSAI_TEXT}Checking pacman lock...${BONSAI_RESET}"
+  if [ -f /var/lib/pacman/db.lck ]; then
+    echo -e "${CER} ${BONSAI_RED}Pacman database is locked (/var/lib/pacman/db.lck)${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Another pacman instance may be running.${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}If no other pacman is running: sudo rm /var/lib/pacman/db.lck${BONSAI_RESET}"
+    ((errors++))
+  else
+    echo -e "${COK} ${BONSAI_TEXT}Pacman is not locked${BONSAI_RESET}"
+  fi
+
+  # 5. Check for broken pacman.conf (duplicate CachyOS entries)
+  echo -e "${CNT} ${BONSAI_TEXT}Checking pacman.conf integrity...${BONSAI_RESET}"
+  local cachyos_count
+  cachyos_count=$(grep -c '^\[cachyos\]' /etc/pacman.conf 2>/dev/null || echo "0")
+  if [[ "$cachyos_count" -gt 1 ]]; then
+    echo -e "${CER} ${BONSAI_RED}Duplicate CachyOS repo entries found in /etc/pacman.conf (${cachyos_count}x)${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Fixing: removing all CachyOS entries for clean re-add...${BONSAI_RESET}"
+    # Remove all CachyOS repo blocks (from comment to Include line)
+    sudo sed -i '/^# CachyOS Repositories/,/^$/d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos/,/^$/d' /etc/pacman.conf
+    echo -e "${COK} ${BONSAI_TEXT}Duplicate entries removed, will be re-added cleanly${BONSAI_RESET}"
+  else
+    echo -e "${COK} ${BONSAI_TEXT}pacman.conf looks clean${BONSAI_RESET}"
+  fi
+
+  # 6. Check Architecture line isn't corrupted (duplicate x86_64_v3)
+  local arch_line
+  arch_line=$(grep '^Architecture' /etc/pacman.conf 2>/dev/null || echo "")
+  if [[ -n "$arch_line" ]]; then
+    local v3_count
+    v3_count=$(echo "$arch_line" | grep -o 'x86_64_v3' | wc -l)
+    if [[ "$v3_count" -gt 1 ]]; then
+      echo -e "${CWR} ${BONSAI_YELLOW}Duplicate x86_64_v3 in Architecture line, fixing...${BONSAI_RESET}"
+      sudo sed -i 's/^Architecture.*/Architecture = auto x86_64 x86_64_v3/' /etc/pacman.conf
+      echo -e "${COK} ${BONSAI_TEXT}Architecture line cleaned${BONSAI_RESET}"
+    fi
+  fi
+
+  # 7. Check sufficient disk space on /boot (kernels need ~100MB)
+  echo -e "${CNT} ${BONSAI_TEXT}Checking /boot disk space...${BONSAI_RESET}"
+  local boot_avail_kb
+  boot_avail_kb=$(df --output=avail /boot 2>/dev/null | tail -1 | tr -d ' ')
+  if [[ -n "$boot_avail_kb" ]] && [[ "$boot_avail_kb" -lt 102400 ]]; then
+    echo -e "${CER} ${BONSAI_RED}/boot has less than 100MB free (${boot_avail_kb}KB available)${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Remove old kernels/initramfs to free space${BONSAI_RESET}"
+    ((errors++))
+  else
+    echo -e "${COK} ${BONSAI_TEXT}/boot has sufficient space${BONSAI_RESET}"
+  fi
+
+  if [[ $errors -gt 0 ]]; then
+    echo -e "\n${CER} ${BONSAI_RED}Pre-flight check failed with ${errors} error(s)${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Fix the issues above before proceeding${BONSAI_RESET}"
+    return 1
+  fi
+
+  echo -e "\n${COK} ${BONSAI_GREEN}All pre-flight checks passed${BONSAI_RESET}"
+  return 0
+}
+
+# Ensure NVIDIA modules in mkinitcpio.conf without duplication
+# IDEMPOTENT: Safe to re-run — checks each module individually
+function ensure_nvidia_initramfs() {
+  local modules_needed=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
+  local current_modules
+  current_modules=$(grep -oP '^MODULES=\(\K[^\)]*' /etc/mkinitcpio.conf || echo "")
+  local needs_rebuild=false
+
+  for mod in "${modules_needed[@]}"; do
+    if ! echo "$current_modules" | grep -qw "$mod"; then
+      needs_rebuild=true
+      break
+    fi
+  done
+
+  if $needs_rebuild; then
+    # Remove any existing nvidia-related modules to avoid duplication
+    local cleaned_modules
+    cleaned_modules=$(echo "$current_modules" | sed -E 's/\bnvidia(_modeset|_uvm|_drm)?\b//g' | xargs)
+    # Append all nvidia modules cleanly
+    local new_modules="${cleaned_modules} nvidia nvidia_modeset nvidia_uvm nvidia_drm"
+    # Normalize whitespace
+    new_modules=$(echo "$new_modules" | xargs)
+    sudo sed -i "s/^MODULES=(.*/MODULES=(${new_modules})/" /etc/mkinitcpio.conf
+    echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs with NVIDIA modules...${BONSAI_RESET}"
+    sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
+  else
+    echo -e "${COK} ${BONSAI_TEXT}NVIDIA modules already in initramfs${BONSAI_RESET}"
+  fi
+}
+
 # Convert existing Arch Linux to CachyOS
+# IDEMPOTENT: Safe to re-run — each step checks current state before acting
 function convert_to_cachyos() {
   show_bonsai_header
   show_section "Convert Arch Linux to CachyOS"
@@ -1992,7 +2138,8 @@ function convert_to_cachyos() {
   echo -e "  ${BONSAI_TEXT}• Update NVIDIA drivers to DKMS (if applicable)${BONSAI_RESET}"
   echo -e "  ${BONSAI_TEXT}• Update bootloader configuration${BONSAI_RESET}"
 
-  echo -e "\n${CAT} ${BONSAI_YELLOW}Recommended: Create a Timeshift snapshot first!${BONSAI_RESET}\n"
+  echo -e "\n${CAT} ${BONSAI_YELLOW}Recommended: Create a Timeshift snapshot first!${BONSAI_RESET}"
+  echo -e "${CNT} ${BONSAI_MUTED}This script is safe to re-run after a failed attempt.${BONSAI_RESET}\n"
 
   read -p "$(echo -e ${BONSAI_YELLOW}Continue with conversion? [y/N]: ${BONSAI_RESET})" confirm
   if [[ ! $confirm =~ ^[Yy]$ ]]; then
@@ -2000,7 +2147,13 @@ function convert_to_cachyos() {
     return
   fi
 
-  # Step 1: Add CachyOS repositories
+  # Pre-flight validation — abort early on critical issues
+  if ! cachyos_preflight_check; then
+    echo -e "\n${CER} ${BONSAI_RED}Conversion aborted due to pre-flight failures${BONSAI_RESET}"
+    return 1
+  fi
+
+  # Step 1: Add CachyOS repositories (idempotent)
   echo -e "\n${CNT} ${BONSAI_TEXT}Step 1/6: Adding CachyOS repositories...${BONSAI_RESET}"
   configure_cachyos_repos_running
 
@@ -2008,9 +2161,9 @@ function convert_to_cachyos() {
   echo -e "\n${CNT} ${BONSAI_TEXT}Step 2/6: Selecting CachyOS kernel...${BONSAI_RESET}"
   select_cachyos_kernel
 
-  # Step 3: Install new kernel + headers
+  # Step 3: Install new kernel + headers (--needed skips if already current version)
   echo -e "\n${CNT} ${BONSAI_TEXT}Step 3/6: Installing ${KERNEL_TYPE} kernel...${BONSAI_RESET}"
-  sudo pacman -S --noconfirm $KERNEL_TYPE $KERNEL_HEADERS
+  sudo pacman -S --noconfirm --needed $KERNEL_TYPE $KERNEL_HEADERS
 
   # Step 4: Install CachyOS optimized packages
   echo -e "\n${CNT} ${BONSAI_TEXT}Step 4/6: Upgrading to CachyOS-optimized packages...${BONSAI_RESET}"
@@ -2020,31 +2173,14 @@ function convert_to_cachyos() {
   done
 
   # PipeWire packages must upgrade in a single transaction (version-locked deps)
-  echo -e "${CNT} ${BONSAI_MUTED}Upgrading PipeWire stack...${BONSAI_RESET}"
+  echo -e "${CNT} ${BONSAI_MUTED}Upgrading PipeWire stack (atomic transaction)...${BONSAI_RESET}"
   sudo pacman -S --noconfirm --needed "${cachyos_pipewire_packages[@]}" 2>/dev/null || true
 
   # Step 5: Handle NVIDIA (detect GPU hardware, install/convert to DKMS)
   if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
     echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: NVIDIA GPU detected, configuring DKMS driver...${BONSAI_RESET}"
 
-    # Remove ALL existing nvidia packages to avoid conflicts
-    # This handles nvidia, nvidia-open, nvidia-dkms, and their utils
-    local nvidia_pkgs_to_remove=()
-    for pkg in nvidia nvidia-open nvidia-open-dkms nvidia-lts nvidia-dkms \
-               nvidia-utils nvidia-settings nvidia-535xx-dkms nvidia-535xx-utils \
-               nvidia-550xx-dkms nvidia-550xx-utils; do
-      if pacman -Q "$pkg" &>/dev/null; then
-        nvidia_pkgs_to_remove+=("$pkg")
-      fi
-    done
-
-    if [[ ${#nvidia_pkgs_to_remove[@]} -gt 0 ]]; then
-      echo -e "${CWR} ${BONSAI_YELLOW}Removing existing NVIDIA packages: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
-      sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>/dev/null || true
-    fi
-
-    # Install CachyOS NVIDIA DKMS driver
-    # nvidia-open-dkms requires Turing+ (GSP firmware). Older GPUs need nvidia-dkms.
+    # Determine correct driver for this GPU
     local nvidia_pkg="nvidia-dkms"
     local gpu_pci_id
     gpu_pci_id=$(lspci -nn | grep -iE '(VGA|3D)' | grep -i nvidia | grep -oP '10de:\K[0-9a-f]{4}' | head -1)
@@ -2055,15 +2191,32 @@ function convert_to_cachyos() {
         nvidia_pkg="nvidia-open-dkms"
       fi
     fi
-    echo -e "${CNT} ${BONSAI_TEXT}Installing ${nvidia_pkg} and utilities...${BONSAI_RESET}"
-    sudo pacman -S --noconfirm "$nvidia_pkg" nvidia-utils nvidia-settings
 
-    # Ensure nvidia modules in initramfs
-    if ! grep -qE 'nvidia.*nvidia_modeset.*nvidia_uvm.*nvidia_drm' /etc/mkinitcpio.conf; then
-      sudo sed -Ei 's/^(MODULES=\([^\)]*)\)/\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
-      echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs with NVIDIA modules...${BONSAI_RESET}"
-      sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
+    # Check if the correct driver is already installed
+    if pacman -Q "$nvidia_pkg" &>/dev/null; then
+      echo -e "${COK} ${BONSAI_TEXT}Correct NVIDIA driver already installed: ${nvidia_pkg}${BONSAI_RESET}"
+    else
+      # Remove ALL existing nvidia packages to avoid conflicts
+      local nvidia_pkgs_to_remove=()
+      for pkg in nvidia nvidia-open nvidia-open-dkms nvidia-lts nvidia-dkms \
+                 nvidia-utils nvidia-settings nvidia-535xx-dkms nvidia-535xx-utils \
+                 nvidia-550xx-dkms nvidia-550xx-utils; do
+        if pacman -Q "$pkg" &>/dev/null; then
+          nvidia_pkgs_to_remove+=("$pkg")
+        fi
+      done
+
+      if [[ ${#nvidia_pkgs_to_remove[@]} -gt 0 ]]; then
+        echo -e "${CWR} ${BONSAI_YELLOW}Removing existing NVIDIA packages: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
+        sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>/dev/null || true
+      fi
+
+      echo -e "${CNT} ${BONSAI_TEXT}Installing ${nvidia_pkg} and utilities...${BONSAI_RESET}"
+      sudo pacman -S --noconfirm "$nvidia_pkg" nvidia-utils nvidia-settings
     fi
+
+    # Ensure nvidia modules in initramfs (idempotent, no duplication)
+    ensure_nvidia_initramfs
   else
     echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: No NVIDIA GPU detected, skipping...${BONSAI_RESET}"
   fi
@@ -2133,28 +2286,49 @@ function convert_to_cachyos() {
     local entry_title="Arch Linux (CachyOS ${KERNEL_TYPE})"
 
     # Detect microcode
-    local microcode_line=""
+    local microcode_initrd=""
     if [ -f /boot/intel-ucode.img ]; then
-      microcode_line="initrd  /intel-ucode.img"
+      microcode_initrd=$'initrd  /intel-ucode.img\n'
     elif [ -f /boot/amd-ucode.img ]; then
-      microcode_line="initrd  /amd-ucode.img"
+      microcode_initrd=$'initrd  /amd-ucode.img\n'
     fi
 
+    # Write boot entry without blank lines (microcode only if present)
     sudo tee "$entry_path" > /dev/null << EOF
 title   $entry_title
 linux   /vmlinuz-$KERNEL_TYPE
-${microcode_line}
-initrd  /initramfs-$KERNEL_TYPE.img
+${microcode_initrd}initrd  /initramfs-$KERNEL_TYPE.img
 options $kernel_opts
 EOF
 
     echo -e "${COK} ${BONSAI_TEXT}Created boot entry: ${entry_name}${BONSAI_RESET}"
 
+    # Verify the boot entry was written correctly
+    echo -e "${CNT} ${BONSAI_TEXT}Verifying boot entry...${BONSAI_RESET}"
+    if grep -q "vmlinuz-$KERNEL_TYPE" "$entry_path" && \
+       grep -q "initramfs-$KERNEL_TYPE" "$entry_path" && \
+       grep -q "options" "$entry_path"; then
+      echo -e "${COK} ${BONSAI_TEXT}Boot entry verified OK${BONSAI_RESET}"
+    else
+      echo -e "${CER} ${BONSAI_RED}Boot entry verification FAILED — check ${entry_path}${BONSAI_RESET}"
+      return 1
+    fi
+
     # Set as default
-    sudo sed -i "s/^default .*/default ${entry_name}/" /boot/loader/loader.conf
+    if grep -q '^default' /boot/loader/loader.conf; then
+      sudo sed -i "s/^default .*/default ${entry_name}/" /boot/loader/loader.conf
+    else
+      echo "default ${entry_name}" | sudo tee -a /boot/loader/loader.conf > /dev/null
+    fi
     echo -e "${COK} ${BONSAI_TEXT}Set ${entry_name} as default boot entry${BONSAI_RESET}"
   else
     echo -e "${CWR} ${BONSAI_YELLOW}No supported bootloader detected. Manual configuration required.${BONSAI_RESET}"
+  fi
+
+  # Rebuild initramfs for the new kernel to ensure everything is consistent
+  echo -e "${CNT} ${BONSAI_TEXT}Ensuring initramfs is up to date for ${KERNEL_TYPE}...${BONSAI_RESET}"
+  if [ -f "/boot/vmlinuz-${KERNEL_TYPE}" ]; then
+    sudo mkinitcpio -p "$KERNEL_TYPE" 2>&1 | tee -a "$INSTLOG"
   fi
 
   echo -e "\n${COK} ${BONSAI_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${BONSAI_RESET}"
