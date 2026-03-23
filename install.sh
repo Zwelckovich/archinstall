@@ -2280,8 +2280,26 @@ function convert_to_cachyos() {
       kernel_opts="$kernel_opts nvidia-drm.modeset=1 nvidia_drm.fbdev=1"
     fi
 
-    # Create new boot entry
+    # Remove stale CachyOS boot entries from previous conversion attempts
+    # (e.g., user picked linux-cachyos first, then linux-cachyos-lts on re-run)
     local entry_name="${KERNEL_TYPE}.conf"
+    for stale_entry in /boot/loader/entries/linux-cachyos*.conf; do
+      [ -f "$stale_entry" ] || continue
+      if [[ "$(basename "$stale_entry")" != "$entry_name" ]]; then
+        local stale_kernel
+        stale_kernel=$(grep -oP 'linux\s+/vmlinuz-\K.*' "$stale_entry" 2>/dev/null || echo "")
+        echo -e "${CWR} ${BONSAI_YELLOW}Removing stale boot entry: $(basename "$stale_entry")${BONSAI_RESET}"
+        sudo rm -f "$stale_entry"
+        # Also remove the orphaned kernel if installed and not the one we're installing
+        if [[ -n "$stale_kernel" ]] && [[ "$stale_kernel" != "$KERNEL_TYPE" ]] && \
+           pacman -Q "$stale_kernel" &>/dev/null; then
+          echo -e "${CWR} ${BONSAI_YELLOW}Removing orphaned kernel: ${stale_kernel}${BONSAI_RESET}"
+          sudo pacman -Rns --noconfirm "$stale_kernel" "${stale_kernel}-headers" 2>/dev/null || true
+        fi
+      fi
+    done
+
+    # Create new boot entry
     local entry_path="/boot/loader/entries/${entry_name}"
     local entry_title="Arch Linux (CachyOS ${KERNEL_TYPE})"
 
