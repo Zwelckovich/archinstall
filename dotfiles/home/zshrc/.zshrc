@@ -17,7 +17,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 source ~/archinstall/catppuccin-zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode gh uv yarn sudo extract copypath copyfile)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode gh uv yarn sudo extract copypath copyfile colored-man-pages command-not-found safe-paste systemd aliases)
 source $ZSH/oh-my-zsh.sh
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 zvm_after_init() {
