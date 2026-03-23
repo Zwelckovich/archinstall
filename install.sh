@@ -677,6 +677,128 @@ function detect_bootloader() {
   fi
 }
 
+# Derive kernel/root boot options from what's actually mounted.
+# Works for both chroot (/mnt) during fresh install and running system (/).
+# Outputs a single line of kernel options to stdout; diagnostics go to stderr.
+# Usage: derive_kernel_opts [mount_point]   (default: /mnt)
+#
+# In chroot context (/mnt), commands run as root — no sudo needed.
+# On a running system (/), cryptsetup/blkid need sudo — we detect this
+# and use sudo only when necessary.
+function derive_kernel_opts() {
+  local mount_point="${1:-/mnt}"
+  local root_src root_dev mapname luks_part luks_uuid root_uuid
+
+  # On a running system, cryptsetup/blkid/lsblk may need sudo.
+  # In chroot (as root), sudo is unnecessary and may not exist.
+  local SUDO=""
+  if [[ "$mount_point" == "/" ]] && [[ $EUID -ne 0 ]]; then
+    SUDO="sudo"
+  fi
+
+  root_src=$(findmnt -no SOURCE "$mount_point")
+
+  # When mounting BTRFS subvolumes, findmnt may append "[/@]". Strip any suffix so
+  # the resulting path can be passed to blkid/cryptsetup.
+  root_dev="${root_src%%\[*}"
+
+  # Diagnostic logging (visible in install log)
+  echo -e "${CNT} derive_kernel_opts: findmnt($mount_point) returned '${root_src}', stripped to '${root_dev}'" >&2
+
+  # Normalise UUID=/LABEL= style sources back into concrete device nodes.
+  case "$root_dev" in
+    UUID=*)
+      root_dev="$($SUDO blkid -U "${root_dev#UUID=}" 2> /dev/null)"
+      ;;
+    LABEL=*)
+      root_dev="$($SUDO blkid -L "${root_dev#LABEL=}" 2> /dev/null)"
+      ;;
+  esac
+
+  if [[ -z "$root_dev" ]]; then
+    root_dev="${root_src%%\[*}"
+  fi
+
+  if [[ "$root_dev" == /dev/mapper/* ]]; then
+    mapname="${root_dev#/dev/mapper/}"
+    if [[ -z "$mapname" ]]; then
+      mapname="cryptroot"
+    fi
+    echo -e "${CNT} derive_kernel_opts: encrypted root detected, mapper='${mapname}'" >&2
+
+    # cryptsetup status prefers the map name (without /dev/mapper/).
+    luks_part=$($SUDO cryptsetup status "$mapname" 2> /dev/null | awk '/device:/ {print $2}')
+    if [[ -z "$luks_part" ]]; then
+      # Fallback: read backing device from sysfs (works without root)
+      local dm_dir
+      for dm_dir in /sys/block/dm-*; do
+        [ -d "$dm_dir" ] || continue
+        if [[ "$(cat "$dm_dir/dm/name" 2>/dev/null)" == "$mapname" ]]; then
+          local slave
+          slave=$(ls "$dm_dir/slaves/" 2>/dev/null | head -1)
+          if [[ -n "$slave" ]]; then
+            luks_part="/dev/$slave"
+            echo -e "${CNT} derive_kernel_opts: found LUKS device via sysfs: ${luks_part}" >&2
+          fi
+          break
+        fi
+      done
+    fi
+    if [[ -z "$luks_part" ]]; then
+      # Final fallback: lsblk with sudo
+      local pkname
+      pkname=$($SUDO lsblk -no PKNAME "$root_dev" 2>/dev/null | head -n1)
+      if [[ -n "$pkname" ]]; then
+        luks_part="/dev/$pkname"
+      fi
+    fi
+
+    # Validate we actually found the LUKS partition
+    if [[ -z "$luks_part" || "$luks_part" == "/dev/" ]]; then
+      echo -e "${CER} derive_kernel_opts: FATAL — could not determine LUKS backing device for mapper '${mapname}'" >&2
+      echo -e "${CER} derive_kernel_opts: cryptsetup status, sysfs, and lsblk all failed" >&2
+      return 1
+    fi
+
+    echo -e "${CNT} derive_kernel_opts: LUKS partition='${luks_part}'" >&2
+    luks_uuid=$($SUDO blkid -s UUID -o value "$luks_part" 2> /dev/null)
+    if [[ -z "$luks_uuid" ]]; then
+      # Fallback: udevadm works without root and reads from udev database
+      luks_uuid=$(udevadm info --query=property --name="$luks_part" 2>/dev/null | awk -F= '/^ID_FS_UUID=/ {print $2}')
+      if [[ -n "$luks_uuid" ]]; then
+        echo -e "${CNT} derive_kernel_opts: got UUID via udevadm: ${luks_uuid}" >&2
+      fi
+    fi
+
+    if [[ -n "$luks_uuid" ]]; then
+      echo -e "${COK} derive_kernel_opts: LUKS UUID='${luks_uuid}'" >&2
+      echo "cryptdevice=UUID=$luks_uuid:$mapname root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
+    else
+      echo -e "${CWR} derive_kernel_opts: blkid returned no UUID for '${luks_part}', using device path" >&2
+      echo "cryptdevice=$luks_part:$mapname root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
+    fi
+  else
+    echo -e "${CNT} derive_kernel_opts: unencrypted root, device='${root_dev}'" >&2
+
+    # Attempt to read the filesystem UUID from the concrete device. If that fails,
+    # fall back to udevadm, findmnt UUID, or (worst case) the raw device path.
+    root_uuid=$($SUDO blkid -s UUID -o value "$root_dev" 2> /dev/null)
+    if [[ -z "$root_uuid" ]]; then
+      root_uuid=$(udevadm info --query=property --name="$root_dev" 2>/dev/null | awk -F= '/^ID_FS_UUID=/ {print $2}')
+    fi
+    if [[ -z "$root_uuid" ]]; then
+      root_uuid=$(findmnt -no UUID "$mount_point" 2> /dev/null)
+    fi
+
+    if [[ -n "$root_uuid" ]]; then
+      echo "root=UUID=$root_uuid rootflags=subvol=@ rw quiet"
+    else
+      echo -e "${CWR} derive_kernel_opts: no UUID found, using raw device '${root_dev}'" >&2
+      echo "root=$root_dev rootflags=subvol=@ rw quiet"
+    fi
+  fi
+}
+
 function refresh_partition_table() {
   local disk_path="$1"
   if command -v udevadm > /dev/null 2>&1; then
@@ -1051,86 +1173,8 @@ EOF
   show_section "Bootloader Configuration"
 
   # ---------- FIXED: robust GRUB/systemd-boot setup uses findmnt and cryptsetup ----------
-  # Helper to derive kernel/root options from what's actually mounted under /mnt
-  derive_kernel_opts() {
-    local root_src root_dev mapname luks_part luks_uuid root_uuid
-    root_src=$(findmnt -no SOURCE /mnt)
-
-    # When mounting BTRFS subvolumes, findmnt may append "[/@]". Strip any suffix so
-    # the resulting path can be passed to blkid/cryptsetup.
-    root_dev="${root_src%%\[*}"
-
-    # Diagnostic logging (visible in install log)
-    echo -e "${CNT} derive_kernel_opts: findmnt returned '${root_src}', stripped to '${root_dev}'" >&2
-
-    # Normalise UUID=/LABEL= style sources back into concrete device nodes.
-    case "$root_dev" in
-      UUID=*)
-        root_dev="$(blkid -U "${root_dev#UUID=}" 2> /dev/null)"
-        ;;
-      LABEL=*)
-        root_dev="$(blkid -L "${root_dev#LABEL=}" 2> /dev/null)"
-        ;;
-    esac
-
-    if [[ -z "$root_dev" ]]; then
-      root_dev="${root_src%%\[*}"
-    fi
-
-    if [[ "$root_dev" == /dev/mapper/* ]]; then
-      mapname="${root_dev#/dev/mapper/}"
-      if [[ -z "$mapname" ]]; then
-        mapname="cryptroot"
-      fi
-      echo -e "${CNT} derive_kernel_opts: encrypted root detected, mapper='${mapname}'" >&2
-
-      # cryptsetup status prefers the map name (without /dev/mapper/).
-      luks_part=$(cryptsetup status "$mapname" 2> /dev/null | awk '/device:/ {print $2}')
-      if [[ -z "$luks_part" ]]; then
-        # Fallback to lsblk if cryptsetup status is unavailable.
-        local pkname
-        pkname=$(lsblk -no PKNAME "$root_dev" 2>/dev/null | head -n1)
-        if [[ -n "$pkname" ]]; then
-          luks_part="/dev/$pkname"
-        fi
-      fi
-
-      # Validate we actually found the LUKS partition
-      if [[ -z "$luks_part" || "$luks_part" == "/dev/" ]]; then
-        echo -e "${CER} derive_kernel_opts: FATAL — could not determine LUKS backing device for mapper '${mapname}'" >&2
-        echo -e "${CER} derive_kernel_opts: cryptsetup status and lsblk both failed" >&2
-        # Return a clearly broken string so the caller can detect failure
-        return 1
-      fi
-
-      echo -e "${CNT} derive_kernel_opts: LUKS partition='${luks_part}'" >&2
-      luks_uuid=$(blkid -s UUID -o value "$luks_part" 2> /dev/null)
-
-      if [[ -n "$luks_uuid" ]]; then
-        echo -e "${COK} derive_kernel_opts: LUKS UUID='${luks_uuid}'" >&2
-        echo "cryptdevice=UUID=$luks_uuid:cryptroot root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
-      else
-        echo -e "${CWR} derive_kernel_opts: blkid returned no UUID for '${luks_part}', using device path" >&2
-        echo "cryptdevice=$luks_part:cryptroot root=/dev/mapper/$mapname rootflags=subvol=@ rw quiet"
-      fi
-    else
-      echo -e "${CNT} derive_kernel_opts: unencrypted root, device='${root_dev}'" >&2
-
-      # Attempt to read the filesystem UUID from the concrete device. If that fails,
-      # fall back to findmnt's UUID field or (worst case) the raw device path.
-      root_uuid=$(blkid -s UUID -o value "$root_dev" 2> /dev/null)
-      if [[ -z "$root_uuid" ]]; then
-        root_uuid=$(findmnt -no UUID /mnt 2> /dev/null)
-      fi
-
-      if [[ -n "$root_uuid" ]]; then
-        echo "root=UUID=$root_uuid rootflags=subvol=@ rw quiet"
-      else
-        echo -e "${CWR} derive_kernel_opts: no UUID found, using raw device '${root_dev}'" >&2
-        echo "root=$root_dev rootflags=subvol=@ rw quiet"
-      fi
-    fi
-  }
+  # derive_kernel_opts is a top-level function (defined near detect_bootloader)
+  # so it can be shared between base_config (chroot) and convert_to_cachyos (running system)
 
   resolve_esp_context() {
     local mount_point="${1:-/mnt/boot}"
@@ -2287,48 +2331,21 @@ function convert_to_cachyos() {
   elif [[ $DETECTED_BOOTLOADER == "systemd-boot" ]]; then
     echo -e "${CNT} ${BONSAI_TEXT}Creating systemd-boot entry for ${KERNEL_TYPE}...${BONSAI_RESET}"
 
-    # Detect current root partition — strip BTRFS subvol suffix [/@]
-    local root_part
-    root_part=$(findmnt -n -o SOURCE /)
-    root_part="${root_part%%\[*}"
-
-    # Detect BTRFS subvolume for rootflags
-    local rootflags=""
-    if findmnt -n -o FSTYPE / | grep -q btrfs; then
-      rootflags="rootflags=subvol=@"
+    # Derive kernel options using the same robust function used during fresh install.
+    # Pass "/" to query the running system instead of /mnt (chroot).
+    local kernel_opts
+    kernel_opts=$(derive_kernel_opts "/")
+    if [[ $? -ne 0 ]] || [[ -z "$kernel_opts" ]]; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: Could not derive kernel boot options for running system${BONSAI_RESET}"
+      echo -e "${CAT} ${BONSAI_YELLOW}Check the diagnostic output above for details${BONSAI_RESET}"
+      return 1
     fi
 
-    # Detect encryption from actual mapper device path
-    local crypt_opts=""
-    if [[ "$root_part" == /dev/mapper/* ]]; then
-      local mapname="${root_part#/dev/mapper/}"
-      local luks_part
-      luks_part=$(cryptsetup status "$mapname" 2>/dev/null | awk '/device:/ {print $2}')
-      if [[ -z "$luks_part" ]]; then
-        luks_part="/dev/$(lsblk -no PKNAME "$root_part" | head -n1)"
-      fi
-      local luks_uuid
-      luks_uuid=$(sudo blkid -s UUID -o value "$luks_part" 2>/dev/null)
-      if [[ -n "$luks_uuid" ]]; then
-        crypt_opts="cryptdevice=UUID=${luks_uuid}:${mapname} root=${root_part}"
-      else
-        crypt_opts="cryptdevice=${luks_part}:${mapname} root=${root_part}"
-      fi
-    fi
-
-    # Build kernel options with UUID validation
-    local kernel_opts=""
-    if [[ -n "$crypt_opts" ]]; then
-      kernel_opts="$crypt_opts $rootflags rw"
-    else
-      local root_uuid
-      root_uuid=$(sudo blkid -s UUID -o value "$root_part" 2>/dev/null)
-      if [[ -z "$root_uuid" ]]; then
-        echo -e "${CER} ${BONSAI_RED}ERROR: Could not determine root partition UUID for ${root_part}${BONSAI_RESET}"
-        echo -e "${CAT} ${BONSAI_YELLOW}Boot entry not created. Manual configuration required.${BONSAI_RESET}"
-        return 1
-      fi
-      kernel_opts="root=UUID=${root_uuid} $rootflags rw"
+    # Validate no empty UUIDs slipped through
+    if [[ "$kernel_opts" == *"cryptdevice=UUID=:"* ]] || [[ "$kernel_opts" == *"root=UUID= "* ]]; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: kernel options contain empty UUID — aborting${BONSAI_RESET}"
+      echo -e "${CER} ${BONSAI_RED}Generated: ${kernel_opts}${BONSAI_RESET}"
+      return 1
     fi
 
     # Add NVIDIA options if any NVIDIA driver is installed
