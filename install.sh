@@ -2570,8 +2570,8 @@ function main_menu() {
   done
 }
 
-# Startup NVIDIA health check — detect and fix driver mismatches automatically
-# Runs before the menu so the system is in a healthy state regardless of which option is picked
+# Startup NVIDIA health check — detect driver mismatches and offer to fix
+# Non-blocking: detects problem and asks user, never blocks the menu
 function startup_nvidia_health_check() {
   # Only relevant if NVIDIA hardware is present
   if ! lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
@@ -2593,12 +2593,21 @@ function startup_nvidia_health_check() {
     return  # Correct driver already installed
   fi
 
-  # Wrong driver or missing — fix it automatically
-  show_section "NVIDIA Driver Health Check"
-  echo -e "${CWR} ${BONSAI_YELLOW}Incompatible NVIDIA driver detected!${BONSAI_RESET}"
+  # Wrong driver detected — warn and offer fix
+  echo ""
+  echo -e "${CWR} ${BONSAI_YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${BONSAI_RESET}"
+  echo -e "${CWR} ${BONSAI_YELLOW}  NVIDIA DRIVER MISMATCH DETECTED${BONSAI_RESET}"
+  echo -e "${CWR} ${BONSAI_YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${BONSAI_RESET}"
   echo -e "${CNT} ${BONSAI_TEXT}GPU requires: ${BONSAI_GREEN}${NVIDIA_DRV_PKG}${BONSAI_RESET} (${NVIDIA_ARCH_DESC})"
-  echo -e "${CNT} ${BONSAI_TEXT}Currently installed: ${BONSAI_RED}${actual_pkg:-nvidia-open-dkms (via Provides)}${BONSAI_RESET}"
-  echo -e "${CNT} ${BONSAI_TEXT}Fixing automatically...${BONSAI_RESET}\n"
+  echo -e "${CNT} ${BONSAI_TEXT}Installed:    ${BONSAI_RED}${actual_pkg:-nvidia-open-dkms (via Provides)}${BONSAI_RESET}"
+  echo ""
+
+  read -p "$(echo -e ${BONSAI_YELLOW}Fix NVIDIA driver now? [Y/n]: ${BONSAI_RESET})" fix_nvidia
+  if [[ $fix_nvidia =~ ^[Nn]$ ]]; then
+    echo -e "${CNT} ${BONSAI_TEXT}Skipping — you can fix later via option 5 (Convert to CachyOS)${BONSAI_RESET}"
+    sleep 2
+    return
+  fi
 
   # Remove all existing nvidia driver/utils packages
   local nvidia_pkgs_to_remove=()
@@ -2618,22 +2627,22 @@ function startup_nvidia_health_check() {
   fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing ${NVIDIA_DRV_PKG} + ${NVIDIA_UTILS_PKG}...${BONSAI_RESET}"
-  sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"
-
-  # Verify
-  local verify_pkg
-  verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
-  if [[ "$verify_pkg" == "$NVIDIA_DRV_PKG" ]]; then
-    echo -e "${COK} ${BONSAI_GREEN}NVIDIA driver fixed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
-    echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs...${BONSAI_RESET}"
-    sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
-    echo -e "\n${CAT} ${BONSAI_YELLOW}Reboot required for NVIDIA driver to load!${BONSAI_RESET}\n"
-    sleep 3
+  if sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"; then
+    # Verify
+    local verify_pkg
+    verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
+    if [[ "$verify_pkg" == "$NVIDIA_DRV_PKG" ]]; then
+      echo -e "${COK} ${BONSAI_GREEN}NVIDIA driver fixed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
+      echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs...${BONSAI_RESET}"
+      sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
+      echo -e "\n${CAT} ${BONSAI_YELLOW}Reboot required for NVIDIA driver to load!${BONSAI_RESET}\n"
+    else
+      echo -e "${CER} ${BONSAI_RED}Verification failed — expected ${NVIDIA_DRV_PKG}, got ${verify_pkg:-nothing}${BONSAI_RESET}"
+    fi
   else
-    echo -e "${CER} ${BONSAI_RED}NVIDIA driver fix FAILED — expected ${NVIDIA_DRV_PKG}, got ${verify_pkg:-nothing}${BONSAI_RESET}"
-    echo -e "${CER} ${BONSAI_RED}Manual fix: sudo pacman -S nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings${BONSAI_RESET}"
-    sleep 5
+    echo -e "${CER} ${BONSAI_RED}Installation failed — you may need to reboot first if kernel was upgraded${BONSAI_RESET}"
   fi
+  sleep 3
 }
 
 # Start the installer
