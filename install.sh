@@ -2232,8 +2232,8 @@ function determine_nvidia_packages() {
     # Detect CachyOS by repo availability (not DISTRO_TYPE which may be stale)
     # CachyOS replaced nvidia-dkms with nvidia-open-dkms (Provides/Replaces: nvidia-dkms)
     # so "nvidia-dkms" resolves to nvidia-open-dkms which won't work for pre-Turing
-    if pacman -Si nvidia-535xx-dkms &>/dev/null 2>&1; then
-      # CachyOS legacy driver available — use proprietary 535xx branch
+    if grep -q '^\[cachyos' /etc/pacman.conf 2>/dev/null; then
+      # CachyOS repos configured — use proprietary 535xx branch for pre-Turing
       NVIDIA_DRV_PKG="nvidia-535xx-dkms"
       NVIDIA_UTILS_PKG="nvidia-535xx-utils"
       NVIDIA_SETTINGS_PKG="nvidia-535xx-settings"
@@ -2372,11 +2372,21 @@ function convert_to_cachyos() {
 
       if [[ ${#nvidia_pkgs_to_remove[@]} -gt 0 ]]; then
         echo -e "${CWR} ${BONSAI_YELLOW}Removing incompatible NVIDIA packages: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
-        sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>/dev/null || true
+        sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>&1 | tee -a "$INSTLOG"
       fi
 
       echo -e "${CNT} ${BONSAI_TEXT}Installing ${NVIDIA_DRV_PKG} + ${NVIDIA_UTILS_PKG}...${BONSAI_RESET}"
-      sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG"
+      sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"
+
+      # Verify the EXACT correct package was installed (catch silent Provides resolution)
+      local verify_pkg
+      verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
+      if [[ "$verify_pkg" != "$NVIDIA_DRV_PKG" ]]; then
+        echo -e "${CER} ${BONSAI_RED}NVIDIA driver verification FAILED — expected ${NVIDIA_DRV_PKG}, got ${verify_pkg:-nothing}${BONSAI_RESET}"
+        echo -e "${CER} ${BONSAI_RED}Manual fix: sudo pacman -S nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings${BONSAI_RESET}"
+        return 1
+      fi
+      echo -e "${COK} ${BONSAI_TEXT}NVIDIA driver verified: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
     fi
 
     # Ensure nvidia modules in initramfs (idempotent, no duplication)
