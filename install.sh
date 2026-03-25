@@ -2357,11 +2357,11 @@ function convert_to_cachyos() {
     if [[ "$actual_nvidia_pkg" == "$NVIDIA_DRV_PKG" ]]; then
       echo -e "${COK} ${BONSAI_TEXT}Correct NVIDIA driver already installed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
     else
-      # Remove ALL existing nvidia driver/utils packages to avoid conflicts
+      # Remove ALL existing nvidia driver/utils packages and known conflicting deps
       # Use pacman -Qq to resolve to REAL package names (not virtual/Provides)
       local nvidia_pkgs_to_remove=()
       for pkg in nvidia nvidia-open nvidia-open-dkms nvidia-lts nvidia-dkms \
-                 nvidia-utils nvidia-settings opencl-nvidia \
+                 nvidia-utils nvidia-settings opencl-nvidia egl-gbm \
                  nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings \
                  nvidia-550xx-dkms nvidia-550xx-utils nvidia-550xx-settings \
                  nvidia-580xx-dkms nvidia-580xx-utils nvidia-580xx-settings; do
@@ -2374,11 +2374,12 @@ function convert_to_cachyos() {
 
       if [[ ${#nvidia_pkgs_to_remove[@]} -gt 0 ]]; then
         echo -e "${CWR} ${BONSAI_YELLOW}Removing incompatible NVIDIA packages: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
-        sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>&1 | tee -a "$INSTLOG"
+        sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>&1 | tee -a "$INSTLOG" || true
       fi
 
       echo -e "${CNT} ${BONSAI_TEXT}Installing ${NVIDIA_DRV_PKG} + ${NVIDIA_UTILS_PKG}...${BONSAI_RESET}"
-      sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"
+      # --ask 4 auto-resolves conflicting packages during install
+      sudo pacman -S --noconfirm --ask 4 "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"
 
       # Verify the EXACT correct package was installed (catch silent Provides resolution)
       local verify_pkg
@@ -2611,18 +2612,16 @@ function startup_nvidia_health_check() {
     return
   fi
 
-  # Remove all existing nvidia driver/utils packages
+  # Remove all existing nvidia driver/utils packages and known conflicting deps
   # Use pacman -Qq to resolve to REAL package names (not virtual/Provides names)
-  # e.g. "nvidia-dkms" resolves to "nvidia-open-dkms" on CachyOS
   local nvidia_pkgs_to_remove=()
   for pkg in nvidia nvidia-open nvidia-open-dkms nvidia-lts nvidia-dkms \
-             nvidia-utils nvidia-settings opencl-nvidia \
+             nvidia-utils nvidia-settings opencl-nvidia egl-gbm \
              nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings \
              nvidia-550xx-dkms nvidia-550xx-utils nvidia-550xx-settings \
              nvidia-580xx-dkms nvidia-580xx-utils nvidia-580xx-settings; do
     local real_pkg
     real_pkg=$(pacman -Qq "$pkg" 2>/dev/null || true)
-    # Only add if real package found and not already in the list
     if [[ -n "$real_pkg" ]] && [[ ! " ${nvidia_pkgs_to_remove[*]:-} " =~ " ${real_pkg} " ]]; then
       nvidia_pkgs_to_remove+=("$real_pkg")
     fi
@@ -2632,15 +2631,14 @@ function startup_nvidia_health_check() {
   echo -e "${CNT} ${BONSAI_TEXT}Syncing package database...${BONSAI_RESET}"
   sudo pacman -Sy 2>&1 | tee -a "$INSTLOG" || true
 
-  # Remove and install in one transaction to avoid leaving the system driverless
-  # pacman can handle remove+install atomically with -S --overwrite
   if [[ ${#nvidia_pkgs_to_remove[@]} -gt 0 ]]; then
     echo -e "${CWR} ${BONSAI_YELLOW}Removing: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
     sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>&1 | tee -a "$INSTLOG" || true
   fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing ${NVIDIA_DRV_PKG} + ${NVIDIA_UTILS_PKG}...${BONSAI_RESET}"
-  if sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"; then
+  # --ask 4 auto-resolves conflicting packages during install
+  if sudo pacman -S --noconfirm --ask 4 "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"; then
     local verify_pkg
     verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null || true)
     if [[ "$verify_pkg" == "$NVIDIA_DRV_PKG" ]]; then
