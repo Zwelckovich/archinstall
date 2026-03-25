@@ -52,3 +52,4 @@ dotfiles/config/code/.config/Code/shared_proto_db
 AGENTS.md
 GEMINI.md
 dotfiles/config/code/.config/Code/User/mcp.json
+/install_bonsai.log
