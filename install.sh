@@ -2358,15 +2358,17 @@ function convert_to_cachyos() {
       echo -e "${COK} ${BONSAI_TEXT}Correct NVIDIA driver already installed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
     else
       # Remove ALL existing nvidia driver/utils packages to avoid conflicts
-      # Must cover: mainline, open, legacy 535/550/580, and Arch-standard packages
+      # Use pacman -Qq to resolve to REAL package names (not virtual/Provides)
       local nvidia_pkgs_to_remove=()
       for pkg in nvidia nvidia-open nvidia-open-dkms nvidia-lts nvidia-dkms \
                  nvidia-utils nvidia-settings opencl-nvidia \
                  nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings \
                  nvidia-550xx-dkms nvidia-550xx-utils nvidia-550xx-settings \
                  nvidia-580xx-dkms nvidia-580xx-utils nvidia-580xx-settings; do
-        if pacman -Q "$pkg" &>/dev/null; then
-          nvidia_pkgs_to_remove+=("$pkg")
+        local real_pkg
+        real_pkg=$(pacman -Qq "$pkg" 2>/dev/null || true)
+        if [[ -n "$real_pkg" ]] && [[ ! " ${nvidia_pkgs_to_remove[*]:-} " =~ " ${real_pkg} " ]]; then
+          nvidia_pkgs_to_remove+=("$real_pkg")
         fi
       done
 
@@ -2610,14 +2612,19 @@ function startup_nvidia_health_check() {
   fi
 
   # Remove all existing nvidia driver/utils packages
+  # Use pacman -Qq to resolve to REAL package names (not virtual/Provides names)
+  # e.g. "nvidia-dkms" resolves to "nvidia-open-dkms" on CachyOS
   local nvidia_pkgs_to_remove=()
   for pkg in nvidia nvidia-open nvidia-open-dkms nvidia-lts nvidia-dkms \
              nvidia-utils nvidia-settings opencl-nvidia \
              nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings \
              nvidia-550xx-dkms nvidia-550xx-utils nvidia-550xx-settings \
              nvidia-580xx-dkms nvidia-580xx-utils nvidia-580xx-settings; do
-    if pacman -Q "$pkg" &>/dev/null; then
-      nvidia_pkgs_to_remove+=("$pkg")
+    local real_pkg
+    real_pkg=$(pacman -Qq "$pkg" 2>/dev/null || true)
+    # Only add if real package found and not already in the list
+    if [[ -n "$real_pkg" ]] && [[ ! " ${nvidia_pkgs_to_remove[*]:-} " =~ " ${real_pkg} " ]]; then
+      nvidia_pkgs_to_remove+=("$real_pkg")
     fi
   done
 
