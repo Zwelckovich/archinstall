@@ -2233,11 +2233,13 @@ function determine_nvidia_packages() {
     # CachyOS replaced nvidia-dkms with nvidia-open-dkms (Provides/Replaces: nvidia-dkms)
     # so "nvidia-dkms" resolves to nvidia-open-dkms which won't work for pre-Turing
     if grep -q '^\[cachyos' /etc/pacman.conf 2>/dev/null; then
-      # CachyOS repos configured — use proprietary 535xx branch for pre-Turing
-      NVIDIA_DRV_PKG="nvidia-535xx-dkms"
-      NVIDIA_UTILS_PKG="nvidia-535xx-utils"
-      NVIDIA_SETTINGS_PKG="nvidia-535xx-settings"
-      NVIDIA_ARCH_DESC="Maxwell/Pascal (535xx proprietary)"
+      # CachyOS repos configured — use proprietary 550xx branch for pre-Turing
+      # 550xx is the last production branch supporting Maxwell/Pascal
+      # 535xx is too old for kernel 6.19+, nvidia-open-dkms only supports Turing+
+      NVIDIA_DRV_PKG="nvidia-550xx-dkms"
+      NVIDIA_UTILS_PKG="nvidia-550xx-utils"
+      NVIDIA_SETTINGS_PKG="nvidia-settings"
+      NVIDIA_ARCH_DESC="Maxwell/Pascal (550xx proprietary)"
     else
       # Standard Arch: nvidia-dkms has proprietary modules, supports Maxwell+
       NVIDIA_DRV_PKG="nvidia-dkms"
