@@ -2570,5 +2570,72 @@ function main_menu() {
   done
 }
 
+# Startup NVIDIA health check — detect and fix driver mismatches automatically
+# Runs before the menu so the system is in a healthy state regardless of which option is picked
+function startup_nvidia_health_check() {
+  # Only relevant if NVIDIA hardware is present
+  if ! lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
+    return
+  fi
+
+  # Only relevant if CachyOS repos are configured
+  if ! grep -q '^\[cachyos' /etc/pacman.conf 2>/dev/null; then
+    return
+  fi
+
+  # Determine the correct driver for this GPU
+  determine_nvidia_packages
+
+  # Check if the correct EXACT driver is installed
+  local actual_pkg
+  actual_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
+  if [[ "$actual_pkg" == "$NVIDIA_DRV_PKG" ]]; then
+    return  # Correct driver already installed
+  fi
+
+  # Wrong driver or missing — fix it automatically
+  show_section "NVIDIA Driver Health Check"
+  echo -e "${CWR} ${BONSAI_YELLOW}Incompatible NVIDIA driver detected!${BONSAI_RESET}"
+  echo -e "${CNT} ${BONSAI_TEXT}GPU requires: ${BONSAI_GREEN}${NVIDIA_DRV_PKG}${BONSAI_RESET} (${NVIDIA_ARCH_DESC})"
+  echo -e "${CNT} ${BONSAI_TEXT}Currently installed: ${BONSAI_RED}${actual_pkg:-nvidia-open-dkms (via Provides)}${BONSAI_RESET}"
+  echo -e "${CNT} ${BONSAI_TEXT}Fixing automatically...${BONSAI_RESET}\n"
+
+  # Remove all existing nvidia driver/utils packages
+  local nvidia_pkgs_to_remove=()
+  for pkg in nvidia nvidia-open nvidia-open-dkms nvidia-lts nvidia-dkms \
+             nvidia-utils nvidia-settings opencl-nvidia \
+             nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings \
+             nvidia-550xx-dkms nvidia-550xx-utils nvidia-550xx-settings \
+             nvidia-580xx-dkms nvidia-580xx-utils nvidia-580xx-settings; do
+    if pacman -Q "$pkg" &>/dev/null; then
+      nvidia_pkgs_to_remove+=("$pkg")
+    fi
+  done
+
+  if [[ ${#nvidia_pkgs_to_remove[@]} -gt 0 ]]; then
+    echo -e "${CWR} ${BONSAI_YELLOW}Removing: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
+    sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>&1 | tee -a "$INSTLOG"
+  fi
+
+  echo -e "${CNT} ${BONSAI_TEXT}Installing ${NVIDIA_DRV_PKG} + ${NVIDIA_UTILS_PKG}...${BONSAI_RESET}"
+  sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"
+
+  # Verify
+  local verify_pkg
+  verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
+  if [[ "$verify_pkg" == "$NVIDIA_DRV_PKG" ]]; then
+    echo -e "${COK} ${BONSAI_GREEN}NVIDIA driver fixed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
+    echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs...${BONSAI_RESET}"
+    sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
+    echo -e "\n${CAT} ${BONSAI_YELLOW}Reboot required for NVIDIA driver to load!${BONSAI_RESET}\n"
+    sleep 3
+  else
+    echo -e "${CER} ${BONSAI_RED}NVIDIA driver fix FAILED — expected ${NVIDIA_DRV_PKG}, got ${verify_pkg:-nothing}${BONSAI_RESET}"
+    echo -e "${CER} ${BONSAI_RED}Manual fix: sudo pacman -S nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings${BONSAI_RESET}"
+    sleep 5
+  fi
+}
+
 # Start the installer
+startup_nvidia_health_check
 main_menu
