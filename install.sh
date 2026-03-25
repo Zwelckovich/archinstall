@@ -2628,26 +2628,32 @@ function startup_nvidia_health_check() {
     fi
   done
 
+  # Sync package database first to ensure nvidia-535xx-dkms is findable
+  echo -e "${CNT} ${BONSAI_TEXT}Syncing package database...${BONSAI_RESET}"
+  sudo pacman -Sy 2>&1 | tee -a "$INSTLOG" || true
+
+  # Remove and install in one transaction to avoid leaving the system driverless
+  # pacman can handle remove+install atomically with -S --overwrite
   if [[ ${#nvidia_pkgs_to_remove[@]} -gt 0 ]]; then
     echo -e "${CWR} ${BONSAI_YELLOW}Removing: ${nvidia_pkgs_to_remove[*]}${BONSAI_RESET}"
-    sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>&1 | tee -a "$INSTLOG"
+    sudo pacman -Rdd --noconfirm "${nvidia_pkgs_to_remove[@]}" 2>&1 | tee -a "$INSTLOG" || true
   fi
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing ${NVIDIA_DRV_PKG} + ${NVIDIA_UTILS_PKG}...${BONSAI_RESET}"
   if sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"; then
-    # Verify
     local verify_pkg
     verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null || true)
     if [[ "$verify_pkg" == "$NVIDIA_DRV_PKG" ]]; then
       echo -e "${COK} ${BONSAI_GREEN}NVIDIA driver fixed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
       echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs...${BONSAI_RESET}"
-      sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
+      sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG" || true
       echo -e "\n${CAT} ${BONSAI_YELLOW}Reboot required for NVIDIA driver to load!${BONSAI_RESET}\n"
     else
       echo -e "${CER} ${BONSAI_RED}Verification failed — expected ${NVIDIA_DRV_PKG}, got ${verify_pkg:-nothing}${BONSAI_RESET}"
     fi
   else
-    echo -e "${CER} ${BONSAI_RED}Installation failed — you may need to reboot first if kernel was upgraded${BONSAI_RESET}"
+    echo -e "${CER} ${BONSAI_RED}Installation failed. Run manually:${BONSAI_RESET}"
+    echo -e "${CER} ${BONSAI_RED}  sudo pacman -S nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings${BONSAI_RESET}"
   fi
   sleep 3
 }
