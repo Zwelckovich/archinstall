@@ -2228,15 +2228,18 @@ function determine_nvidia_packages() {
     NVIDIA_SETTINGS_PKG="nvidia-settings"
     NVIDIA_ARCH_DESC="Turing+ (open modules)"
   else
-    if [ "$DISTRO_TYPE" = "cachyos" ]; then
-      # CachyOS packages nvidia-open-dkms as Replaces: nvidia-dkms
-      # Open modules don't support pre-Turing — use proprietary 535xx branch
+    # Pre-Turing (Maxwell/Pascal): open kernel modules don't support these GPUs
+    # Detect CachyOS by repo availability (not DISTRO_TYPE which may be stale)
+    # CachyOS replaced nvidia-dkms with nvidia-open-dkms (Provides/Replaces: nvidia-dkms)
+    # so "nvidia-dkms" resolves to nvidia-open-dkms which won't work for pre-Turing
+    if pacman -Si nvidia-535xx-dkms &>/dev/null 2>&1; then
+      # CachyOS legacy driver available — use proprietary 535xx branch
       NVIDIA_DRV_PKG="nvidia-535xx-dkms"
       NVIDIA_UTILS_PKG="nvidia-535xx-utils"
       NVIDIA_SETTINGS_PKG="nvidia-535xx-settings"
-      NVIDIA_ARCH_DESC="Maxwell/Pascal (535xx proprietary — CachyOS)"
+      NVIDIA_ARCH_DESC="Maxwell/Pascal (535xx proprietary)"
     else
-      # Arch Linux: standard nvidia-dkms has proprietary modules, supports Maxwell+
+      # Standard Arch: nvidia-dkms has proprietary modules, supports Maxwell+
       NVIDIA_DRV_PKG="nvidia-dkms"
       NVIDIA_UTILS_PKG="nvidia-utils"
       NVIDIA_SETTINGS_PKG="nvidia-settings"
@@ -2346,8 +2349,12 @@ function convert_to_cachyos() {
     echo -e "${CNT} ${BONSAI_TEXT}GPU architecture: ${NVIDIA_ARCH_DESC}${BONSAI_RESET}"
     echo -e "${CNT} ${BONSAI_TEXT}Selected driver: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
 
-    # Check if the correct driver is already installed
-    if pacman -Q "$NVIDIA_DRV_PKG" &>/dev/null; then
+    # Check if the EXACT correct driver is already installed (not a virtual/provides match)
+    # pacman -Q resolves Provides, so "pacman -Q nvidia-dkms" succeeds even when
+    # nvidia-open-dkms is installed (because it Provides: nvidia-dkms). Compare actual name.
+    local actual_nvidia_pkg
+    actual_nvidia_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
+    if [[ "$actual_nvidia_pkg" == "$NVIDIA_DRV_PKG" ]]; then
       echo -e "${COK} ${BONSAI_TEXT}Correct NVIDIA driver already installed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
     else
       # Remove ALL existing nvidia driver/utils packages to avoid conflicts
