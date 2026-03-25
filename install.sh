@@ -2353,7 +2353,7 @@ function convert_to_cachyos() {
     # pacman -Q resolves Provides, so "pacman -Q nvidia-dkms" succeeds even when
     # nvidia-open-dkms is installed (because it Provides: nvidia-dkms). Compare actual name.
     local actual_nvidia_pkg
-    actual_nvidia_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
+    actual_nvidia_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null || true)
     if [[ "$actual_nvidia_pkg" == "$NVIDIA_DRV_PKG" ]]; then
       echo -e "${COK} ${BONSAI_TEXT}Correct NVIDIA driver already installed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
     else
@@ -2380,7 +2380,7 @@ function convert_to_cachyos() {
 
       # Verify the EXACT correct package was installed (catch silent Provides resolution)
       local verify_pkg
-      verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
+      verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null || true)
       if [[ "$verify_pkg" != "$NVIDIA_DRV_PKG" ]]; then
         echo -e "${CER} ${BONSAI_RED}NVIDIA driver verification FAILED — expected ${NVIDIA_DRV_PKG}, got ${verify_pkg:-nothing}${BONSAI_RESET}"
         echo -e "${CER} ${BONSAI_RED}Manual fix: sudo pacman -S nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings${BONSAI_RESET}"
@@ -2588,7 +2588,7 @@ function startup_nvidia_health_check() {
 
   # Check if the correct EXACT driver is installed
   local actual_pkg
-  actual_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
+  actual_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null || true)
   if [[ "$actual_pkg" == "$NVIDIA_DRV_PKG" ]]; then
     return  # Correct driver already installed
   fi
@@ -2630,7 +2630,7 @@ function startup_nvidia_health_check() {
   if sudo pacman -S --noconfirm "$NVIDIA_DRV_PKG" "$NVIDIA_UTILS_PKG" "$NVIDIA_SETTINGS_PKG" 2>&1 | tee -a "$INSTLOG"; then
     # Verify
     local verify_pkg
-    verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null)
+    verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null || true)
     if [[ "$verify_pkg" == "$NVIDIA_DRV_PKG" ]]; then
       echo -e "${COK} ${BONSAI_GREEN}NVIDIA driver fixed: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
       echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs...${BONSAI_RESET}"
