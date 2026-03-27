@@ -1717,22 +1717,23 @@ function install_hyprland() {
       done
     fi
 
-    if grep -qE '^MODULES=.*nvidia. *nvidia_modeset.*nvidia_uvm.*nvidia_drm' /etc/mkinitcpio.conf; then
-      echo -e "${COK} ${BONSAI_TEXT}Nvidia modules already configured${BONSAI_RESET}"
-    else
-      sudo sed -Ei 's/^(MODULES=\([^\)]*)\)/\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
-      echo -e "${COK} ${BONSAI_TEXT}Nvidia modules added to mkinitcpio.conf${BONSAI_RESET}"
+    # Use ensure_nvidia_initramfs which handles CachyOS drop-in vs Arch direct edit
+    ensure_nvidia_initramfs
+
+    # On CachyOS, the proprietary driver enables DRM modesetting by default — no modprobe.d needed
+    # On standard Arch, we still need the explicit config
+    if ! grep -q '^\[cachyos' /etc/pacman.conf 2>/dev/null; then
+      NVEA="/etc/modprobe.d/nvidia.conf"
+      if [ -f "$NVEA" ]; then
+        echo -e "${COK} ${BONSAI_TEXT}Nvidia modeset already configured${BONSAI_RESET}"
+      else
+        echo -e "${CNT} ${BONSAI_TEXT}Adding Nvidia modeset configuration...${BONSAI_RESET}"
+        sudo bash -c 'echo "options nvidia_drm modeset=1 fbdev=1" > /etc/modprobe.d/nvidia.conf'
+      fi
     fi
 
-    sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
-
-    NVEA="/etc/modprobe.d/nvidia.conf"
-    if [ -f "$NVEA" ]; then
-      echo -e "${COK} ${BONSAI_TEXT}Nvidia modeset already configured${BONSAI_RESET}"
-    else
-      echo -e "${CNT} ${BONSAI_TEXT}Adding Nvidia modeset configuration...${BONSAI_RESET}"
-      sudo bash -c 'echo "options nvidia_drm modeset=1 fbdev=1" > /etc/modprobe.d/nvidia.conf'
-    fi
+    # Enable suspend/resume/hibernate services
+    enable_nvidia_power_services
   fi
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Installing development tools and applications...${BONSAI_RESET}"
@@ -1980,37 +1981,40 @@ function update_bootloader_sddm() {
     sudo cp -r ~/archinstall/dotfiles/usr/share/grub/themes/* /boot/grub/themes/
   fi
 
-  if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
-    if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
-      ISNVIDIA=true
-    else
-      ISNVIDIA=false
-    fi
-
-    if [[ $ISNVIDIA == true ]]; then
-      echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB for NVIDIA...${BONSAI_RESET}"
-      if [ -f /etc/default/grub ]; then
-        if ! sudo grep -q "nvidia-drm.modeset=1" /etc/default/grub; then
-          sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia-drm.modeset=1"/' /etc/default/grub
-          echo -e "${COK} ${BONSAI_TEXT}nvidia-drm.modeset=1 added${BONSAI_RESET}"
-        fi
-        if ! sudo grep -q "nvidia_drm.fbdev=1" /etc/default/grub; then
-          sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia_drm.fbdev=1"/' /etc/default/grub
-          echo -e "${COK} ${BONSAI_TEXT}nvidia_drm.fbdev=1 added${BONSAI_RESET}"
-        fi
+  # Add NVIDIA kernel params only on standard Arch — CachyOS drivers handle modesetting internally
+  if ! grep -q '^\[cachyos' /etc/pacman.conf 2>/dev/null; then
+    if [[ $DETECTED_BOOTLOADER == "grub" ]]; then
+      if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
+        ISNVIDIA=true
+      else
+        ISNVIDIA=false
       fi
-    fi
-  elif [[ $DETECTED_BOOTLOADER == "systemd-boot" ]]; then
-    if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
-      echo -e "${CNT} ${BONSAI_TEXT}Configuring systemd-boot for NVIDIA...${BONSAI_RESET}"
-      for entry in /boot/loader/entries/*.conf; do
-        if [ -f "$entry" ]; then
-          if ! grep -q "nvidia-drm.modeset=1" "$entry"; then
-            sudo sed -i "/^options/ s/$/ nvidia-drm.modeset=1 nvidia_drm.fbdev=1/" "$entry"
-            echo -e "${COK} ${BONSAI_TEXT}NVIDIA parameters added to $(basename $entry)${BONSAI_RESET}"
+
+      if [[ $ISNVIDIA == true ]]; then
+        echo -e "${CNT} ${BONSAI_TEXT}Configuring GRUB for NVIDIA...${BONSAI_RESET}"
+        if [ -f /etc/default/grub ]; then
+          if ! sudo grep -q "nvidia-drm.modeset=1" /etc/default/grub; then
+            sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia-drm.modeset=1"/' /etc/default/grub
+            echo -e "${COK} ${BONSAI_TEXT}nvidia-drm.modeset=1 added${BONSAI_RESET}"
+          fi
+          if ! sudo grep -q "nvidia_drm.fbdev=1" /etc/default/grub; then
+            sudo sed -i -e 's/\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 nvidia_drm.fbdev=1"/' /etc/default/grub
+            echo -e "${COK} ${BONSAI_TEXT}nvidia_drm.fbdev=1 added${BONSAI_RESET}"
           fi
         fi
-      done
+      fi
+    elif [[ $DETECTED_BOOTLOADER == "systemd-boot" ]]; then
+      if lspci -k | grep -A 2 -E "(VGA|3D)" | grep -iq nvidia; then
+        echo -e "${CNT} ${BONSAI_TEXT}Configuring systemd-boot for NVIDIA...${BONSAI_RESET}"
+        for entry in /boot/loader/entries/*.conf; do
+          if [ -f "$entry" ]; then
+            if ! grep -q "nvidia-drm.modeset=1" "$entry"; then
+              sudo sed -i "/^options/ s/$/ nvidia-drm.modeset=1 nvidia_drm.fbdev=1/" "$entry"
+              echo -e "${COK} ${BONSAI_TEXT}NVIDIA parameters added to $(basename $entry)${BONSAI_RESET}"
+            fi
+          fi
+        done
+      fi
     fi
   fi
 
@@ -2204,7 +2208,8 @@ function cachyos_preflight_check() {
 
 # Determine correct NVIDIA driver packages for GPU architecture and distro
 # CachyOS replaced nvidia-dkms with nvidia-open-dkms (open kernel modules, Turing+ only)
-# Pre-Turing GPUs (Maxwell/Pascal) need the proprietary nvidia-535xx legacy branch
+# Pre-Turing GPUs (Maxwell/Pascal) need the proprietary legacy branch on CachyOS
+# (580xx current as of 2026, falling back to 550xx/535xx if unavailable)
 # Sets globals: NVIDIA_DRV_PKG, NVIDIA_UTILS_PKG, NVIDIA_SETTINGS_PKG, NVIDIA_ARCH_DESC
 function determine_nvidia_packages() {
   local gpu_pci_id
@@ -2233,13 +2238,25 @@ function determine_nvidia_packages() {
     # CachyOS replaced nvidia-dkms with nvidia-open-dkms (Provides/Replaces: nvidia-dkms)
     # so "nvidia-dkms" resolves to nvidia-open-dkms which won't work for pre-Turing
     if grep -q '^\[cachyos' /etc/pacman.conf 2>/dev/null; then
-      # CachyOS repos configured — use proprietary 550xx branch for pre-Turing
-      # 550xx is the last production branch supporting Maxwell/Pascal
-      # 535xx is too old for kernel 6.19+, nvidia-open-dkms only supports Turing+
-      NVIDIA_DRV_PKG="nvidia-550xx-dkms"
-      NVIDIA_UTILS_PKG="nvidia-550xx-utils"
-      NVIDIA_SETTINGS_PKG="nvidia-settings"
-      NVIDIA_ARCH_DESC="Maxwell/Pascal (550xx proprietary)"
+      # CachyOS repos configured — use proprietary legacy branch for pre-Turing
+      # nvidia-open-dkms only supports Turing+, so we need versioned proprietary drivers
+      # Dynamically detect which legacy branch is available (580xx > 550xx > 535xx)
+      if pacman -Ss '^nvidia-580xx-dkms$' 2>/dev/null | grep -q nvidia-580xx-dkms; then
+        NVIDIA_DRV_PKG="nvidia-580xx-dkms"
+        NVIDIA_UTILS_PKG="nvidia-580xx-utils"
+        NVIDIA_SETTINGS_PKG="nvidia-580xx-settings"
+        NVIDIA_ARCH_DESC="Maxwell/Pascal (580xx proprietary)"
+      elif pacman -Ss '^nvidia-550xx-dkms$' 2>/dev/null | grep -q nvidia-550xx-dkms; then
+        NVIDIA_DRV_PKG="nvidia-550xx-dkms"
+        NVIDIA_UTILS_PKG="nvidia-550xx-utils"
+        NVIDIA_SETTINGS_PKG="nvidia-550xx-settings"
+        NVIDIA_ARCH_DESC="Maxwell/Pascal (550xx proprietary)"
+      else
+        NVIDIA_DRV_PKG="nvidia-535xx-dkms"
+        NVIDIA_UTILS_PKG="nvidia-535xx-utils"
+        NVIDIA_SETTINGS_PKG="nvidia-535xx-settings"
+        NVIDIA_ARCH_DESC="Maxwell/Pascal (535xx proprietary, fallback)"
+      fi
     else
       # Standard Arch: nvidia-dkms has proprietary modules, supports Maxwell+
       NVIDIA_DRV_PKG="nvidia-dkms"
@@ -2258,10 +2275,42 @@ function is_nvidia_driver_installed() {
   pacman -Qq 2>/dev/null | grep -qE '^nvidia-[0-9]+xx-dkms$'
 }
 
-# Ensure NVIDIA modules in mkinitcpio.conf without duplication
-# IDEMPOTENT: Safe to re-run — checks each module individually
+# Ensure NVIDIA modules in mkinitcpio without duplication
+# On CachyOS: uses drop-in file (matching ISO installer behavior)
+# On Arch: edits /etc/mkinitcpio.conf directly
+# IDEMPOTENT: Safe to re-run
 function ensure_nvidia_initramfs() {
   local modules_needed=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
+  local dropin_content="MODULES+=(${modules_needed[*]})"
+
+  # CachyOS: use drop-in file approach (matches chwd / ISO installer)
+  if grep -q '^\[cachyos' /etc/pacman.conf 2>/dev/null; then
+    local dropin_dir="/etc/mkinitcpio.conf.d"
+    local dropin_file="${dropin_dir}/10-nvidia.conf"
+    sudo mkdir -p "$dropin_dir"
+
+    if [[ -f "$dropin_file" ]] && grep -qF "$dropin_content" "$dropin_file"; then
+      echo -e "${COK} ${BONSAI_TEXT}NVIDIA modules already in mkinitcpio drop-in${BONSAI_RESET}"
+    else
+      echo "$dropin_content" | sudo tee "$dropin_file" > /dev/null
+      echo -e "${COK} ${BONSAI_TEXT}Created ${dropin_file} with NVIDIA modules${BONSAI_RESET}"
+
+      # Clean nvidia modules from main config to avoid duplication
+      if grep -qE '\bnvidia\b' /etc/mkinitcpio.conf 2>/dev/null; then
+        local current_modules
+        current_modules=$(grep -oP '^MODULES=\(\K[^\)]*' /etc/mkinitcpio.conf || echo "")
+        local cleaned_modules
+        cleaned_modules=$(echo "$current_modules" | sed -E 's/\bnvidia(_modeset|_uvm|_drm)?\b//g' | xargs)
+        sudo sed -i "s/^MODULES=(.*/MODULES=(${cleaned_modules})/" /etc/mkinitcpio.conf
+      fi
+
+      echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs with NVIDIA modules...${BONSAI_RESET}"
+      sudo mkinitcpio -P 2>&1 | tee -a "$INSTLOG"
+    fi
+    return
+  fi
+
+  # Standard Arch: edit main config directly
   local current_modules
   current_modules=$(grep -oP '^MODULES=\(\K[^\)]*' /etc/mkinitcpio.conf || echo "")
   local needs_rebuild=false
@@ -2274,12 +2323,9 @@ function ensure_nvidia_initramfs() {
   done
 
   if $needs_rebuild; then
-    # Remove any existing nvidia-related modules to avoid duplication
     local cleaned_modules
     cleaned_modules=$(echo "$current_modules" | sed -E 's/\bnvidia(_modeset|_uvm|_drm)?\b//g' | xargs)
-    # Append all nvidia modules cleanly
     local new_modules="${cleaned_modules} nvidia nvidia_modeset nvidia_uvm nvidia_drm"
-    # Normalize whitespace
     new_modules=$(echo "$new_modules" | xargs)
     sudo sed -i "s/^MODULES=(.*/MODULES=(${new_modules})/" /etc/mkinitcpio.conf
     echo -e "${CNT} ${BONSAI_TEXT}Rebuilding initramfs with NVIDIA modules...${BONSAI_RESET}"
@@ -2287,6 +2333,18 @@ function ensure_nvidia_initramfs() {
   else
     echo -e "${COK} ${BONSAI_TEXT}NVIDIA modules already in initramfs${BONSAI_RESET}"
   fi
+}
+
+# Enable NVIDIA power management services (suspend/resume/hibernate)
+# IDEMPOTENT: systemctl enable is a no-op if already enabled
+function enable_nvidia_power_services() {
+  local services=(nvidia-suspend nvidia-resume nvidia-hibernate)
+  for svc in "${services[@]}"; do
+    if systemctl list-unit-files "${svc}.service" &>/dev/null; then
+      sudo systemctl enable "${svc}.service" 2>/dev/null || true
+    fi
+  done
+  echo -e "${COK} ${BONSAI_TEXT}NVIDIA power management services enabled${BONSAI_RESET}"
 }
 
 # Convert existing Arch Linux to CachyOS
@@ -2346,7 +2404,7 @@ function convert_to_cachyos() {
 
     # Determine correct driver for this GPU architecture and distro
     # CachyOS replaced nvidia-dkms with nvidia-open-dkms (Turing+ only)
-    # Pre-Turing GPUs need the proprietary nvidia-535xx branch on CachyOS
+    # Pre-Turing GPUs need a proprietary legacy branch on CachyOS (580xx/550xx/535xx)
     determine_nvidia_packages
     echo -e "${CNT} ${BONSAI_TEXT}GPU architecture: ${NVIDIA_ARCH_DESC}${BONSAI_RESET}"
     echo -e "${CNT} ${BONSAI_TEXT}Selected driver: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
@@ -2388,7 +2446,7 @@ function convert_to_cachyos() {
       verify_pkg=$(pacman -Qq "$NVIDIA_DRV_PKG" 2>/dev/null || true)
       if [[ "$verify_pkg" != "$NVIDIA_DRV_PKG" ]]; then
         echo -e "${CER} ${BONSAI_RED}NVIDIA driver verification FAILED — expected ${NVIDIA_DRV_PKG}, got ${verify_pkg:-nothing}${BONSAI_RESET}"
-        echo -e "${CER} ${BONSAI_RED}Manual fix: sudo pacman -S nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings${BONSAI_RESET}"
+        echo -e "${CER} ${BONSAI_RED}Manual fix: sudo pacman -S ${NVIDIA_DRV_PKG} ${NVIDIA_UTILS_PKG} ${NVIDIA_SETTINGS_PKG}${BONSAI_RESET}"
         return 1
       fi
       echo -e "${COK} ${BONSAI_TEXT}NVIDIA driver verified: ${NVIDIA_DRV_PKG}${BONSAI_RESET}"
@@ -2396,6 +2454,8 @@ function convert_to_cachyos() {
 
     # Ensure nvidia modules in initramfs (idempotent, no duplication)
     ensure_nvidia_initramfs
+    # Enable suspend/resume/hibernate services
+    enable_nvidia_power_services
   else
     echo -e "\n${CNT} ${BONSAI_TEXT}Step 5/6: No NVIDIA GPU detected, skipping...${BONSAI_RESET}"
   fi
@@ -2427,8 +2487,8 @@ function convert_to_cachyos() {
       return 1
     fi
 
-    # Add NVIDIA options if any NVIDIA driver variant is installed (including legacy branches)
-    if is_nvidia_driver_installed; then
+    # Add NVIDIA kernel params only on standard Arch — CachyOS drivers handle modesetting internally
+    if is_nvidia_driver_installed && ! grep -q '^\[cachyos' /etc/pacman.conf 2>/dev/null; then
       kernel_opts="$kernel_opts nvidia-drm.modeset=1 nvidia_drm.fbdev=1"
     fi
 
@@ -2653,7 +2713,7 @@ function startup_nvidia_health_check() {
     fi
   else
     echo -e "${CER} ${BONSAI_RED}Installation failed. Run manually:${BONSAI_RESET}"
-    echo -e "${CER} ${BONSAI_RED}  sudo pacman -S nvidia-535xx-dkms nvidia-535xx-utils nvidia-535xx-settings${BONSAI_RESET}"
+    echo -e "${CER} ${BONSAI_RED}  sudo pacman -S ${NVIDIA_DRV_PKG} ${NVIDIA_UTILS_PKG} ${NVIDIA_SETTINGS_PKG}${BONSAI_RESET}"
   fi
   sleep 3
 }
