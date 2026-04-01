@@ -227,6 +227,10 @@ alias -s pdf=zathura
 # --- Programming Environment Update ---
 alias codeup="yamir && yain biome lazygit visual-studio-code-bin && uv self update && bun upgrade && claude install && code --update-extensions && sudo npm install -g corepack && sudo npm install -g npm@latest"
 
+# --- BONSAI Sync ---
+alias bonsai-push="cp -rf ~/projects/BONSAI/.claude/{output-styles,rules,skills} ~/.claude/ && cp -f ~/projects/BONSAI/CLAUDE.md ~/CLAUDE.md && echo 'BONSAI pushed to global'"
+alias bonsai-pull="cp -rf ~/.claude/{output-styles,rules,skills} ~/projects/BONSAI/.claude/ && cp -f ~/CLAUDE.md ~/projects/BONSAI/CLAUDE.md && echo 'BONSAI pulled from global'"
+
 # --- Rsync Mirror ---
 alias mirror="rsync -a --info=progress2 --no-inc-recursive --delete"
 alias mirror-dry="rsync -an --info=progress2 --no-inc-recursive --delete"

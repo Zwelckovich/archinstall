@@ -122,6 +122,8 @@ tools_stage=(
   webstorm                        # JavaScript/TypeScript IDE by JetBrains
   docker                          # Container platform
   biome                           # Fast formatter/linter for JS/TS (BONSAI preferred)
+  libnotify                       # Desktop notification library (notify-send)
+  ydotool                         # Input automation for Wayland (key simulation)
   claude-code                     # Claude AI code assistant
   shfmt                           # Shell script formatter
   stylua                          # Lua code formatter
@@ -1755,6 +1757,10 @@ function install_hyprland() {
   echo -e "\n${CNT} ${BONSAI_TEXT}Enabling services...${BONSAI_RESET}"
   sudo systemctl enable sddm
   sudo systemctl enable bluetooth.service
+
+  echo -e "\n${CNT} ${BONSAI_TEXT}Configuring ydotool (input automation)...${BONSAI_RESET}"
+  sudo usermod -aG input "$USER"
+  systemctl --user enable --now ydotool.service
 
   show_section "Shell Configuration"
 
