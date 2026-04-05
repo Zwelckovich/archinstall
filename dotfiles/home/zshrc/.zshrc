@@ -184,6 +184,33 @@ alias yasu='yasnap && yay -Syu --noconfirm --mflags "--nocheck"'
 alias yadown="sudo downgrade"          # Downgrade packages
 alias yahist="tail -50 /var/log/pacman.log | grep -E 'upgraded|installed|removed'"
 
+# ---- ISO Writer ----
+# Usage: isowrite <image.iso> <device>   e.g. isowrite archlinux.iso /dev/sde
+isowrite() {
+  if [[ $# -ne 2 ]]; then
+    echo "Usage: isowrite <image.iso> <device>"
+    echo "Example: isowrite archlinux.iso /dev/sde"
+    return 1
+  fi
+  local iso="$1"
+  local dev="$2"
+  if [[ ! -f "$iso" ]]; then
+    echo "✗ ISO not found: $iso"
+    return 1
+  fi
+  if [[ ! -b "$dev" ]]; then
+    echo "✗ Not a block device: $dev"
+    return 1
+  fi
+  echo "→ Target: $dev"
+  lsblk -o NAME,SIZE,MODEL,MOUNTPOINTS "$dev"
+  echo ""
+  read -q "?⚠  This will DESTROY all data on $dev. Continue? [y/N] " && echo || { echo "Aborted."; return 1; }
+  sudo umount "${dev}"?* 2>/dev/null
+  sudo dd if="$iso" of="$dev" bs=4M status=progress oflag=sync conv=fsync && sync
+  echo "✓ Done. You can now remove $dev."
+}
+
 # ---- TLDR ----
 
 alias help="tldr"
