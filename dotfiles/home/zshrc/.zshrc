@@ -258,6 +258,58 @@ alias codeup="yamir && yain biome lazygit visual-studio-code-bin && uv self upda
 alias bonsai-push="cp -rf ~/projects/BONSAI/.claude/{output-styles,rules,skills} ~/.claude/ && cp -f ~/projects/BONSAI/CLAUDE.md ~/CLAUDE.md && echo 'BONSAI pushed to global'"
 alias bonsai-pull="cp -rf ~/.claude/{output-styles,rules,skills} ~/projects/BONSAI/.claude/ && cp -f ~/CLAUDE.md ~/projects/BONSAI/CLAUDE.md && echo 'BONSAI pulled from global'"
 
+bonsai-diff() {
+    emulate -L zsh
+    local green=$'\e[38;2;124;152;133m' blue=$'\e[38;2;130;164;199m'
+    local yellow=$'\e[38;2;199;168;130m' muted=$'\e[38;2;139;146;165m'
+    local reset=$'\e[0m' bold=$'\e[1m'
+    local -a pairs=(
+        "output-styles|$HOME/.claude/output-styles|$HOME/projects/BONSAI/.claude/output-styles"
+        "rules|$HOME/.claude/rules|$HOME/projects/BONSAI/.claude/rules"
+        "skills|$HOME/.claude/skills|$HOME/projects/BONSAI/.claude/skills"
+        "CLAUDE.md|$HOME/CLAUDE.md|$HOME/projects/BONSAI/CLAUDE.md"
+    )
+    local -a details=()
+    local entry name global repo diff_out diff_count g_mtime r_mtime label
+    printf "${bold}BONSAI sync status${reset}  ${muted}(global ↔ BONSAI repo)${reset}\n\n"
+    for entry in "${pairs[@]}"; do
+        name="${entry%%|*}"; entry="${entry#*|}"
+        global="${entry%%|*}"; repo="${entry#*|}"
+        if [[ ! -e $global || ! -e $repo ]]; then
+            printf "  %-14s ${yellow}⚠ missing${reset} ${muted}(%s)${reset}\n" \
+                "$name" "$([[ ! -e $global ]] && echo 'global' || echo 'repo') side not found"
+            continue
+        fi
+        diff_out=$(diff -rq "$global" "$repo" 2>&1)
+        if [[ -z $diff_out ]]; then
+            printf "  %-14s ${green}✓ in sync${reset}\n" "$name"
+            continue
+        fi
+        diff_count=$(printf '%s\n' "$diff_out" | wc -l)
+        if [[ -d $global ]]; then
+            g_mtime=$(find "$global" -type f -printf '%T@\n' 2>/dev/null | sort -n | tail -1)
+            r_mtime=$(find "$repo"   -type f -printf '%T@\n' 2>/dev/null | sort -n | tail -1)
+        else
+            g_mtime=$(stat -c %Y "$global")
+            r_mtime=$(stat -c %Y "$repo")
+        fi
+        g_mtime=${g_mtime%.*}; r_mtime=${r_mtime%.*}
+        if (( g_mtime > r_mtime )); then
+            label="${blue}→ global newer${reset} ${muted}(run: bonsai-pull)${reset}"
+        elif (( r_mtime > g_mtime )); then
+            label="${blue}← repo newer${reset}   ${muted}(run: bonsai-push)${reset}"
+        else
+            label="${yellow}⚠ same mtime, content differs${reset}"
+        fi
+        printf "  %-14s %s ${muted}— %d file(s) differ${reset}\n" "$name" "$label" "$diff_count"
+        details+=("${bold}$name${reset}"$'\n'"$diff_out")
+    done
+    if (( ${#details} > 0 )); then
+        printf "\n${bold}Details${reset}\n"
+        for entry in "${details[@]}"; do printf "\n%s\n" "$entry"; done
+    fi
+}
+
 # --- Rsync Mirror ---
 alias mirror="rsync -a --info=progress2 --no-inc-recursive --delete"
 alias mirror-dry="rsync -an --info=progress2 --no-inc-recursive --delete"
