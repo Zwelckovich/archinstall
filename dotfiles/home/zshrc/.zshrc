@@ -310,6 +310,9 @@ bonsai-diff() {
     fi
 }
 
+# --- BONSAI Repo Update ---
+alias bonsai-update="git -C ~/projects/BONSAI pull --no-edit"
+
 # --- Rsync Mirror ---
 alias mirror="rsync -a --info=progress2 --no-inc-recursive --delete"
 alias mirror-dry="rsync -an --info=progress2 --no-inc-recursive --delete"
