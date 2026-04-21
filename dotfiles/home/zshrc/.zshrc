@@ -252,7 +252,7 @@ alias -s png=feh
 alias -s pdf=zathura
 
 # --- Programming Environment Update ---
-alias codeup="yamir && yain biome lazygit visual-studio-code-bin && uv self update && bun upgrade && claude install && code --update-extensions && sudo npm install -g corepack && sudo npm install -g npm@latest"
+alias codeup="yamir && yain biome lazygit visual-studio-code-bin && uv self update && bun upgrade && claude update && code --update-extensions && sudo npm install -g corepack && sudo npm install -g npm@latest"
 
 # --- BONSAI Sync ---
 alias bonsai-push="cp -rf ~/projects/BONSAI/.claude/{output-styles,rules,skills} ~/.claude/ && cp -f ~/projects/BONSAI/CLAUDE.md ~/CLAUDE.md && echo 'BONSAI pushed to global'"
