@@ -199,7 +199,7 @@ tools_stage=(
   yazi                            # Terminal file manager
   steam                           # Gaming platform
   lutris                          # Game launcher
-  discord                         # Voice/chat platform
+  discord-latest-bin              # Voice/chat platform (AUR, latest binary)
   qucs-s                          # Circuit simulator
   paraview                        # Scientific data visualization
   bluez                           # Bluetooth protocol stack
