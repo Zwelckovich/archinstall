@@ -231,6 +231,70 @@ alias pydeact="deactivate && which python"
 alias pyvenv="python -m venv .venv && cp ~/archinstall/tools/requirements.txt ./"
 alias pycheck="uv run ruff check --fix && uv run ruff format && uv run ty check"
 
+notebook2py() {
+    emulate -L zsh
+    local cyan=$'\e[38;2;130;164;199m' green=$'\e[38;2;124;152;133m'
+    local yellow=$'\e[38;2;199;168;130m' red=$'\e[38;2;199;130;137m'
+    local reset=$'\e[0m'
+
+    if [[ $# -ne 1 ]]; then
+        print -ru2 -- "${red}✗${reset} Usage: notebook2py <notebook.ipynb>"
+        return 1
+    fi
+    local nb="$1"
+    if [[ ! -f $nb ]]; then
+        print -ru2 -- "${red}✗${reset} Not found: $nb"
+        return 1
+    fi
+    if [[ $nb != *.ipynb ]]; then
+        print -ru2 -- "${red}✗${reset} Not an .ipynb file: $nb"
+        return 1
+    fi
+    local py="${nb%.ipynb}.py"
+
+    # ensure jupytext + ruff are in the uv venv
+    local -a missing=()
+    local pkg
+    for pkg in jupytext ruff; do
+        uv pip show $pkg >/dev/null 2>&1 || missing+=($pkg)
+    done
+    if (( ${#missing} > 0 )); then
+        print -- "${yellow}→${reset} adding missing dev deps: ${missing[*]}"
+        uv add --dev "${missing[@]}" || { print -ru2 -- "${red}✗${reset} uv add failed"; return 1; }
+    fi
+
+    print -- "${cyan}→${reset} converting ${nb:t}"
+    uv run jupytext --to py:percent "$nb" -o "$py" \
+        || { print -ru2 -- "${red}✗${reset} jupytext failed"; return 1; }
+
+    print -- "${cyan}→${reset} stripping notebook artifacts"
+    uv run python - "$py" <<'PYEOF' || { print -ru2 -- "${red}✗${reset} strip failed"; return 1; }
+import ast, pathlib, re, sys
+p = pathlib.Path(sys.argv[1])
+src = p.read_text(encoding="utf-8")
+src = re.sub(r"\A# ---\n(?:#[^\n]*\n)*?# ---\n+", "", src)
+src = re.sub(r"(?m)^# %%[^\n]*\n", "", src)
+tree = ast.parse(src)
+remove = set()
+for node in tree.body:
+    if isinstance(node, ast.Expr) and isinstance(node.value, ast.Name):
+        for ln in range(node.lineno, node.end_lineno + 1):
+            remove.add(ln)
+out = [ln for i, ln in enumerate(src.splitlines(keepends=True), 1) if i not in remove]
+p.write_text("".join(out), encoding="utf-8")
+PYEOF
+
+    print -- "${cyan}→${reset} unused imports + isort (F, I)"
+    uv run ruff check --select F,I --fix "$py" \
+        || { print -ru2 -- "${red}✗${reset} ruff check failed"; return 1; }
+
+    print -- "${cyan}→${reset} formatting"
+    uv run ruff format "$py" \
+        || { print -ru2 -- "${red}✗${reset} ruff format failed"; return 1; }
+
+    print -- "${green}✓${reset} $py"
+}
+
 # --- Tree Aliases ---
 
 alias tree="tre"
