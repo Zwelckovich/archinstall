@@ -109,6 +109,7 @@ tools_stage=(
   qt5-quickcontrols2              # Qt5 quick controls
   eza                             # Modern ls replacement (better colors/icons)
   hyfetch                         # System info with pride flags
+  inxi                            # Comprehensive system information tool (inxi -Fxxxz is the best and fastest command)
   bfg                             # Git repository cleaner
   git-crypt                       # Transparent file encryption in git
   git-lfs                         # Git Large File Storage
