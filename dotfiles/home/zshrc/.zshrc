@@ -178,7 +178,55 @@ yaclean() {
 # ---- TIMESHIFT (System Snapshots) ----
 
 alias yasnap="sudo timeshift --create --comments 'Pre-update $(date +%Y-%m-%d_%H-%M)'"
-alias yasu='yasnap && yay -Syu --noconfirm --mflags "--nocheck"'
+
+# yasu: snapshot, then full upgrade. On pacman file-conflict failure, retry
+# with --overwrite only if every conflicting path falls under an allowlisted
+# glob (e.g. npm self-updates). Mixed conflicts fail loudly.
+yasu() {
+  sudo timeshift --create --comments "Pre-update $(date +%Y-%m-%d_%H-%M)" || return $?
+
+  local logfile=$(mktemp /tmp/yasu.XXXXXX.log)
+  yay -Syu --noconfirm --mflags "--nocheck" 2>&1 | tee "$logfile"
+  local code=${pipestatus[1]}
+  (( code == 0 )) && { rm -f "$logfile"; return 0 }
+
+  local -a overwrite_globs=(
+    '/usr/lib/node_modules/npm/*'
+    # add more here as they bite you
+  )
+
+  local -a conflicts
+  conflicts=(${(f)"$(grep -oE '^[a-zA-Z0-9_.+-]+: /[^ ]+ exists in filesystem' "$logfile" | awk '{print $2}')"})
+
+  if (( ${#conflicts} == 0 )); then
+    rm -f "$logfile"
+    return $code
+  fi
+
+  local -a unhandled
+  local p g prefix
+  for p in $conflicts; do
+    local hit=0
+    for g in $overwrite_globs; do
+      prefix=${g%/\*}
+      [[ $p == ${prefix}/* ]] && { hit=1; break }
+    done
+    (( hit )) || unhandled+=($p)
+  done
+
+  if (( ${#unhandled} > 0 )); then
+    print -P "%F{red}yasu: conflicts outside allowlist — refusing --overwrite:%f" >&2
+    printf '  %s\n' "${unhandled[@]}" >&2
+    print -P "%F{8}log retained at: $logfile%f" >&2
+    return $code
+  fi
+
+  print -P "%F{yellow}yasu: allowlisted conflicts detected — retrying with --overwrite%f"
+  yay -Syu --noconfirm --mflags "--nocheck" --overwrite "${(j:,:)overwrite_globs}"
+  local rcode=$?
+  (( rcode == 0 )) && rm -f "$logfile" || print -P "%F{8}log retained at: $logfile%f" >&2
+  return $rcode
+}
 
 # Recovery helpers
 alias yadown="sudo downgrade"          # Downgrade packages
