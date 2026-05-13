@@ -67,7 +67,7 @@ hypr_base_stage=(
   hyprlock                        # Hyprland screen locker
   hyprland                        # Dynamic tiling Wayland compositor
   pyprland                        # Python plugin system for Hyprland
-  swww                            # Animated wallpaper daemon for Wayland
+  awww                            # Animated wallpaper daemon for Wayland (swww fork, Provides: swww)
   swaync                          # Notification center for Sway/Wayland
   wl-clipboard                    # Wayland clipboard utilities
   clipse                          # Clipboard manager
