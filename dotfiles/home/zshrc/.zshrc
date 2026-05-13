@@ -186,6 +186,11 @@ unalias yasu 2>/dev/null  # tolerate re-source when prior shell had the alias
 function yasu {
   sudo timeshift --create --comments "Pre-update $(date +%Y-%m-%d_%H-%M)" || return $?
 
+  # Refresh sudo timestamp at a clean TTY so the password prompt isn't
+  # swallowed by the tee pipe below (tee line-buffers; sudo's prompt has
+  # no newline, so it can appear garbled or after-the-fact).
+  sudo -v || return $?
+
   local logfile=$(mktemp /tmp/yasu.XXXXXX.log)
   yay -Syu --noconfirm --mflags "--nocheck" 2>&1 | tee "$logfile"
   local code=${pipestatus[1]}
