@@ -182,7 +182,8 @@ alias yasnap="sudo timeshift --create --comments 'Pre-update $(date +%Y-%m-%d_%H
 # yasu: snapshot, then full upgrade. On pacman file-conflict failure, retry
 # with --overwrite only if every conflicting path falls under an allowlisted
 # glob (e.g. npm self-updates). Mixed conflicts fail loudly.
-yasu() {
+unalias yasu 2>/dev/null  # tolerate re-source when prior shell had the alias
+function yasu {
   sudo timeshift --create --comments "Pre-update $(date +%Y-%m-%d_%H-%M)" || return $?
 
   local logfile=$(mktemp /tmp/yasu.XXXXXX.log)
