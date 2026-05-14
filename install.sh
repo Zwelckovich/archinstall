@@ -1919,7 +1919,7 @@ function restore_dotfiles() {
 
   if [ ! -d ~/.password-store ]; then
     echo -e "${CNT} ${BONSAI_TEXT}Initializing password store...${BONSAI_RESET}"
-    gpg_key=$(gpg --list-secret-keys --keyid-format LONG 2> /dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
+    gpg_key=$(gpg --list-secret-keys --keyid-format LONG 2> /dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2 || true)
     if [ -n "$gpg_key" ]; then
       pass init "$gpg_key"
     else
