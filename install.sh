@@ -119,8 +119,6 @@ tools_stage=(
   python-pynvim                   # Python client for Neovim
   tk                              # Tcl/Tk GUI toolkit
   rust                            # Rust programming language
-  pycharm                         # Python IDE by JetBrains
-  webstorm                        # JavaScript/TypeScript IDE by JetBrains
   docker                          # Container platform
   biome                           # Fast formatter/linter for JS/TS (BONSAI preferred)
   libnotify                       # Desktop notification library (notify-send)
