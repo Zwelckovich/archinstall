@@ -1872,18 +1872,18 @@ function restore_dotfiles() {
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config rofi
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing ZSH plugins...${BONSAI_RESET}"
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
-  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-  git clone https://github.com/catppuccin/zsh-syntax-highlighting.git ~/archinstall/catppuccin-zsh-syntax-highlighting
-  git clone --depth=1 https://github.com/jeffreytse/zsh-vi-mode ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-vi-mode
+  [ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ] || git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
+  [ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ] || git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+  [ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ] || git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+  [ -d ~/archinstall/catppuccin-zsh-syntax-highlighting ] || git clone https://github.com/catppuccin/zsh-syntax-highlighting.git ~/archinstall/catppuccin-zsh-syntax-highlighting
+  [ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-vi-mode" ] || git clone --depth=1 https://github.com/jeffreytse/zsh-vi-mode ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-vi-mode
 
   echo -e "${CNT} ${BONSAI_TEXT}Installing FZF-Git...${BONSAI_RESET}"
-  git clone https://github.com/junegunn/fzf-git.sh.git ~/archinstall/fzf-git
+  [ -d ~/archinstall/fzf-git ] || git clone https://github.com/junegunn/fzf-git.sh.git ~/archinstall/fzf-git
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring TMUX...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home tmux
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  [ -d ~/.tmux/plugins/tpm ] || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring shell...${BONSAI_RESET}"
   rm -rf ~/.zshrc
