@@ -199,8 +199,6 @@ tools_stage=(
   steam                           # Gaming platform
   lutris                          # Game launcher
   discord-latest-bin              # Voice/chat platform (AUR, latest binary)
-  qucs-s                          # Circuit simulator
-  paraview                        # Scientific data visualization
   bluez                           # Bluetooth protocol stack
   bluez-utils                     # Bluetooth utilities
   blueman                         # Bluetooth manager
