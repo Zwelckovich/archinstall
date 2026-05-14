@@ -1832,7 +1832,6 @@ function restore_dotfiles() {
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config lazygit
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring Hyprland...${BONSAI_RESET}"
-  rm -rf ~/.config/hypr
 
   echo -e "${CNT} ${BONSAI_TEXT}Select device type:${BONSAI_RESET}\n"
   echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}Desktop${BONSAI_RESET}"
@@ -1841,14 +1840,21 @@ function restore_dotfiles() {
   echo ""
   read -p "$(echo -e ${BONSAI_YELLOW}Select device [1-2]: ${BONSAI_RESET})" device_choice
 
+  # A running Hyprland session regenerates ~/.config/hypr/hyprland.conf
+  # as a stub the instant it disappears, racing stow. Skip that file in
+  # stow and force-link it separately with ln -sfn.
   case "$device_choice" in
     1)
-      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr desktop
+      rm -rf ~/.config/hypr
+      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr --ignore='hyprland.conf' desktop
+      ln -sfn ~/archinstall/dotfiles/config/hypr/desktop/.config/hypr/hyprland.conf ~/.config/hypr/hyprland.conf
       chmod u+x ~/archinstall/dotfiles/config/hypr/desktop/.config/hypr/wallpaper.sh
       echo -e "${COK} ${BONSAI_TEXT}Desktop configuration applied${BONSAI_RESET}"
       ;;
     2)
-      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr laptop
+      rm -rf ~/.config/hypr
+      stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config/hypr --ignore='hyprland.conf' laptop
+      ln -sfn ~/archinstall/dotfiles/config/hypr/laptop/.config/hypr/hyprland.conf ~/.config/hypr/hyprland.conf
       chmod u+x ~/archinstall/dotfiles/config/hypr/laptop/.config/hypr/wallpaper.sh
       echo -e "${COK} ${BONSAI_TEXT}Laptop configuration applied${BONSAI_RESET}"
       ;;
