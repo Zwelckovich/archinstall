@@ -943,7 +943,7 @@ function btrfs_format() {
 
   # Unmount any mounted partitions
   umount "/dev/${SELECTED_DISK}"?* 2> /dev/null || true
-  umount -l /mnt 2> /dev/null
+  umount -l /mnt 2> /dev/null || true
 
   echo -e "${CNT} ${BONSAI_TEXT}Wiping all existing signatures from disk...${BONSAI_RESET}"
   wipefs -af "/dev/$SELECTED_DISK"
@@ -1629,7 +1629,7 @@ EOF
     EFIVARFS_HOST_MOUNTED=false
   fi
 
-  umount -l /mnt
+  umount -l /mnt 2> /dev/null || true
 
   show_section "Installation Complete! 🌱"
 
