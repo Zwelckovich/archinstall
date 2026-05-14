@@ -1907,7 +1907,7 @@ function restore_dotfiles() {
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config mutt
   chmod +x ~/.config/mutt/scripts/*.sh
 
-  echo -e "${CNT} ${BONSAI_TEXT}Configuring Calcurse calendar...${BONSAIRESET}"
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring Calcurse calendar...${BONSAI_RESET}"
   mkdir -p ~/.local/share/calcurse
   mkdir -p ~/.config/calcurse/{hooks,caldav}
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config calcurse
