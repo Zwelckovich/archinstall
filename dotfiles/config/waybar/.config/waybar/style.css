@@ -38,6 +38,18 @@ button:hover {
     padding: 0 4px;
 }
 
+/* Collapse empty persistent workspaces; keep the active one visible */
+#workspaces button.empty:not(.active):not(.focused) {
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    border: none;
+    box-shadow: none;
+    color: transparent;
+    background: none;
+    opacity: 0;
+}
+
 #workspaces button.focused {
     background-color: @bonsai-bg-secondary;
     color: @bonsai-text-primary;
