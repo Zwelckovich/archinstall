@@ -1,5 +1,43 @@
 # Archinstall Catppuccin Style
 
+## Connect to WiFi
+
+On a wired connection skip this. On WiFi, connect with `iwctl` before running
+any `pacman` command (see [iwctl(1)](https://man.archlinux.org/man/iwctl.1)).
+
+Enter the interactive prompt:
+
+```sh
+iwctl
+```
+
+List your wireless device (usually `wlan0`), scan, and show networks:
+
+```sh
+[iwd]# device list
+[iwd]# station wlan0 scan
+[iwd]# station wlan0 get-networks
+```
+
+Connect to your network — you will be prompted for the passphrase:
+
+```sh
+[iwd]# station wlan0 connect SSID
+[iwd]# exit
+```
+
+Or do it non-interactively in one line:
+
+```sh
+iwctl --passphrase "passphrase" station wlan0 connect "SSID"
+```
+
+Verify connectivity:
+
+```sh
+ping -c 3 archlinux.org
+```
+
 ## Install
 
 ```sh
