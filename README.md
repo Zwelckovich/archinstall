@@ -41,7 +41,7 @@ ping -c 3 archlinux.org
 ## Install
 
 ```sh
-loadkeys de
+loadkeys de-latin1-nodeadkeys
 pacman-key --init
 pacman-key --populate archlinux
 pacman -Scc
