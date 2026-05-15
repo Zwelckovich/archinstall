@@ -123,7 +123,6 @@ tools_stage=(
   biome                           # Fast formatter/linter for JS/TS (BONSAI preferred)
   libnotify                       # Desktop notification library (notify-send)
   ydotool                         # Input automation for Wayland (key simulation)
-  claude-code                     # Claude AI code assistant
   shfmt                           # Shell script formatter
   stylua                          # Lua code formatter
   luacheck                        # Lua linter
