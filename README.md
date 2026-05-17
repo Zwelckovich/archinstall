@@ -68,11 +68,29 @@ cd archinstall
 sh install.sh
 ```
 
-Change Monitor Settings
+### Change Monitor Settings
+
+Inspect connected outputs:
 
 ```sh
 hyprctl monitors all
 ```
+
+**Switch to the KTC M27P6 layout** (KTC on DisplayPort, ASUS stays on HDMI, LG
+removed). One command rewrites the monitor/workspace/screenshot config and reloads
+Hyprland live — no reboot. Idempotent and revertable:
+
+```sh
+~/archinstall/tools/ktc-monitor.sh            # apply: KTC DP-1 4K@160, ASUS right
+~/archinstall/tools/ktc-monitor.sh --dry-run  # preview the diff, change nothing
+~/archinstall/tools/ktc-monitor.sh --safe     # DSC fallback: 4K@120, no 10-bit
+~/archinstall/tools/ktc-monitor.sh --revert   # back to the dual-HDMI (ASUS+LG) layout
+~/archinstall/tools/ktc-monitor.sh --vrr-on   # enable Adaptive-Sync once stable
+~/archinstall/tools/ktc-monitor.sh --help     # all options
+```
+
+A one-time `hyprland.conf.bak` is written on first change; `--revert` restores the
+original layout byte-for-byte (or `git checkout` the desktop `hyprland.conf`).
 
 ### Install on MacBook
 
