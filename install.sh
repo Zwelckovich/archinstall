@@ -66,20 +66,33 @@ init_logging() {
 # survive the reboot out of the tmpfs ISO. Idempotent and failure-tolerant —
 # callable on demand (before the final unmount) and again from log_finish.
 persist_logs() {
-  if mountpoint -q /mnt 2> /dev/null; then
-    { mkdir -p /mnt/var/log \
-        && cp -f "$LOG_FILE" "$XTRACE_FILE" /mnt/var/log/ 2> /dev/null \
-        && echo "  persisted to /mnt/var/log/"; } || true
+  if ! mountpoint -q /mnt 2> /dev/null; then
+    echo -e "  ${CAT} log persist skipped: /mnt is not a mountpoint"
+    return 0
   fi
+  local err
+  if ! err=$(mkdir -p /mnt/var/log 2>&1); then
+    echo -e "  ${CER} log persist failed: mkdir /mnt/var/log: ${err}"
+    return 0
+  fi
+  if err=$(cp -f "$LOG_FILE" "$XTRACE_FILE" /mnt/var/log/ 2>&1); then
+    echo -e "  ${COK} logs persisted to /mnt/var/log/"
+  else
+    echo -e "  ${CER} log persist failed: cp: ${err}"
+  fi
+  return 0
 }
 
-# Undo charset/SGR corruption from binary command output (e.g. efibootmgr -v)
-# so the terminal stays readable after exit or Ctrl+C. Soft reset only — no
-# screen clear, so the final message and log paths remain visible.
+# Restore the controlling terminal after a PTY/binary-output mess so the
+# shell is usable again. `stty sane` is the key bit — it fixes the "frozen,
+# no input echo" wedge a soft escape reset cannot. Acts on /dev/tty so it
+# works even when stdout is closed/redirected. Soft only — no screen clear,
+# so the final message and log paths stay visible.
 reset_terminal() {
-  printf '\033[0m\033(B\017' 2> /dev/null || true
+  stty sane < /dev/tty 2> /dev/null || true
+  printf '\033[0m\033(B\017' > /dev/tty 2> /dev/null || true
   if command -v tput > /dev/null 2>&1; then
-    { tput sgr0; tput rmacs; } 2> /dev/null || true
+    { tput sgr0 > /dev/tty; tput rmacs > /dev/tty; } 2> /dev/null || true
   fi
 }
 
@@ -99,8 +112,13 @@ log_finish() {
   echo "  xtrace: $XTRACE_FILE"
   persist_logs
   reset_terminal
-  exec 1>&- 2>&- || true
-  wait "${TEE_PID:-}" 2>/dev/null || true   # let tee/sed flush — no truncated tail on crash
+  if [[ -n "${TEE_PID:-}" ]]; then
+    # Fallback (non-script) path ONLY: close our stdout so tee/sed see EOF
+    # and flush, then wait for them. Under the `script` PTY this block must
+    # NOT run — closing the PTY slave there wedges the controlling terminal.
+    exec 1>&- 2>&- || true
+    wait "${TEE_PID}" 2> /dev/null || true
+  fi
 }
 
 # Ctrl+C / TERM: drop xtrace noise, then exit so the EXIT trap (log_finish)
@@ -108,7 +126,8 @@ log_finish() {
 # on an already-corrupted screen.
 on_interrupt() {
   set +x
-  echo -e "\n${CAT} ${BONSAI_YELLOW}Interrupted — saving logs and restoring terminal...${BONSAI_RESET}"
+  reset_terminal
+  echo -e "\n${CAT} ${BONSAI_YELLOW}Interrupted — saving logs and restoring terminal...${BONSAI_RESET}" > /dev/tty 2>&1 || true
   exit 130
 }
 
@@ -1735,11 +1754,14 @@ EOF
   echo -e "${CNT} ${BONSAI_TEXT}Verifying EFI boot entries...${BONSAI_RESET}"
   local efiboot_output
   if efiboot_output=$(arch-chroot /mnt efibootmgr -v 2>&1); then
-    # efibootmgr -v prints raw binary device paths on some firmware (Apple
-    # Macs) — strip everything but printable ASCII, tab and newline so the
-    # bytes can't corrupt the terminal or poison the readable log. The
-    # PARTUUID/"GPT,<uuid>" tokens are ASCII, so verification still matches.
-    efiboot_output=$(printf '%s' "$efiboot_output" | tr -cd '\11\12\40-\176')
+    # efibootmgr -v appends multi-line `dp:`/`data:` hex dumps per entry —
+    # a wall of (printable) hex that floods and garbles the screen. Drop
+    # those lines; keep the readable `Boot####* label  HD(...,GPT,uuid,...)`
+    # lines so ESP-PARTUUID verification still works. tr -cd stays as a
+    # defence against any residual non-printable bytes.
+    efiboot_output=$(printf '%s\n' "$efiboot_output" \
+      | grep -avE '^[[:space:]]*(dp|data):' \
+      | tr -cd '\11\12\40-\176')
     echo "$efiboot_output"
   else
     echo -e "${CWR} ${BONSAI_YELLOW}efibootmgr could not enumerate entries. Verify UEFI settings manually.${BONSAI_RESET}"
@@ -1816,13 +1838,21 @@ EOF
   echo -e "${CNT} ${BONSAI_TEXT}Choose an action:${BONSAI_RESET}\n"
   echo -e "  ${BONSAI_GREEN}[1]${BONSAI_RESET} ${BONSAI_TEXT}Shutdown${BONSAI_RESET}"
   echo -e "  ${BONSAI_GREEN}[2]${BONSAI_RESET} ${BONSAI_TEXT}Reboot${BONSAI_RESET}"
+  echo -e "  ${BONSAI_GREEN}[3]${BONSAI_RESET} ${BONSAI_TEXT}Return to terminal${BONSAI_RESET}"
 
   echo ""
-  read -p "$(echo -e ${BONSAI_YELLOW}Select action [1-2]: ${BONSAI_RESET})" action_choice
+  read -p "$(echo -e ${BONSAI_YELLOW}Select action [1-3]: ${BONSAI_RESET})" action_choice
 
   case $action_choice in
     1) shutdown now ;;
     2) reboot ;;
+    # Clean exit to the live shell — the path `script` unwinds correctly
+    # (restores termios). No Ctrl+C needed; logs already persisted above.
+    3)
+      reset_terminal
+      echo -e "${COK} ${BONSAI_TEXT}Returning to terminal. Logs: ${BONSAI_YELLOW}${LOG_FILE}${BONSAI_RESET}"
+      exit 0
+      ;;
     *) echo -e "${CWR} ${BONSAI_YELLOW}No action taken${BONSAI_RESET}" ;;
   esac
 }
