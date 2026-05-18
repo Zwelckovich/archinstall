@@ -1482,6 +1482,33 @@ EOF
     return 1
   }
 
+  # Verify-then-recreate: trust an existing entry ONLY if it targets the
+  # CURRENT ESP PARTUUID. A reinstall makes a new GPT GUID each time, so a
+  # detected prior-install entry points at a deleted partition — delete our
+  # own stale entries (never kali/OpenCore/Mac OS X) and recreate.
+  ensure_efi_entry() {
+    local label="$1" loader="$2" up vout pat bootnum
+    up="${ESP_PARTUUID^^}"
+    vout=$(arch-chroot /mnt efibootmgr -v 2> /dev/null || true)
+    pat=$(sed -E 's/[][(){}.*+?^$|\\]/\\&/g' <<< "$label")
+
+    if [[ -n "$ESP_PARTUUID" ]] \
+      && grep -iE "^Boot[0-9A-F]{4}\*?[[:space:]].*${pat}.*GPT,${up}" <<< "$vout" > /dev/null; then
+      echo -e "${COK} ${BONSAI_TEXT}EFI entry already targets the current ESP (${BONSAI_YELLOW}${ESP_PARTUUID}${BONSAI_TEXT}).${BONSAI_RESET}"
+      return 0
+    fi
+
+    while read -r bootnum; do
+      [[ -n "$bootnum" ]] || continue
+      arch-chroot /mnt efibootmgr -B -b "$bootnum" > /dev/null 2>&1 \
+        || efibootmgr -B -b "$bootnum" > /dev/null 2>&1 || true
+      echo -e "${CAT} ${BONSAI_TEXT}Removed stale EFI entry ${BONSAI_YELLOW}Boot${bootnum}${BONSAI_TEXT} (${label}).${BONSAI_RESET}"
+    done < <(grep -iE "^Boot[0-9A-F]{4}\*?[[:space:]].*${pat}" <<< "$vout" \
+      | sed -E 's/^Boot([0-9A-Fa-f]{4}).*/\1/')
+
+    register_efi_entry "$label" "$loader"
+  }
+
   verify_efi_entry_targets_esp() {
     local description="$1"
     local output="$2"
@@ -1588,14 +1615,9 @@ EOF
 
     local grub_entry_label="BONSAI Linux (GRUB)"
     local grub_loader='\\EFI\\GRUB\\grubx64.efi'
-    if arch-chroot /mnt efibootmgr | grep -E "GRUB|${grub_entry_label}|Arch" > /dev/null 2>&1; then
-      echo -e "${COK} ${BONSAI_TEXT}Detected existing EFI entry for GRUB${BONSAI_RESET}"
-    else
-      echo -e "${CWR} ${BONSAI_YELLOW}EFI entry for GRUB not detected. Attempting registration...${BONSAI_RESET}"
-      if ! register_efi_entry "$grub_entry_label" "$grub_loader"; then
-        echo -e "${CER} ${BONSAI_RED}Failed to ensure EFI entry for GRUB.${BONSAI_RESET}"
-        return 1
-      fi
+    if ! ensure_efi_entry "$grub_entry_label" "$grub_loader"; then
+      echo -e "${CER} ${BONSAI_RED}Failed to ensure EFI entry for GRUB.${BONSAI_RESET}"
+      return 1
     fi
 
     if ! arch-chroot /mnt efibootmgr | grep -E "GRUB|${grub_entry_label}" > /dev/null 2>&1; then
@@ -1704,14 +1726,9 @@ EOF
     local entry_label="BONSAI Linux (systemd-boot)"
     local loader_path='\\EFI\\systemd\\systemd-bootx64.efi'
 
-    if arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|${entry_label}" > /dev/null 2>&1; then
-      echo -e "${COK} ${BONSAI_TEXT}Detected existing EFI entry for systemd-boot${BONSAI_RESET}"
-    else
-      echo -e "${CWR} ${BONSAI_YELLOW}EFI entry not detected. Attempting to register ${entry_label}...${BONSAI_RESET}"
-      if ! register_efi_entry "$entry_label" "$loader_path"; then
-        echo -e "${CER} ${BONSAI_RED}Failed to ensure EFI entry for systemd-boot.${BONSAI_RESET}"
-        return 1
-      fi
+    if ! ensure_efi_entry "$entry_label" "$loader_path"; then
+      echo -e "${CER} ${BONSAI_RED}Failed to ensure EFI entry for systemd-boot.${BONSAI_RESET}"
+      return 1
     fi
 
     if ! arch-chroot /mnt efibootmgr | grep -E "Linux Boot Manager|systemd-boot|${entry_label}" > /dev/null 2>&1; then
