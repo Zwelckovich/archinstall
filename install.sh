@@ -962,6 +962,17 @@ function pacman_init() {
   echo -e "${COK} ${BONSAI_TEXT}Pacman configured successfully${BONSAI_RESET}"
 }
 
+# Hard network gate. Called early (before any destructive disk step) and
+# again before reflector — so a no-network abort never wipes the disk first.
+require_network() {
+  echo -e "${CNT} ${BONSAI_TEXT}Testing network connectivity...${BONSAI_RESET}"
+  if ! ping -c 1 -W 3 archlinux.org &> /dev/null; then
+    echo -e "${CER} ${BONSAI_RED}No internet connection detected!${BONSAI_RESET}"
+    echo -e "${CAT} ${BONSAI_YELLOW}Connect first (run macwifi.sh / iwctl), then re-run. No changes were made to the disk.${BONSAI_RESET}"
+    exit 1
+  fi
+}
+
 function optimize_mirrors() {
   show_section "Mirror Optimization"
 
@@ -982,12 +993,7 @@ function optimize_mirrors() {
 
   cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 
-  echo -e "${CNT} ${BONSAI_TEXT}Testing network connectivity...${BONSAI_RESET}"
-  if ! ping -c 1 archlinux.org &> /dev/null; then
-    echo -e "${CER} ${BONSAI_RED}No internet connection detected!${BONSAI_RESET}"
-    echo -e "${CAT} ${BONSAI_YELLOW}Please check your network connection and try again.${BONSAI_RESET}"
-    exit 1
-  fi
+  require_network   # second guard: network may have dropped since the early gate
 
   echo -e "${CNT} ${BONSAI_TEXT}Finding fastest mirrors (this may take a minute)...${BONSAI_RESET}"
   if command -v reflector &> /dev/null; then
@@ -1078,6 +1084,10 @@ function btrfs_format() {
 
   # Select encryption
   select_encryption
+
+  # Gate on connectivity BEFORE anything destructive — selections so far are
+  # interactive only, so aborting here loses no data.
+  require_network
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Preparing disk...${BONSAI_RESET}"
 
@@ -1424,7 +1434,13 @@ EOF
       return 1
     fi
 
-    ESP_PARTUUID=$(blkid -s PARTUUID -o value "$ESP_DEV" 2> /dev/null || true)
+    # Read PARTUUID from a NON-cached source: sgdisk repartitioned the disk
+    # this run, so `blkid -s` (cache) can return the pre-wipe GUID and make
+    # verify_efi_entry_targets_esp warn falsely. lsblk uses the udev DB
+    # (already refreshed), `blkid -p` is a fresh probe; cached blkid last.
+    ESP_PARTUUID=$(lsblk -dno PARTUUID "$ESP_DEV" 2> /dev/null | head -n1 || true)
+    [[ -z "$ESP_PARTUUID" ]] && ESP_PARTUUID=$(blkid -p -s PARTUUID -o value "$ESP_DEV" 2> /dev/null || true)
+    [[ -z "$ESP_PARTUUID" ]] && ESP_PARTUUID=$(blkid -s PARTUUID -o value "$ESP_DEV" 2> /dev/null || true)
     ESP_LABEL=$(blkid -s LABEL -o value "$ESP_DEV" 2> /dev/null || true)
     return 0
   }
