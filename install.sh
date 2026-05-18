@@ -62,23 +62,54 @@ init_logging() {
   set -x
 }
 
+# Copy logs into the installed system while /mnt is still mounted so they
+# survive the reboot out of the tmpfs ISO. Idempotent and failure-tolerant —
+# callable on demand (before the final unmount) and again from log_finish.
+persist_logs() {
+  if mountpoint -q /mnt 2> /dev/null; then
+    { mkdir -p /mnt/var/log \
+        && cp -f "$LOG_FILE" "$XTRACE_FILE" /mnt/var/log/ 2> /dev/null \
+        && echo "  persisted to /mnt/var/log/"; } || true
+  fi
+}
+
+# Undo charset/SGR corruption from binary command output (e.g. efibootmgr -v)
+# so the terminal stays readable after exit or Ctrl+C. Soft reset only — no
+# screen clear, so the final message and log paths remain visible.
+reset_terminal() {
+  printf '\033[0m\033(B\017' 2> /dev/null || true
+  if command -v tput > /dev/null 2>&1; then
+    { tput sgr0; tput rmacs; } 2> /dev/null || true
+  fi
+}
+
 log_finish() {
   local rc=$?
+  [[ ${__FINISHED:-0} == 1 ]] && return
+  __FINISHED=1
   set +x
-  if [[ $rc -ne 0 ]]; then
-    echo -e "\n${CER} Installation failed (exit $rc)."
-  else
+  if [[ $rc -eq 0 ]]; then
     echo -e "\n${COK} Done."
+  elif [[ $rc -eq 130 ]]; then
+    echo -e "\n${CAT} Interrupted (Ctrl+C)."
+  else
+    echo -e "\n${CER} Installation failed (exit $rc)."
   fi
   echo "  log:    $LOG_FILE"
   echo "  xtrace: $XTRACE_FILE"
-  if mountpoint -q /mnt 2>/dev/null; then
-    { mkdir -p /mnt/var/log \
-        && cp -f "$LOG_FILE" "$XTRACE_FILE" /mnt/var/log/ 2>/dev/null \
-        && echo "  persisted to /mnt/var/log/"; } || true
-  fi
+  persist_logs
+  reset_terminal
   exec 1>&- 2>&- || true
   wait "${TEE_PID:-}" 2>/dev/null || true   # let tee/sed flush — no truncated tail on crash
+}
+
+# Ctrl+C / TERM: drop xtrace noise, then exit so the EXIT trap (log_finish)
+# persists logs and restores the terminal exactly once instead of crashing
+# on an already-corrupted screen.
+on_interrupt() {
+  set +x
+  echo -e "\n${CAT} ${BONSAI_YELLOW}Interrupted — saving logs and restoring terminal...${BONSAI_RESET}"
+  exit 130
 }
 
 # Retry an interactive credential command until it succeeds. A failing
@@ -103,6 +134,7 @@ part_is_held() {
 }
 
 trap log_finish EXIT
+trap on_interrupt INT TERM
 init_logging
 
 # Global variables for installation choices
@@ -1274,17 +1306,44 @@ EOF
   arch-chroot /mnt pacman --noconfirm -S broadcom-wl-dkms || true
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring initramfs...${BONSAI_RESET}"
-  variable="MODULES=()"
-  variable_changed="MODULES=(btrfs)"
-  arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
+  # Edit /mnt/etc/mkinitcpio.conf in a content-agnostic way. The previous
+  # exact-string match silently did nothing whenever the distro's default
+  # HOOKS/MODULES line differed (spacing, order, new `microcode`/`kms`
+  # hooks) — on encrypted installs that dropped the `encrypt` hook and
+  # produced a system that could not unlock LUKS and would not boot.
+  local mkconf=/mnt/etc/mkinitcpio.conf
 
-  if [ "$USE_ENCRYPTION" = true ]; then
-    variable="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)"
-    variable_changed="HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)"
-    arch-chroot /mnt sed -i "/^$variable/ c$variable_changed" /etc/mkinitcpio.conf
+  # MODULES: ensure btrfs is present whatever the array currently holds.
+  if ! grep -qE '^MODULES=\([^)]*\bbtrfs\b' "$mkconf"; then
+    sed -i -E 's/^MODULES=\((.*)\)/MODULES=(\1 btrfs)/; s/^MODULES=\([[:space:]]+/MODULES=(/' "$mkconf"
   fi
 
-  arch-chroot /mnt mkinitcpio -p $KERNEL_TYPE
+  if [ "$USE_ENCRYPTION" = true ]; then
+    # Insert `encrypt` immediately before `filesystems`, regardless of the
+    # surrounding default hooks. Idempotent; second pass is a safety net
+    # if `filesystems` was unexpectedly absent.
+    if ! grep -qE '^HOOKS=\([^)]*\bencrypt\b' "$mkconf"; then
+      sed -i -E 's/^(HOOKS=\(.*)\bfilesystems\b/\1encrypt filesystems/' "$mkconf"
+    fi
+    if ! grep -qE '^HOOKS=\([^)]*\bencrypt\b' "$mkconf"; then
+      sed -i -E 's/^HOOKS=\((.*)\)/HOOKS=(\1 encrypt)/' "$mkconf"
+    fi
+  fi
+
+  arch-chroot /mnt mkinitcpio -p "$KERNEL_TYPE"
+
+  if [ "$USE_ENCRYPTION" = true ]; then
+    # Fail loudly instead of shipping an encrypted system that cannot unlock.
+    if ! grep -qE '^HOOKS=\([^)]*\bencrypt\b' "$mkconf"; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: 'encrypt' hook missing from mkinitcpio.conf — encrypted system would not boot.${BONSAI_RESET}"
+      exit 1
+    fi
+    if ! arch-chroot /mnt lsinitcpio "/boot/initramfs-${KERNEL_TYPE}.img" 2> /dev/null | grep -q 'hooks/encrypt'; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: built initramfs lacks the encrypt hook — aborting before an unbootable install.${BONSAI_RESET}"
+      exit 1
+    fi
+    echo -e "${COK} ${BONSAI_TEXT}Verified: ${BONSAI_GREEN}encrypt${BONSAI_TEXT} hook present in HOOKS and initramfs.${BONSAI_RESET}"
+  fi
 
   show_section "Bootloader Configuration"
 
@@ -1676,6 +1735,11 @@ EOF
   echo -e "${CNT} ${BONSAI_TEXT}Verifying EFI boot entries...${BONSAI_RESET}"
   local efiboot_output
   if efiboot_output=$(arch-chroot /mnt efibootmgr -v 2>&1); then
+    # efibootmgr -v prints raw binary device paths on some firmware (Apple
+    # Macs) — strip everything but printable ASCII, tab and newline so the
+    # bytes can't corrupt the terminal or poison the readable log. The
+    # PARTUUID/"GPT,<uuid>" tokens are ASCII, so verification still matches.
+    efiboot_output=$(printf '%s' "$efiboot_output" | tr -cd '\11\12\40-\176')
     echo "$efiboot_output"
   else
     echo -e "${CWR} ${BONSAI_YELLOW}efibootmgr could not enumerate entries. Verify UEFI settings manually.${BONSAI_RESET}"
@@ -1738,6 +1802,11 @@ EOF
     fi
     EFIVARFS_HOST_MOUNTED=false
   fi
+
+  # Persist logs into the installed system BEFORE unmounting — otherwise the
+  # EXIT-trap copy finds /mnt gone and the logs vanish with the tmpfs ISO.
+  echo -e "${CNT} ${BONSAI_TEXT}Saving installation logs to the new system...${BONSAI_RESET}"
+  persist_logs
 
   umount -l /mnt 2> /dev/null || true
 
