@@ -34,27 +34,13 @@ LOG_FILE="${LOG_DIR}/install_bonsai-${LOG_TS}.log"
 XTRACE_FILE="${LOG_DIR}/install_bonsai-${LOG_TS}.xtrace.log"
 INSTLOG="$LOG_FILE"   # keeps existing `tee -a "$INSTLOG"` lines working
 
-# Re-exec once under a PTY (util-linux `script`) so pacman/pacstrap/passwd/
-# cryptsetup detect a real terminal — restores live download progress while
-# still capturing 100% of output. The raw session is ANSI-stripped and
-# carriage-return-collapsed into the readable log; the terminal stays live.
-# Falls back silently to the tee path if `script` is unavailable or the
-# script is piped (curl | bash), keeping logging intact (without progress).
-if [[ -z "${BONSAI_UNDER_SCRIPT:-}" && -f "$0" && "$0" != bash ]] \
-  && command -v script > /dev/null 2>&1; then
-  export BONSAI_UNDER_SCRIPT=1
-  exec script -qe -f -c "bash $(printf '%q' "$0")$(printf ' %q' "$@")" \
-    >(sed -u -r 's/\x1b\[[0-9;:?]*[a-zA-Z]//g; s/\r$//; s/.*\r//' >> "$LOG_FILE")
-fi
-
+# Always-on logging via tee: a copy of stdout/stderr (ANSI-stripped,
+# \r-collapsed) goes to the readable log; full xtrace to its own fd.
+# No PTY wrapper — util-linux `script` wedged the controlling terminal
+# on exit/Ctrl+C, so live pacman progress is traded for a reliable exit.
 init_logging() {
-  if [[ -z "${BONSAI_UNDER_SCRIPT:-}" ]]; then
-    # Fallback path (no `script`): tee a copy of stdout/stderr, ANSI-stripped
-    # and \r-collapsed, into the readable log. No live progress bars here.
-    exec > >(tee >(sed -u -r 's/\x1b\[[0-9;:?]*[a-zA-Z]//g; s/\r$//; s/.*\r//' >> "$LOG_FILE")) 2>&1
-    TEE_PID=$!
-  fi
-  # Under `script` stdout is already a captured PTY — do not re-pipe it.
+  exec > >(tee >(sed -u -r 's/\x1b\[[0-9;:?]*[a-zA-Z]//g; s/\r$//; s/.*\r//' >> "$LOG_FILE")) 2>&1
+  TEE_PID=$!
   # Full xtrace, log-only — routed to its own fd so the BONSAI TUI stays clean.
   exec {XTRACE_FD}>>"$XTRACE_FILE"
   export BASH_XTRACEFD=$XTRACE_FD
@@ -1338,30 +1324,32 @@ EOF
   fi
 
   if [ "$USE_ENCRYPTION" = true ]; then
-    # Insert `encrypt` immediately before `filesystems`, regardless of the
-    # surrounding default hooks. Idempotent; second pass is a safety net
-    # if `filesystems` was unexpectedly absent.
-    if ! grep -qE '^HOOKS=\([^)]*\bencrypt\b' "$mkconf"; then
-      sed -i -E 's/^(HOOKS=\(.*)\bfilesystems\b/\1encrypt filesystems/' "$mkconf"
-    fi
-    if ! grep -qE '^HOOKS=\([^)]*\bencrypt\b' "$mkconf"; then
-      sed -i -E 's/^HOOKS=\((.*)\)/HOOKS=(\1 encrypt)/' "$mkconf"
-    fi
+    # Pin the canonical *busybox* encrypted HOOKS. A systemd-based default
+    # (current Arch / CachyOS ship `base systemd ... sd-encrypt`) combined
+    # with the cryptdevice= cmdline derive_kernel_opts emits gives a
+    # systemd-initrd that ignores cryptdevice=, never unlocks LUKS, and
+    # times out on /dev/mapper/cryptroot -> emergency mode. This line is
+    # consistent with cryptdevice=UUID=...:cryptroot and is known-bootable.
+    sed -i -E 's|^HOOKS=\(.*\)|HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)|' "$mkconf"
   fi
 
   arch-chroot /mnt mkinitcpio -p "$KERNEL_TYPE"
 
   if [ "$USE_ENCRYPTION" = true ]; then
     # Fail loudly instead of shipping an encrypted system that cannot unlock.
-    if ! grep -qE '^HOOKS=\([^)]*\bencrypt\b' "$mkconf"; then
-      echo -e "${CER} ${BONSAI_RED}FATAL: 'encrypt' hook missing from mkinitcpio.conf — encrypted system would not boot.${BONSAI_RESET}"
+    # Must be busybox-consistent: encrypt present, NO systemd/sd-encrypt.
+    if ! grep -qE '^HOOKS=\([^)]*\bencrypt\b' "$mkconf" \
+      || grep -qE '^HOOKS=\([^)]*\b(systemd|sd-encrypt)\b' "$mkconf"; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: HOOKS not busybox-consistent (encrypt missing or systemd/sd-encrypt present) — encrypted system would not boot.${BONSAI_RESET}"
       exit 1
     fi
-    if ! arch-chroot /mnt lsinitcpio "/boot/initramfs-${KERNEL_TYPE}.img" 2> /dev/null | grep -q 'hooks/encrypt'; then
-      echo -e "${CER} ${BONSAI_RED}FATAL: built initramfs lacks the encrypt hook — aborting before an unbootable install.${BONSAI_RESET}"
+    local lsi
+    lsi=$(arch-chroot /mnt lsinitcpio "/boot/initramfs-${KERNEL_TYPE}.img" 2> /dev/null || true)
+    if ! grep -q 'hooks/encrypt' <<< "$lsi" || grep -q 'hooks/sd-encrypt' <<< "$lsi"; then
+      echo -e "${CER} ${BONSAI_RED}FATAL: initramfs hook set inconsistent with cryptdevice= cmdline — aborting before an unbootable install.${BONSAI_RESET}"
       exit 1
     fi
-    echo -e "${COK} ${BONSAI_TEXT}Verified: ${BONSAI_GREEN}encrypt${BONSAI_TEXT} hook present in HOOKS and initramfs.${BONSAI_RESET}"
+    echo -e "${COK} ${BONSAI_TEXT}Verified: busybox ${BONSAI_GREEN}encrypt${BONSAI_TEXT} hook, no systemd-initrd conflict.${BONSAI_RESET}"
   fi
 
   show_section "Bootloader Configuration"
