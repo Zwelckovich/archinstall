@@ -34,11 +34,27 @@ LOG_FILE="${LOG_DIR}/install_bonsai-${LOG_TS}.log"
 XTRACE_FILE="${LOG_DIR}/install_bonsai-${LOG_TS}.xtrace.log"
 INSTLOG="$LOG_FILE"   # keeps existing `tee -a "$INSTLOG"` lines working
 
+# Re-exec once under a PTY (util-linux `script`) so pacman/pacstrap/passwd/
+# cryptsetup detect a real terminal — restores live download progress while
+# still capturing 100% of output. The raw session is ANSI-stripped and
+# carriage-return-collapsed into the readable log; the terminal stays live.
+# Falls back silently to the tee path if `script` is unavailable or the
+# script is piped (curl | bash), keeping logging intact (without progress).
+if [[ -z "${BONSAI_UNDER_SCRIPT:-}" && -f "$0" && "$0" != bash ]] \
+  && command -v script > /dev/null 2>&1; then
+  export BONSAI_UNDER_SCRIPT=1
+  exec script -qe -f -c "bash $(printf '%q' "$0")$(printf ' %q' "$@")" \
+    >(sed -u -r 's/\x1b\[[0-9;:?]*[a-zA-Z]//g; s/\r$//; s/.*\r//' >> "$LOG_FILE")
+fi
+
 init_logging() {
-  # tee writes raw bytes to the terminal (color preserved) and a copy
-  # with ANSI escapes stripped to the readable log.
-  exec > >(tee >(sed -u -r 's/\x1b\[[0-9;:?]*[a-zA-Z]//g' >> "$LOG_FILE")) 2>&1
-  TEE_PID=$!
+  if [[ -z "${BONSAI_UNDER_SCRIPT:-}" ]]; then
+    # Fallback path (no `script`): tee a copy of stdout/stderr, ANSI-stripped
+    # and \r-collapsed, into the readable log. No live progress bars here.
+    exec > >(tee >(sed -u -r 's/\x1b\[[0-9;:?]*[a-zA-Z]//g; s/\r$//; s/.*\r//' >> "$LOG_FILE")) 2>&1
+    TEE_PID=$!
+  fi
+  # Under `script` stdout is already a captured PTY — do not re-pipe it.
   # Full xtrace, log-only — routed to its own fd so the BONSAI TUI stays clean.
   exec {XTRACE_FD}>>"$XTRACE_FILE"
   export BASH_XTRACEFD=$XTRACE_FD
@@ -63,6 +79,27 @@ log_finish() {
   fi
   exec 1>&- 2>&- || true
   wait "${TEE_PID:-}" 2>/dev/null || true   # let tee/sed flush — no truncated tail on crash
+}
+
+# Retry an interactive credential command until it succeeds. A failing
+# command in an `until` condition is exempt from `set -e`, so a mistyped
+# or mismatched password re-prompts instead of aborting the install.
+prompt_until_ok() {
+  local label="$1"
+  shift
+  until "$@"; do
+    echo -e "${CAT} ${BONSAI_YELLOW}${label} not accepted (mismatch or too weak). Try again.${BONSAI_RESET}"
+  done
+}
+
+# True if a block device is still mapped/mounted by something (a leftover
+# LUKS/dm mapping or an active mount) — used to tell a "device in use"
+# failure apart from a mistyped passphrase so we don't loop forever.
+part_is_held() {
+  local part="$1"
+  [[ $(lsblk -nro NAME "$part" 2> /dev/null | wc -l) -gt 1 ]] && return 0
+  findmnt -nro SOURCE 2> /dev/null | grep -qx "$part" && return 0
+  return 1
 }
 
 trap log_finish EXIT
@@ -969,6 +1006,33 @@ MIRRORS
   echo -e "${COK} ${BONSAI_TEXT}Mirrors optimized successfully${BONSAI_RESET}"
 }
 
+# Tear down anything from a previous failed run that still holds the target
+# disk: nested mounts under /mnt, swap, and LUKS/dm mappings whose backing
+# store is a partition of this disk. Without this a re-run of an encrypted
+# install fails with "Cannot exclusively open <part>, device in use".
+# Every step is failure-tolerant so detection gaps never abort prep.
+wipe_disk_holders() {
+  local disk="$1" dm pass closed
+  umount -R /mnt 2> /dev/null || umount -Rl /mnt 2> /dev/null || true
+  while read -r p; do
+    swapoff "$p" 2> /dev/null || true
+  done < <(lsblk -nrpo NAME "$disk" 2> /dev/null)
+  for pass in 1 2 3; do   # a few passes unwind stacked mappings (LVM-on-LUKS)
+    closed=false
+    for dm in /dev/mapper/*; do
+      [[ $dm == /dev/mapper/control || ! -e $dm ]] && continue
+      if lsblk -nso NAME "$dm" 2> /dev/null | grep -qx "$(basename "$disk")"; then
+        cryptsetup close "$(basename "$dm")" 2> /dev/null \
+          || dmsetup remove "$(basename "$dm")" 2> /dev/null || true
+        closed=true
+      fi
+    done
+    [[ $closed == false ]] && break
+  done
+  cryptsetup close cryptroot 2> /dev/null || true   # installer's own name, belt-and-suspenders
+  umount "/dev/$(basename "$disk")"?* 2> /dev/null || true
+}
+
 function btrfs_format() {
   show_section "Disk Partitioning & Formatting"
 
@@ -980,9 +1044,9 @@ function btrfs_format() {
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Preparing disk...${BONSAI_RESET}"
 
-  # Unmount any mounted partitions
-  umount "/dev/${SELECTED_DISK}"?* 2> /dev/null || true
-  umount -l /mnt 2> /dev/null || true
+  # Release any leftover mounts / LUKS-or-dm mappings from a previous failed
+  # run so the disk can be wiped (fixes "device in use" on a re-run).
+  wipe_disk_holders "/dev/$SELECTED_DISK"
 
   echo -e "${CNT} ${BONSAI_TEXT}Wiping all existing signatures from disk...${BONSAI_RESET}"
   wipefs -af "/dev/$SELECTED_DISK"
@@ -1015,11 +1079,21 @@ function btrfs_format() {
     echo -e "${CWR} ${BONSAI_YELLOW}You will be prompted to enter the encryption password${BONSAI_RESET}"
     echo -e "${CNT} ${BONSAI_TEXT}Choose a strong password and remember it!${BONSAI_RESET}\n"
 
-    cryptsetup -c aes-xts-plain64 --key-size=512 --hash=sha512 --iter-time=3000 \
-      --pbkdf=pbkdf2 --use-random luksFormat --type=luks1 "$PARTITION2"
+    while true; do
+      if part_is_held "$PARTITION2"; then
+        echo -e "${CER} ${BONSAI_RED}${PARTITION2} is still held by a mapping or mount — not a passphrase problem.${BONSAI_RESET}"
+        echo -e "${CER} ${BONSAI_RED}Close it (cryptsetup close <name>) or reboot, then re-run.${BONSAI_RESET}"
+        exit 1
+      fi
+      if cryptsetup -c aes-xts-plain64 --key-size=512 --hash=sha512 --iter-time=3000 \
+        --pbkdf=pbkdf2 --use-random luksFormat --type=luks1 "$PARTITION2"; then
+        break
+      fi
+      echo -e "${CAT} ${BONSAI_YELLOW}Encryption passphrase not accepted. Try again.${BONSAI_RESET}"
+    done
 
     echo -e "\n${CNT} ${BONSAI_TEXT}Opening encrypted container...${BONSAI_RESET}"
-    cryptsetup luksOpen "$PARTITION2" cryptroot
+    prompt_until_ok "Encryption passphrase" cryptsetup luksOpen "$PARTITION2" cryptroot
 
     echo -e "${CNT} ${BONSAI_TEXT}Creating BTRFS filesystem...${BONSAI_RESET}"
     mkfs.btrfs -f /dev/mapper/cryptroot
@@ -1183,7 +1257,7 @@ EOF
 
   show_section "Root Password"
   echo -e "${CWR} ${BONSAI_YELLOW}Please set the root password:${BONSAI_RESET}"
-  arch-chroot /mnt passwd
+  prompt_until_ok "Root password" arch-chroot /mnt passwd
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring pacman...${BONSAI_RESET}"
   variable="Color"
@@ -1631,10 +1705,7 @@ EOF
 
   show_section "User Password"
   echo -e "${CWR} ${BONSAI_YELLOW}Please set password for user $userstr:${BONSAI_RESET}"
-  if ! arch-chroot /mnt passwd -- "$userstr"; then
-    echo -e "${CER} ${BONSAI_RED}Failed to set password for ${BONSAI_YELLOW}$userstr${BONSAI_RED}.${BONSAI_RESET}"
-    exit 1
-  fi
+  prompt_until_ok "User password for $userstr" arch-chroot /mnt passwd -- "$userstr"
 
   echo -e "\n${CNT} ${BONSAI_TEXT}Configuring sudo...${BONSAI_RESET}"
   variable="%wheel ALL=(ALL:ALL) ALL"
