@@ -22,7 +22,51 @@ CER="${BONSAI_RED}[✗]${BONSAI_RESET}"
 CAT="${BONSAI_YELLOW}[!]${BONSAI_RESET}"
 CWR="${BONSAI_PURPLE}[⚠]${BONSAI_RESET}"
 CAC="${BONSAI_GREEN}[⟳]${BONSAI_RESET}"
-INSTLOG="install_bonsai.log"
+# ── Always-on logging ────────────────────────────────────────────────
+# Captures 100% of output with zero user action. Two correlated files:
+#   install_bonsai-TS.log         readable stdout+stderr, ANSI stripped
+#   install_bonsai-TS.xtrace.log  full `set -x` trace (never on terminal)
+# Both are copied into /mnt/var/log/ on exit so they survive the reboot
+# out of the tmpfs ISO environment.
+LOG_TS="$(date +%Y%m%d-%H%M%S)"
+LOG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_FILE="${LOG_DIR}/install_bonsai-${LOG_TS}.log"
+XTRACE_FILE="${LOG_DIR}/install_bonsai-${LOG_TS}.xtrace.log"
+INSTLOG="$LOG_FILE"   # keeps existing `tee -a "$INSTLOG"` lines working
+
+init_logging() {
+  # tee writes raw bytes to the terminal (color preserved) and a copy
+  # with ANSI escapes stripped to the readable log.
+  exec > >(tee >(sed -u -r 's/\x1b\[[0-9;:?]*[a-zA-Z]//g' >> "$LOG_FILE")) 2>&1
+  TEE_PID=$!
+  # Full xtrace, log-only — routed to its own fd so the BONSAI TUI stays clean.
+  exec {XTRACE_FD}>>"$XTRACE_FILE"
+  export BASH_XTRACEFD=$XTRACE_FD
+  export PS4='+ $(date +%H:%M:%S) ${BASH_SOURCE##*/}:${LINENO}:${FUNCNAME[0]:-main}: '
+  set -x
+}
+
+log_finish() {
+  local rc=$?
+  set +x
+  if [[ $rc -ne 0 ]]; then
+    echo -e "\n${CER} Installation failed (exit $rc)."
+  else
+    echo -e "\n${COK} Done."
+  fi
+  echo "  log:    $LOG_FILE"
+  echo "  xtrace: $XTRACE_FILE"
+  if mountpoint -q /mnt 2>/dev/null; then
+    { mkdir -p /mnt/var/log \
+        && cp -f "$LOG_FILE" "$XTRACE_FILE" /mnt/var/log/ 2>/dev/null \
+        && echo "  persisted to /mnt/var/log/"; } || true
+  fi
+  exec 1>&- 2>&- || true
+  wait "${TEE_PID:-}" 2>/dev/null || true   # let tee/sed flush — no truncated tail on crash
+}
+
+trap log_finish EXIT
+init_logging
 
 # Global variables for installation choices
 SELECTED_DISK=""

@@ -53,3 +53,5 @@ AGENTS.md
 GEMINI.md
 dotfiles/config/code/.config/Code/User/mcp.json
 /install_bonsai.log
+/install_bonsai-*.log
+/install_bonsai-*.xtrace.log
