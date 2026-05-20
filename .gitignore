@@ -1,5 +1,6 @@
 # Log Files
 install.log
+*.bak
 fzf-git/
 catppuccin-zsh-syntax-highlighting/
 lazy-lock.json
