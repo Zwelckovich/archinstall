@@ -195,7 +195,7 @@ hypr_base_stage=(
   ttf-droid                       # Android's default font family
   ttf-fira-code                   # Monospaced font with programming ligatures
   ttf-jetbrains-mono              # JetBrains monospaced font
-  ttf-jetbrains-mono-nerd         # JetBrains font with extra glyphs
+  ttf-jetbrains-mono-nerd         # JetBrains font with extra glyphs (also UI/workbench font)
   qt5ct                           # Qt5 configuration tool
   qt6ct                           # Qt6 configuration tool
   catppuccin-cursors-mocha        # Catppuccin cursor theme
@@ -2052,6 +2052,13 @@ function restore_dotfiles() {
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring VS Code...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config code
+
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring fontconfig (JetBrains Mono UI font)...${BONSAI_RESET}"
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config fontconfig
+
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring GTK (theme + JetBrains Mono font)...${BONSAI_RESET}"
+  rm -f ~/.config/gtk-3.0/settings.ini
+  stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config gtk
 
   echo -e "${CNT} ${BONSAI_TEXT}Configuring Bottom system monitor...${BONSAI_RESET}"
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/config bottom
