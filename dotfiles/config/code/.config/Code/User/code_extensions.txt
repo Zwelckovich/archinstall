@@ -50,3 +50,4 @@ ms-vscode-remote.remote-wsl
 quarto.quarto
 csstools.postcss
 ms-vscode.powershell
+marimo-team.vscode-marimo
