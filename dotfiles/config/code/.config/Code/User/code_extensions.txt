@@ -51,3 +51,4 @@ quarto.quarto
 csstools.postcss
 ms-vscode.powershell
 marimo-team.vscode-marimo
+github.vscode-github-actions
