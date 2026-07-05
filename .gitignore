@@ -7,6 +7,10 @@ lazy-lock.json
 
 # BONSAI and Claude files
 .claude/
+# ...but do track the stowed Claude Code settings package (parent dir must be
+# un-ignored first, then the file, or git keeps it excluded).
+!dotfiles/home/claude/.claude/
+!dotfiles/home/claude/.claude/settings.json
 CLAUDE.md
 CLEANUP.md
 BONSAI.md

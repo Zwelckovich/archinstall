@@ -2132,6 +2132,12 @@ function restore_dotfiles() {
   rm -rf ~/.p10k.zsh
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home p10k
 
+  echo -e "${CNT} ${BONSAI_TEXT}Configuring Claude Code...${BONSAI_RESET}"
+  # ~/.claude holds live Claude Code state (projects/, todos/, ...). mkdir + --no-folding
+  # force stow to symlink only settings.json and never fold the whole dir into a symlink.
+  mkdir -p ~/.claude
+  stow -v 1 --no-folding -t ~/ -d ~/archinstall/dotfiles/home claude
+
   echo -e "${CNT} ${BONSAI_TEXT}Installing themes and icons...${BONSAI_RESET}"
   rm -rf ~/.themes
   stow -v 1 -t ~/ -d ~/archinstall/dotfiles/home themes
