@@ -9,6 +9,7 @@
   "effortLevel": "high",
   "ultracode": true,
   "tui": "fullscreen",
+  "theme": "dark",
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
   "skipAutoPermissionPrompt": true
