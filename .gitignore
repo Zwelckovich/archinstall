@@ -14,6 +14,13 @@ lazy-lock.json
 CLAUDE.md
 CLEANUP.md
 BONSAI.md
+
+# BONSAI development / planning docs — local only, not part of the shared dotfiles
+CONCEPT.md
+IDEA.md
+GROW.md
+CLAUDE.local.md
+cachyos-adjust.md
 dotfiles/config/mutt/.config/mutt/accounts
 dotfiles/config/calcurse/.config/systemd/user/default.target.wants/calcurse-notify.service
 dotfiles/config/code/.config/Code/Cache
