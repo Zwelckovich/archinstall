@@ -47,8 +47,8 @@ bierner.markdown-mermaid
 astral-sh.ty
 hoovercj.vscode-settings-cycler
 ms-vscode-remote.remote-wsl
-quarto.quarto
 csstools.postcss
 ms-vscode.powershell
 marimo-team.vscode-marimo
 github.vscode-github-actions
+takumii.markdowntable
